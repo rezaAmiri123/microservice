@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package grpc;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/rezaAmiri123/microservice/service_user/proto/grpc";
+
+message User {
+    bytes user_uuid = 1;
+    string username = 2;
+    string email = 3;
+    string bio = 4;
+    string image = 5;
+    google.protobuf.Timestamp password_changed_at = 6;
+    google.protobuf.Timestamp created_at = 7;
+}

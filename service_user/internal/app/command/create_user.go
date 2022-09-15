@@ -2,61 +2,45 @@ package command
 
 import (
 	"context"
-	"time"
+	"fmt"
 
+	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
 	"github.com/rezaAmiri123/microservice/service_user/internal/domain/user"
+	"github.com/rezaAmiri123/microservice/service_user/internal/utils"
 )
 
 type CreateUserHandler struct {
-	logger   logger.Logger
-	userRepo user.Repository
+	logger logger.Logger
+	repo   user.Repository
 }
 
 func NewCreateUserHandler(userRepo user.Repository, logger logger.Logger) CreateUserHandler {
 	if userRepo == nil {
 		panic("userRepo is nil")
 	}
-	return CreateUserHandler{userRepo: userRepo, logger: logger}
+	return CreateUserHandler{repo: userRepo, logger: logger}
 }
 
 func (h CreateUserHandler) Handle(ctx context.Context, arg *user.CreateUserParams) (*user.User, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "CreateUserHandler.Handle")
 	defer span.Finish()
 
-	if err := user.SetUUID(); err != nil {
-		return err
+	// TODO we need to hash the password
+	hashedPassword, err := utils.HashPassword(arg.Password)
+	if err != nil {
+		h.logger.Errorf("connot hash the password: %v", err)
+		return &user.User{}, fmt.Errorf("connot hash the password: %w", err)
 	}
-	if err := user.Validate(ctx); err != nil {
-		return err
-	}
-	if err := user.HashPassword(); err != nil {
-		return err
+	arg.Password = hashedPassword
+
+	u, err := h.repo.CreateUser(ctx, arg)
+	if err != nil {
+		h.logger.Errorf("connot create user: %v", err)
+		return &user.User{}, fmt.Errorf("connot create user: %w", err)
 	}
 
-	e := &kafkaMessages.Email{
-		To:      []string{user.Email},
-		From:    "admin@example.com",
-		Subject: "register user subject",
-		Body:    "register user body",
-	}
-	msg := &kafkaMessages.CreateEmail{Email: e}
-
-	message, err := proto.Marshal(msg)
-	if err != nil {
-		return err
-	}
-	err = h.userRepo.Create(ctx, user)
-	if err != nil {
-		return err
-	}
-	err = h.kafka.PublishMessage(ctx, kafka.Message{
-		Topic: kafkaClient.CreateEmailTopic,
-		Value: message,
-		Time:  time.Now().UTC(),
-	})
-	if err != nil {
-		h.logger.Errorf("can not send kafka message %v", err)
-	}
-	return err
+	// remove the password from response
+	u.Password = ""
+	return u, nil
 }
