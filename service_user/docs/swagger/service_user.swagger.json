@@ -103,11 +103,11 @@
         "image": {
           "type": "string"
         },
-        "passwordChangedAt": {
+        "createdAt": {
           "type": "string",
           "format": "date-time"
         },
-        "createdAt": {
+        "updatedAt": {
           "type": "string",
           "format": "date-time"
         }
