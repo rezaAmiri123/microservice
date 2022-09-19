@@ -15,11 +15,11 @@ type CreateUserHandler struct {
 	repo   user.Repository
 }
 
-func NewCreateUserHandler(userRepo user.Repository, logger logger.Logger) CreateUserHandler {
+func NewCreateUserHandler(userRepo user.Repository, logger logger.Logger) *CreateUserHandler {
 	if userRepo == nil {
 		panic("userRepo is nil")
 	}
-	return CreateUserHandler{repo: userRepo, logger: logger}
+	return &CreateUserHandler{repo: userRepo, logger: logger}
 }
 
 func (h CreateUserHandler) Handle(ctx context.Context, arg *user.CreateUserParams) (*user.User, error) {

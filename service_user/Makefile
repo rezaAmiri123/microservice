@@ -13,6 +13,9 @@ dropdb:
 psql:
 	psql -h $(DB_ADDR) -U $(DB_USER) -d $(DB_NAME) -W
 
+evans:
+	evans --host localhost --port 5080 -r repl
+
 migratecreate:
 	migrate create -ext sql -dir internal/adapters/migration -seq service_user
 

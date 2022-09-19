@@ -8,8 +8,8 @@ import (
 )
 
 type Config struct {
-	ServiceName     string `mapstructure:"METRIC_SERVICE_NAME"`
-	ServiceHostPort string `mapstructure:"METRIC_SERVICE_HOST_PORT"`
+	MetricServiceName     string `mapstructure:"METRIC_SERVICE_NAME"`
+	MetricServiceHostPort string `mapstructure:"METRIC_SERVICE_HOST_PORT"`
 }
 
 type UserServiceMetric struct {
@@ -23,15 +23,15 @@ type UserServiceMetric struct {
 func NewUserServiceMetric(cfg *Config) *UserServiceMetric {
 	return &UserServiceMetric{
 		CreateUserGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
-			Name: fmt.Sprintf("%s_create_user_grpc_requests_total", cfg.ServiceName),
+			Name: fmt.Sprintf("%s_create_user_grpc_requests_total", cfg.MetricServiceHostPort),
 			Help: "The total of create user grpc requests",
 		}),
 		SuccessGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
-			Name: fmt.Sprintf("%s_success_grpc_requsts_total", cfg.ServiceName),
+			Name: fmt.Sprintf("%s_success_grpc_requsts_total", cfg.MetricServiceHostPort),
 			Help: "The total number of success grpc requests",
 		}),
 		ErrorGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
-			Name: fmt.Sprintf("%s_error_grpc_requsts_total", cfg.ServiceName),
+			Name: fmt.Sprintf("%s_error_grpc_requsts_total", cfg.MetricServiceHostPort),
 			Help: "The total number of error grpc requests",
 		}),
 		// SuccessKafkaMessages: promauto.NewCounter(prometheus.CounterOpts{
