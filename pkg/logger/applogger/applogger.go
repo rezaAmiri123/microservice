@@ -15,8 +15,8 @@ type Config struct {
 	LogEncoder string `mapstructure:"LOG_ENCODER"`
 }
 
-func NewLoggerConfig(logLevel string, devMode bool, encoder string) *Config {
-	return &Config{LogLevel: logLevel, LogDevMode: devMode, LogEncoder: encoder}
+func NewLoggerConfig(logLevel string, devMode bool, encoder string) Config {
+	return Config{LogLevel: logLevel, LogDevMode: devMode, LogEncoder: encoder}
 }
 
 // Application logger
