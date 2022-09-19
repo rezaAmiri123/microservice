@@ -10,13 +10,13 @@ import (
 )
 
 type Config struct {
-	LogLevel string `mapstructure:"LOG_LEVEL"`
-	DevMode  bool   `mapstructure:"LOG_DEV_MOD"`
-	Encoder  string `mapstructure:"LOG_ENCODER"`
+	LogLevel   string `mapstructure:"LOG_LEVEL"`
+	LogDevMode bool   `mapstructure:"LOG_DEV_MOD"`
+	LogEncoder string `mapstructure:"LOG_ENCODER"`
 }
 
 func NewLoggerConfig(logLevel string, devMode bool, encoder string) *Config {
-	return &Config{LogLevel: logLevel, DevMode: devMode, Encoder: encoder}
+	return &Config{LogLevel: logLevel, LogDevMode: devMode, LogEncoder: encoder}
 }
 
 // Application logger
@@ -30,7 +30,7 @@ type appLogger struct {
 
 // NewAppLogger App Logger constructor
 func NewAppLogger(cfg Config) logger.Logger {
-	return &appLogger{level: cfg.LogLevel, devMode: cfg.DevMode, encoding: cfg.Encoder}
+	return &appLogger{level: cfg.LogLevel, devMode: cfg.LogDevMode, encoding: cfg.LogEncoder}
 }
 
 // For mapping config logger to email_service logger levels

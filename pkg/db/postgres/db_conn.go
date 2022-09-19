@@ -16,25 +16,25 @@ const (
 )
 
 type Config struct {
-	Driver   string `mapstructure:"POSTGRES_DRIVER"`
-	Host     string `mapstructure:"POSTGRES_HOST"`
-	Port     string `mapstructure:"POSTGRES_PORT"`
-	User     string `mapstructure:"POSTGRES_USER"`
-	DBName   string `mapstructure:"POSTGRES_DB_NAME"`
-	Password string `mapstructure:"POSTGRES_PASSWORD"`
+	PGDriver   string `mapstructure:"POSTGRES_DRIVER"`
+	PGHost     string `mapstructure:"POSTGRES_HOST"`
+	PGPort     string `mapstructure:"POSTGRES_PORT"`
+	PGUser     string `mapstructure:"POSTGRES_USER"`
+	PGDBName   string `mapstructure:"POSTGRES_DB_NAME"`
+	PGPassword string `mapstructure:"POSTGRES_PASSWORD"`
 }
 
 // Return new Postgresql db instance
 func NewPsqlDB(c Config) (*sqlx.DB, error) {
 	dataSourceName := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
-		c.Host,
-		c.Port,
-		c.User,
-		c.DBName,
-		c.Password,
+		c.PGHost,
+		c.PGPort,
+		c.PGUser,
+		c.PGDBName,
+		c.PGPassword,
 	)
 
-	db, err := sqlx.Connect(c.Driver, dataSourceName)
+	db, err := sqlx.Connect(c.PGDriver, dataSourceName)
 	if err != nil {
 		return nil, err
 	}
