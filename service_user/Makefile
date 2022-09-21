@@ -16,6 +16,9 @@ psql:
 evans:
 	evans --host localhost --port 5080 -r repl
 
+run:
+	go run cmd/user/main.go
+
 migratecreate:
 	migrate create -ext sql -dir internal/adapters/migration -seq service_user
 
