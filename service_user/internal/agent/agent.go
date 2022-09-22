@@ -3,6 +3,7 @@ package agent
 import (
 	"io"
 	"sync"
+	"time"
 
 	"github.com/rezaAmiri123/microservice/service_user/internal/app"
 	"github.com/rezaAmiri123/microservice/service_user/internal/domain/user"
@@ -20,6 +21,10 @@ import (
 
 type Config struct {
 	// ServerTLSConfig *tls.Config
+	// token
+	SecretKey            string        `mapstructure:"SECRET_KEY"`
+	AccessTokenDuration  time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
+	RefreshTokenDuration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
 
 	GRPCServerAddr string `mapstructure:"GRPC_SERVER_ADDR"`
 	GRPCServerPort int    `mapstructure:"GRPC_SERVER_PORT"`

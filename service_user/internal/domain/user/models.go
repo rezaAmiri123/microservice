@@ -17,3 +17,15 @@ type User struct {
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }
+
+type Session struct {
+	SessionID    uuid.UUID `json:"session_id"  db:"session_id"`
+	Username     string    `json:"username" db:"username"`
+	RefreshToken string    `json:"refresh_token" db:"refresh_token"`
+	UserAgent    string    `json:"user_agent" db:"user_agent"`
+	ClientIp     string    `json:"client_ip" db:"client_ip"`
+	IsBlocked    bool      `json:"is_blocked" db:"is_blocked"`
+	ExpiresAt    time.Time `json:"expires_at" db:"expires_at"`
+	CreatedAt    time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at" db:"updated_at"`
+}

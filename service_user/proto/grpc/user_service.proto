@@ -4,6 +4,7 @@ package grpc;
 
 import "google/api/annotations.proto";
 import "rpc_create_user.proto";
+import "rpc_login.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "github.com/rezaAmiri123/microservice/service_user/proto/grpc";
@@ -11,7 +12,7 @@ option go_package = "github.com/rezaAmiri123/microservice/service_user/proto/grp
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 	info: {
 		title: "User Service API";
-		version: "1.0";
+		version: "1.1";
 		contact: {
 			name: "User service";
 			url: "https://github.com/rezaAmiri123/microservice/service_user";
@@ -29,6 +30,16 @@ service UserService{
 		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
 			description: "Use this API to create a new user";
 			summary: "Create new user";
+        };
+    }
+	rpc Login (LoginUserRequest) returns (LoginUserResponse) {
+        option (google.api.http) = {
+            post: "/v1/login"
+            body: "*"
+        };
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			description: "Use this API to login user and get access token & refresh token";
+			summary: "Login user";
         };
     }
 }

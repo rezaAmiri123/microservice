@@ -35,6 +35,21 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 	return m.recorder
 }
 
+// CreateSession mocks base method.
+func (m *MockRepository) CreateSession(ctx context.Context, arg *user.CreateSessionParams) (*user.Session, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateSession", ctx, arg)
+	ret0, _ := ret[0].(*user.Session)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateSession indicates an expected call of CreateSession.
+func (mr *MockRepositoryMockRecorder) CreateSession(ctx, arg interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSession", reflect.TypeOf((*MockRepository)(nil).CreateSession), ctx, arg)
+}
+
 // CreateUser mocks base method.
 func (m *MockRepository) CreateUser(ctx context.Context, arg *user.CreateUserParams) (*user.User, error) {
 	m.ctrl.T.Helper()
@@ -48,4 +63,19 @@ func (m *MockRepository) CreateUser(ctx context.Context, arg *user.CreateUserPar
 func (mr *MockRepositoryMockRecorder) CreateUser(ctx, arg interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockRepository)(nil).CreateUser), ctx, arg)
+}
+
+// GetUserByUsername mocks base method.
+func (m *MockRepository) GetUserByUsername(ctx context.Context, username string) (*user.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserByUsername", ctx, username)
+	ret0, _ := ret[0].(*user.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByUsername indicates an expected call of GetUserByUsername.
+func (mr *MockRepositoryMockRecorder) GetUserByUsername(ctx, username interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByUsername", reflect.TypeOf((*MockRepository)(nil).GetUserByUsername), ctx, username)
 }

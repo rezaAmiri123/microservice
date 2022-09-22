@@ -8,12 +8,15 @@ import (
 	"github.com/rezaAmiri123/microservice/service_user/internal/domain/user"
 )
 
-const createUser = `INSERT INTO users (username, password, email, bio, image) VALUES ($1, $2, $3, $4, $5) RETURNING 
-						(user_id, username, password, email, bio, image, created_at, updated_at)`
-const getUser = `SELECT 
-					user_id, username, password, email, bio, image, created_at, updated_at 
-				FROM users
-				WHERE username = $1`
+const createUser = `INSERT INTO users (username, password, email, bio, image) VALUES ($1, $2, $3, $4, $5)`
+
+// const createUser = `INSERT INTO users (username, password, email, bio, image) VALUES ($1, $2, $3, $4, $5) RETURNING
+// 						(user_id, username, password, email, bio, image, created_at, updated_at)`
+
+// const getUser = `SELECT
+// 					user_id, username, password, email, bio, image, created_at, updated_at
+// 				FROM users
+// 				WHERE username = $1`
 
 func (r *PGUserRepository) CreateUser(ctx context.Context, arg *user.CreateUserParams) (*user.User, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "PGUserRepository.CreateUser")

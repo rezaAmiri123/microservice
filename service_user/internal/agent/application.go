@@ -7,6 +7,8 @@ import (
 	"github.com/rezaAmiri123/microservice/service_user/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/service_user/internal/app"
 	"github.com/rezaAmiri123/microservice/service_user/internal/app/command"
+	"github.com/rezaAmiri123/microservice/service_user/pkg/token"
+	"github.com/rezaAmiri123/microservice/service_user/pkg/token/jwt"
 )
 
 func (a *Agent) setupApplication() error {
@@ -25,9 +27,19 @@ func (a *Agent) setupApplication() error {
 	//repo, err := adapters.NewGORMArticleRepository(a.DBConfig)
 	repo := pg.NewPGUserRepository(dbConn, a.logger, a.metric)
 
+	maker, err := jwt.NewJWTMaker(a.SecretKey)
+	if err != nil {
+		return fmt.Errorf("cannot make jwt maker: %w", err)
+	}
+	makerConfig := token.Config{
+		AccessTokenDuration:  a.AccessTokenDuration,
+		RefreshTokenDuration: a.RefreshTokenDuration,
+	}
+
 	application := &app.Application{
 		Commands: app.Commands{
 			CreateUser: command.NewCreateUserHandler(repo, a.logger),
+			Login:      command.NewLoginHandler(repo, a.logger, maker, makerConfig),
 		},
 		Queries: app.Queries{},
 	}
