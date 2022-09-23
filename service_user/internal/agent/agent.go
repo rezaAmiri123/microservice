@@ -12,6 +12,7 @@ import (
 	// "github.com/rezaAmiri123/test-microservice/pkg/auth"
 
 	"github.com/rezaAmiri123/microservice/pkg/logger"
+	"github.com/rezaAmiri123/microservice/pkg/token"
 
 	// "github.com/rezaAmiri123/microservice/wallet_service/internal/app"
 	// "github.com/rezaAmiri123/microservice/wallet_service/internal/domain/wallet"
@@ -62,6 +63,7 @@ type Agent struct {
 	grpcServer  *grpc.Server
 	repository  user.Repository
 	Application *app.Application
+	Maker       token.Maker
 	// AuthClient  auth.AuthClient
 
 	shutdown     bool

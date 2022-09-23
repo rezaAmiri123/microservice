@@ -14,6 +14,7 @@ type Config struct {
 
 type UserServiceMetric struct {
 	CreateUserGrpcRequests prometheus.Counter
+	UpdateUserGrpcRequests prometheus.Counter
 	LoginRequests          prometheus.Counter
 	SuccessGrpcRequests    prometheus.Counter
 	ErrorGrpcRequests      prometheus.Counter
@@ -26,6 +27,10 @@ func NewUserServiceMetric(cfg *Config) *UserServiceMetric {
 		CreateUserGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
 			Name: fmt.Sprintf("%s_create_user_grpc_requests_total", cfg.MetricServiceHostPort),
 			Help: "The total of create user grpc requests",
+		}),
+		UpdateUserGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
+			Name: fmt.Sprintf("%s_update_user_grpc_requests_total", cfg.MetricServiceHostPort),
+			Help: "The total of update user grpc requests",
 		}),
 		LoginRequests: promauto.NewCounter(prometheus.CounterOpts{
 			Name: fmt.Sprintf("%s_login_grpc_requests_total", cfg.MetricServiceHostPort),

@@ -16,10 +16,11 @@ const createSession = `INSERT INTO sessions
 
 	(session_id, username, refresh_token, user_agent, client_ip, is_blocked, expires_at)
 	VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`
-const getSessionByID = `SELECT 
-								session_id, username, refresh_token, user_agent, client_ip, is_blocked, expires_at, created_at, updated_at 
-							FROM sessions
-								WHERE session_id = $1`
+
+// const getSessionByID = `SELECT
+// 								session_id, username, refresh_token, user_agent, client_ip, is_blocked, expires_at, created_at, updated_at
+// 							FROM sessions
+// 								WHERE session_id = $1`
 
 func (r *PGUserRepository) CreateSession(ctx context.Context, arg *user.CreateSessionParams) (*user.Session, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "PGUserRepository.CreateSession")

@@ -7,9 +7,9 @@ import (
 	"github.com/opentracing/opentracing-go"
 	pkgGrpc "github.com/rezaAmiri123/microservice/pkg/grpc"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
+	"github.com/rezaAmiri123/microservice/pkg/token"
 	"github.com/rezaAmiri123/microservice/service_user/internal/domain/user"
 	"github.com/rezaAmiri123/microservice/service_user/internal/utils"
-	"github.com/rezaAmiri123/microservice/service_user/pkg/token"
 )
 
 type LoginHandler struct {

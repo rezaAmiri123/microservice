@@ -4,11 +4,19 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/rezaAmiri123/microservice/service_user/pkg/token"
+	"github.com/rezaAmiri123/microservice/pkg/token"
 )
 
 type CreateUserParams struct {
 	Username string `json:"username" validate:"required,min=6,max=30"`
+	Password string `json:"password" validate:"required,min=8,max=15"`
+	Email    string `json:"email" validate:"required,min=3,max=250,email"`
+	Bio      string `json:"bio"`
+	Image    string `json:"image"`
+}
+
+type UpdateUserParams struct {
+	Username string `json:"username"`
 	Password string `json:"password" validate:"required,min=8,max=15"`
 	Email    string `json:"email" validate:"required,min=3,max=250,email"`
 	Bio      string `json:"bio"`

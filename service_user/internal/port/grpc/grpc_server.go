@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"github.com/rezaAmiri123/microservice/pkg/logger"
+	"github.com/rezaAmiri123/microservice/pkg/token"
 	"github.com/rezaAmiri123/microservice/service_user/internal/app"
 	"github.com/rezaAmiri123/microservice/service_user/internal/metrics"
 	userService "github.com/rezaAmiri123/microservice/service_user/proto/grpc"
@@ -12,6 +13,7 @@ type Config struct {
 	Metric *metrics.UserServiceMetric
 	App    *app.Application
 	Logger logger.Logger
+	Maker  token.Maker
 }
 
 var _ userService.UserServiceServer = (*UserGRPCServer)(nil)

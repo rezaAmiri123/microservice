@@ -4,11 +4,11 @@ import (
 	"fmt"
 
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
+	"github.com/rezaAmiri123/microservice/pkg/token"
+	"github.com/rezaAmiri123/microservice/pkg/token/jwt"
 	"github.com/rezaAmiri123/microservice/service_user/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/service_user/internal/app"
 	"github.com/rezaAmiri123/microservice/service_user/internal/app/command"
-	"github.com/rezaAmiri123/microservice/service_user/pkg/token"
-	"github.com/rezaAmiri123/microservice/service_user/pkg/token/jwt"
 )
 
 func (a *Agent) setupApplication() error {
@@ -39,10 +39,12 @@ func (a *Agent) setupApplication() error {
 	application := &app.Application{
 		Commands: app.Commands{
 			CreateUser: command.NewCreateUserHandler(repo, a.logger),
+			UpdateUser: command.NewUpdateUserHandler(repo, a.logger),
 			Login:      command.NewLoginHandler(repo, a.logger, maker, makerConfig),
 		},
 		Queries: app.Queries{},
 	}
 	a.Application = application
+	a.Maker = maker
 	return nil
 }
