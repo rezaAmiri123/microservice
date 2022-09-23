@@ -1,6 +1,6 @@
 CREATE TABLE sessions (
-    session_id      UUID            PRIMARY KEY     NOT NULL DEFAULT uuid_generate_v4(),
-    username        VARCHAR(128)                    NOT NULL CHECK ( username <> '' ),
+    session_id      UUID            PRIMARY KEY     NOT NULL ,
+    username        VARCHAR(128)                    NOT NULL ,
     refresh_token   VARCHAR                         NOT NULL ,
     user_agent      VARCHAR(128)                    NOT NULL ,
     client_ip       VARCHAR(128)                    NOT NULL ,
