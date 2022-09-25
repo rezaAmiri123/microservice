@@ -16,6 +16,9 @@ psql:
 evans:
 	evans --host localhost --port 5080 -r repl
 
+# set evanse header
+# header Authorization='Bearer xxxxx'
+
 run:
 	go run cmd/user/main.go
 
