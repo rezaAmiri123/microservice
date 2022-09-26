@@ -1,3 +1,4 @@
+//go:generate mockgen -source maker.go -destination mock/maker.go -package maker_mock
 package token
 
 import "time"
