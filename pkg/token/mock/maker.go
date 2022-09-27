@@ -36,11 +36,11 @@ func (m *MockMaker) EXPECT() *MockMakerMockRecorder {
 }
 
 // CreateToken mocks base method.
-func (m *MockMaker) CreateToken(username string, duration time.Duration) (string, token.Payload, error) {
+func (m *MockMaker) CreateToken(username string, duration time.Duration) (string, *token.Payload, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateToken", username, duration)
 	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(token.Payload)
+	ret1, _ := ret[1].(*token.Payload)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }
@@ -52,16 +52,16 @@ func (mr *MockMakerMockRecorder) CreateToken(username, duration interface{}) *go
 }
 
 // VerifyToken mocks base method.
-func (m *MockMaker) VerifyToken(token string) (token.Payload, error) {
+func (m *MockMaker) VerifyToken(t string) (*token.Payload, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "VerifyToken", token)
-	ret0, _ := ret[0].(token.Payload)
+	ret := m.ctrl.Call(m, "VerifyToken", t)
+	ret0, _ := ret[0].(*token.Payload)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // VerifyToken indicates an expected call of VerifyToken.
-func (mr *MockMakerMockRecorder) VerifyToken(token interface{}) *gomock.Call {
+func (mr *MockMakerMockRecorder) VerifyToken(t interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VerifyToken", reflect.TypeOf((*MockMaker)(nil).VerifyToken), token)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VerifyToken", reflect.TypeOf((*MockMaker)(nil).VerifyToken), t)
 }
