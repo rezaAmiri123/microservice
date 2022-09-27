@@ -3,7 +3,7 @@ DB_USER=postgres
 DB_PASSWORD=postgres
 DB_ADDR=microservice_postgesql
 DB_URL=postgresql://$(DB_USER):$(DB_PASSWORD)@$(api_postgesql):5432/$(DB_NAME)?sslmode=disable
-
+MIGRATION_PATH=internal/adapters/migration
 createdb:
 	docker exec -it $(DB_ADDR) createdb --username=$(DB_USER) --owner=$(DB_USER) $(DB_NAME)
 
@@ -23,22 +23,22 @@ run:
 	go run cmd/user/main.go
 
 migratecreate:
-	migrate create -ext sql -dir internal/adapters/migration -seq service_user
+	migrate create -ext sql -dir $(MIGRATION_PATH) -seq service_user
 
 migrateup:
-	migrate -path internal/adapters/migration -database "$(DB_URL)" -verbose up
+	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose up
 
 migrateup1:
-	migrate -path internal/adapters/migration -database "$(DB_URL)" -verbose up 1
+	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose up 1
 
 migratedown:
-	migrate -path internal/adapters/migration -database "$(DB_URL)" -verbose down
+	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose down
 
 migratedown1:
-	migrate -path internal/adapters/migration -database "$(DB_URL)" -verbose down 1
+	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose down 1
 
 migrateforce:
-	migrate  -path internal/adapters/migration -database "$(DB_URL)" force 1
+	migrate  -path $(MIGRATION_PATH) -database "$(DB_URL)" force 1
 
 
 test_coverage:

@@ -12,9 +12,9 @@ scrape_configs:
     static_configs:
       - targets: [ 'host.docker.internal:9101' ]
 
-  # - job_name: 'user_service'
-  #   static_configs:
-  #     - targets: [ 'user_service:8001' ]
+  - job_name: 'service_user'
+    static_configs:
+      - targets: [ 'service_user:8001' ]
 
   # - job_name: 'library_service'
   #   static_configs:
