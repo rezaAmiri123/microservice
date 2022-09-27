@@ -8,20 +8,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type Config struct {
-	AccessTokenDuration  time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
-	RefreshTokenDuration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
-}
-
-// Maker is an interface for managing tokens
-type Maker interface {
-	// CreateToken creates a new token for a specific username and duration
-	CreateToken(username string, duration time.Duration) (string, *Payload, error)
-
-	// VerifyToken checks if the token is valid or not
-	VerifyToken(token string) (*Payload, error)
-}
-
 // Different types of error returned by the VerifyToken function
 var (
 	ErrInvalidToken = errors.New("token is invalid")
@@ -59,4 +45,18 @@ func (payload *Payload) Valid() error {
 		return ErrExpiredToken
 	}
 	return nil
+}
+
+type Config struct {
+	AccessTokenDuration  time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
+	RefreshTokenDuration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
+}
+
+// Maker is an interface for managing tokens
+type Maker interface {
+	// CreateToken creates a new token for a specific username and duration
+	CreateToken(username string, duration time.Duration) (string, *Payload, error)
+
+	// VerifyToken checks if the token is valid or not
+	VerifyToken(token string) (*Payload, error)
 }

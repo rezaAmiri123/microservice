@@ -36,11 +36,11 @@ func (m *MockMaker) EXPECT() *MockMakerMockRecorder {
 }
 
 // CreateToken mocks base method.
-func (m *MockMaker) CreateToken(username string, duration time.Duration) (string, *token.Payload, error) {
+func (m *MockMaker) CreateToken(username string, duration time.Duration) (string, token.Payload, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateToken", username, duration)
 	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(*token.Payload)
+	ret1, _ := ret[1].(token.Payload)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }
@@ -52,10 +52,10 @@ func (mr *MockMakerMockRecorder) CreateToken(username, duration interface{}) *go
 }
 
 // VerifyToken mocks base method.
-func (m *MockMaker) VerifyToken(token string) (*token.Payload, error) {
+func (m *MockMaker) VerifyToken(token string) (token.Payload, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "VerifyToken", token)
-	ret0, _ := ret[0].(*token.Payload)
+	ret0, _ := ret[0].(token.Payload)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
