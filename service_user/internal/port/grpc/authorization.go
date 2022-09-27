@@ -21,7 +21,7 @@ var (
 	ErrInvalidAuthHeaderFormat = errors.New("invalid authorization header format")
 )
 
-func (s *UserGRPCServer) authorizeUser(ctx context.Context) (*token.Payload, error) {
+func (s *UserGRPCServer) AuthorizeUser(ctx context.Context) (*token.Payload, error) {
 	// span, ctx := opentracing.StartSpanFromContext(ctx, "UserGRPCServer.authorizeUser")
 	// defer span.Finish()
 

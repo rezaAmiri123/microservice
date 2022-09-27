@@ -19,7 +19,7 @@ func (s *UserGRPCServer) UpdateUser(ctx context.Context, req *userService.Update
 
 	s.cfg.Metric.UpdateUserGrpcRequests.Inc()
 
-	authPayload, err := s.authorizeUser(ctx)
+	authPayload, err := s.AuthorizeUser(ctx)
 	if err != nil {
 		return nil, pkgGrpc.UnauthenticatedError(err)
 	}
@@ -71,5 +71,5 @@ func validateUpdateUserRequest(req *userService.UpdateUserRequest) (violation []
 	if err := validator.ValidateEmail(req.GetEmail()); err != nil {
 		violation = append(violation, pkgGrpc.FieldViolation("email", err))
 	}
-	return
+	return violation
 }
