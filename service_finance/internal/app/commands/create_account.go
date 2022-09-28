@@ -27,7 +27,7 @@ func (h CreateAccountHandler) Handle(ctx context.Context, arg *finance.CreateAcc
 
 	account, err := h.repo.CreateAccount(ctx, arg)
 	if err != nil {
-		h.logger.Errorf("connot create user: %v", err)
+		h.logger.Errorf("connot create account: %v", err)
 		return &finance.Account{}, fmt.Errorf("connot create account: %w", err)
 	}
 

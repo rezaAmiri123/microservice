@@ -1,4 +1,4 @@
-DB_NAME=microservice
+DB_NAME=microservice_finance
 DB_USER=postgres
 DB_PASSWORD=postgres
 DB_ADDR=microservice_postgesql
@@ -13,14 +13,14 @@ dropdb:
 psql:
 	psql -h $(DB_ADDR) -U $(DB_USER) -d $(DB_NAME) -W
 
-# evans:
-# 	evans --host localhost --port 5080 -r repl
+evans:
+	evans --host localhost --port 6080 -r repl
 
 # set evanse header
 # header Authorization='Bearer xxxxx'
 
-# run:
-# 	go run cmd/user/main.go
+run:
+	go run cmd/finance/main.go
 
 migratecreate:
 	migrate create -ext sql -dir $(MIGRATION_PATH) -seq service_finance
@@ -44,13 +44,13 @@ migrateforce:
 test_coverage:
 	go test --cover ./...
 
-# user_proto:
-# 	protoc \
-# 		--go_out=proto/grpc --go_opt=paths=source_relative \
-# 		--go-grpc_out=proto/grpc --go-grpc_opt=paths=source_relative \
-# 		--grpc-gateway_out=proto/grpc --grpc-gateway_opt=paths=source_relative \
-#         --openapiv2_out=docs/swagger --openapiv2_opt=allow_merge=true,merge_file_name=service_user \
-# 		--proto_path=proto/grpc proto/grpc/*.proto
+finance_proto:
+	protoc \
+		--go_out=proto/grpc --go_opt=paths=source_relative \
+		--go-grpc_out=proto/grpc --go-grpc_opt=paths=source_relative \
+		--grpc-gateway_out=proto/grpc --grpc-gateway_opt=paths=source_relative \
+        --openapiv2_out=docs/swagger --openapiv2_opt=allow_merge=true,merge_file_name=service_finance \
+		--proto_path=proto/grpc proto/grpc/*.proto
 
-generate_mock:
+mock_generate:
 	go generate ./...

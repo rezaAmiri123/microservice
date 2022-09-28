@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package grpc;
+
+import "account.proto";
+
+option go_package = "github.com/rezaAmiri123/microservice/service_finance/proto/grpc";
+
+message CreateAccountRequest {
+    bytes owner_id = 1;
+    int64 balance = 2;
+    string currency = 3;
+}
+
+message CreateAccountResponse {
+    Account account = 1;
+}

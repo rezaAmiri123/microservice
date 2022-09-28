@@ -1,0 +1,139 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "finance Service API",
+    "version": "1.0",
+    "contact": {
+      "name": "finance service",
+      "url": "https://github.com/rezaAmiri123/microservice/service_finance"
+    }
+  },
+  "tags": [
+    {
+      "name": "financeService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/create_account": {
+      "post": {
+        "summary": "Create new account",
+        "description": "Use this API to create a new account",
+        "operationId": "financeService_CreateAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/grpcCreateAccountResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/grpcCreateAccountRequest"
+            }
+          }
+        ],
+        "tags": [
+          "financeService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "grpcAccount": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "string",
+          "format": "byte"
+        },
+        "ownerId": {
+          "type": "string",
+          "format": "byte"
+        },
+        "balance": {
+          "type": "string",
+          "format": "int64"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "grpcCreateAccountRequest": {
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "format": "byte"
+        },
+        "balance": {
+          "type": "string",
+          "format": "int64"
+        },
+        "currency": {
+          "type": "string"
+        }
+      }
+    },
+    "grpcCreateAccountResponse": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/grpcAccount"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	uuid "github.com/google/uuid"
 	finance "github.com/rezaAmiri123/microservice/service_finance/internal/domain/finance"
 )
 
@@ -48,4 +49,19 @@ func (m *MockRepository) CreateAccount(ctx context.Context, arg *finance.CreateA
 func (mr *MockRepositoryMockRecorder) CreateAccount(ctx, arg interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAccount", reflect.TypeOf((*MockRepository)(nil).CreateAccount), ctx, arg)
+}
+
+// GetAccountByID mocks base method.
+func (m *MockRepository) GetAccountByID(ctx context.Context, accountID uuid.UUID) (*finance.Account, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAccountByID", ctx, accountID)
+	ret0, _ := ret[0].(*finance.Account)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAccountByID indicates an expected call of GetAccountByID.
+func (mr *MockRepositoryMockRecorder) GetAccountByID(ctx, accountID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccountByID", reflect.TypeOf((*MockRepository)(nil).GetAccountByID), ctx, accountID)
 }

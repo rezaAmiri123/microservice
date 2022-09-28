@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package grpc;
+
+import "google/api/annotations.proto";
+import "rpc_create_account.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/rezaAmiri123/microservice/service_finance/proto/grpc";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+	info: {
+		title: "finance Service API";
+		version: "1.0";
+		contact: {
+			name: "finance service";
+			url: "https://github.com/rezaAmiri123/microservice/service_finance";
+			// email: "example@example.com";
+		};
+	};
+};
+
+service financeService{
+    rpc CreateAccount (CreateAccountRequest) returns (CreateAccountResponse) {
+        option (google.api.http) = {
+            post: "/v1/create_account"
+            body: "*"
+        };
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			description: "Use this API to create a new account";
+			summary: "Create new account";
+        };
+    }
+}
