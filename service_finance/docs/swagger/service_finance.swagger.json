@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "finance Service API",
-    "version": "1.0",
+    "version": "1.1",
     "contact": {
       "name": "finance service",
       "url": "https://github.com/rezaAmiri123/microservice/service_finance"
@@ -46,6 +46,40 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/grpcCreateAccountRequest"
+            }
+          }
+        ],
+        "tags": [
+          "financeService"
+        ]
+      }
+    },
+    "/v1/create_transfer": {
+      "post": {
+        "summary": "Create new transfer",
+        "description": "Use this API to create a new transfer",
+        "operationId": "financeService_CreateTransfer",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/grpcCreateTransferResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/grpcCreateTransferRequest"
             }
           }
         ],
@@ -105,6 +139,60 @@
       "properties": {
         "account": {
           "$ref": "#/definitions/grpcAccount"
+        }
+      }
+    },
+    "grpcCreateTransferRequest": {
+      "type": "object",
+      "properties": {
+        "fromAccountId": {
+          "type": "string",
+          "format": "byte"
+        },
+        "toAccountId": {
+          "type": "string",
+          "format": "byte"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "grpcCreateTransferResponse": {
+      "type": "object",
+      "properties": {
+        "transfer": {
+          "$ref": "#/definitions/grpcTransfer"
+        }
+      }
+    },
+    "grpcTransfer": {
+      "type": "object",
+      "properties": {
+        "transferId": {
+          "type": "string",
+          "format": "byte"
+        },
+        "fromAccountId": {
+          "type": "string",
+          "format": "byte"
+        },
+        "toAccountId": {
+          "type": "string",
+          "format": "byte"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },

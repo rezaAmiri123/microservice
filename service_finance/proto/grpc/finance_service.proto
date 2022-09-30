@@ -4,6 +4,7 @@ package grpc;
 
 import "google/api/annotations.proto";
 import "rpc_create_account.proto";
+import "rpc_create_transfer.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "github.com/rezaAmiri123/microservice/service_finance/proto/grpc";
@@ -11,7 +12,7 @@ option go_package = "github.com/rezaAmiri123/microservice/service_finance/proto/
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 	info: {
 		title: "finance Service API";
-		version: "1.0";
+		version: "1.1";
 		contact: {
 			name: "finance service";
 			url: "https://github.com/rezaAmiri123/microservice/service_finance";
@@ -29,6 +30,16 @@ service financeService{
 		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
 			description: "Use this API to create a new account";
 			summary: "Create new account";
+        };
+    }
+	rpc CreateTransfer (CreateTransferRequest) returns (CreateTransferResponse) {
+        option (google.api.http) = {
+            post: "/v1/create_transfer"
+            body: "*"
+        };
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			description: "Use this API to create a new transfer";
+			summary: "Create new transfer";
         };
     }
 }

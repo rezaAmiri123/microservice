@@ -27,7 +27,8 @@ func (a *Agent) setupApplication() error {
 
 	application := &app.Application{
 		Commands: app.Commands{
-			CreateAccount: commands.NewCreateAccountHandler(repo, a.logger),
+			CreateAccount:  commands.NewCreateAccountHandler(repo, a.logger),
+			CreateTransfer: commands.NewCreateTransferHandler(repo, a.logger),
 		},
 		Queries: app.Queries{},
 	}

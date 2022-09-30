@@ -14,12 +14,12 @@ const getAccount = `SELECT
 				FROM accounts
 					WHERE account_id = $1`
 
-func (r *PGFinanceRepository) GetAccountByID(ctx context.Context, accountID uuid.UUID) (*finance.Account, error) {
+func (r PGFinanceRepository) GetAccountByID(ctx context.Context, accountID uuid.UUID) (*finance.Account, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "PGFinanceRepository.GetAccountByID")
 	defer span.Finish()
 
 	a := &finance.Account{}
-	if err := r.DB.GetContext(ctx, a, getAccount, accountID); err != nil {
+	if err := r.GetDB().GetContext(ctx, a, getAccount, accountID); err != nil {
 		return nil, fmt.Errorf("database connot get account: %w", err)
 	}
 	return a, nil

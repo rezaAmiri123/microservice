@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package grpc;
+
+import "transfer.proto";
+
+option go_package = "github.com/rezaAmiri123/microservice/service_finance/proto/grpc";
+
+message CreateTransferRequest {
+    bytes from_account_id = 1;
+    bytes to_account_id = 2;
+    int64 amount = 3;
+}
+
+message CreateTransferResponse {
+    Transfer transfer = 1;
+}

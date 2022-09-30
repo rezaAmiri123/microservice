@@ -10,12 +10,12 @@ import (
 
 const createAccount = `INSERT INTO accounts (owner_id, balance, currency) VALUES ($1, $2, $3) RETURNING *`
 
-func (r *PGFinanceRepository) CreateAccount(ctx context.Context, arg *finance.CreateAccountParams) (*finance.Account, error) {
+func (r PGFinanceRepository) CreateAccount(ctx context.Context, arg *finance.CreateAccountParams) (*finance.Account, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "PGFinanceRepository.CreateUser")
 	defer span.Finish()
 
 	var a finance.Account
-	if err := r.DB.QueryRowxContext(
+	if err := r.GetDB().QueryRowxContext(
 		ctx,
 		createAccount,
 		&arg.OwnerID,
