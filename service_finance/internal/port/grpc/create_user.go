@@ -5,6 +5,7 @@ import (
 
 	"github.com/opentracing/opentracing-go"
 	pkgGrpc "github.com/rezaAmiri123/microservice/pkg/grpc"
+	"github.com/rezaAmiri123/microservice/pkg/utils"
 	"github.com/rezaAmiri123/microservice/service_finance/internal/domain/finance"
 	"github.com/rezaAmiri123/microservice/service_finance/internal/validator"
 	financeService "github.com/rezaAmiri123/microservice/service_finance/proto/grpc"
@@ -19,18 +20,12 @@ func (s *FinanceGRPCServer) CreateAccount(ctx context.Context, req *financeServi
 
 	s.cfg.Metric.CreateAccountGrpcRequests.Inc()
 
-	violations := validateCreateAccountRequest(req)
+	arg, violations := validateCreateAccountRequest(req)
 	if violations != nil {
 		return nil, pkgGrpc.InvalidArgumentError(violations)
 	}
 
-	arg := &finance.CreateAccountParams{
-		Balance:  req.GetBalance(),
-		Currency: req.GetCurrency(),
-	}
-	copy(arg.OwnerID[:], req.GetOwnerId())
-
-	a, err := s.cfg.App.Commands.CreateAccount.Handle(ctx, arg)
+	a, err := s.cfg.App.Commands.CreateAccount.Handle(ctx, &arg)
 	if err != nil {
 		s.cfg.Logger.Errorf("failed to create account: %s", err)
 		s.cfg.Metric.ErrorGrpcRequests.Inc()
@@ -45,12 +40,25 @@ func (s *FinanceGRPCServer) CreateAccount(ctx context.Context, req *financeServi
 	return res, nil
 }
 
-func validateCreateAccountRequest(req *financeService.CreateAccountRequest) (violation []*errdetails.BadRequest_FieldViolation) {
+func validateCreateAccountRequest(req *financeService.CreateAccountRequest) (
+	arg finance.CreateAccountParams,
+	violation []*errdetails.BadRequest_FieldViolation,
+) {
 	if err := validator.ValidateCurrency(req.GetCurrency()); err != nil {
 		violation = append(violation, pkgGrpc.FieldViolation("currency", err))
 	}
+	arg.Currency = req.GetCurrency()
+
 	if err := validator.ValidateBalance(req.GetBalance()); err != nil {
 		violation = append(violation, pkgGrpc.FieldViolation("balance", err))
 	}
+	arg.Balance = req.GetBalance()
+
+	ownerID, err := utils.ConvertBase64ToUUID(req.GetOwnerId())
+	if err != nil {
+		violation = append(violation, pkgGrpc.FieldViolation("owner_id", err))
+	}
+	arg.OwnerID = ownerID
+
 	return
 }
