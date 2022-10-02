@@ -10,7 +10,7 @@ CREATE TABLE accounts (
 );
 
 CREATE TABLE entries (
-    entrie_id   UUID        PRIMARY KEY     NOT NULL    DEFAULT uuid_generate_v4(),
+    entry_id    UUID        PRIMARY KEY     NOT NULL    DEFAULT uuid_generate_v4(),
     account_id  UUID                        NOT NULL ,
     amount      BIGINT                      NOT NULL ,
     created_at  TIMESTAMPTZ                 NOT NULL    DEFAULT NOW(),

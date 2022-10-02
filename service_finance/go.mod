@@ -1,6 +1,6 @@
 module github.com/rezaAmiri123/microservice/service_finance
 
-go 1.19
+go 1.18
 
 require (
 	github.com/golang/mock v1.6.0
@@ -12,7 +12,6 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/prometheus/client_golang v1.13.0
 	github.com/rezaAmiri123/microservice/pkg v0.0.0-20220927124653-e36732549ab7
-	github.com/rezaAmiri123/microservice/service_user v0.0.0-20220927131814-5af724d74a86
 	github.com/spf13/viper v1.13.0
 	google.golang.org/genproto v0.0.0-20220822174746-9e6da59bd2fc
 	google.golang.org/grpc v1.49.0

@@ -2,9 +2,9 @@ package grpc
 
 import (
 	"context"
-
 	"github.com/opentracing/opentracing-go"
 	pkgGrpc "github.com/rezaAmiri123/microservice/pkg/grpc"
+	"github.com/rezaAmiri123/microservice/pkg/utils"
 	"github.com/rezaAmiri123/microservice/service_finance/internal/domain/finance"
 	financeService "github.com/rezaAmiri123/microservice/service_finance/proto/grpc"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -18,14 +18,10 @@ func (s *FinanceGRPCServer) CreateTransfer(ctx context.Context, req *financeServ
 
 	s.cfg.Metric.CreateTransferGrpcRequests.Inc()
 
-	violations := validateCreateTransferRequest(req)
+	arg, violations := validateCreateTransferRequest(req)
 	if violations != nil {
 		return nil, pkgGrpc.InvalidArgumentError(violations)
 	}
-
-	arg := finance.TransferTxParams{Amount: req.Amount}
-	copy(arg.FromAccountID[:], req.GetFromAccountId())
-	copy(arg.ToAccountID[:], req.GetToAccountId())
 
 	t, err := s.cfg.App.Commands.CreateTransfer.Handle(ctx, arg)
 	if err != nil {
@@ -42,12 +38,22 @@ func (s *FinanceGRPCServer) CreateTransfer(ctx context.Context, req *financeServ
 	return res, nil
 }
 
-func validateCreateTransferRequest(req *financeService.CreateTransferRequest) (violation []*errdetails.BadRequest_FieldViolation) {
-	// if err := validator.ValidateCurrency(req.GetCurrency()); err != nil {
-	// 	violation = append(violation, pkgGrpc.FieldViolation("currency", err))
-	// }
-	// if err := validator.ValidateBalance(req.GetBalance()); err != nil {
-	// 	violation = append(violation, pkgGrpc.FieldViolation("balance", err))
-	// }
+func validateCreateTransferRequest(req *financeService.CreateTransferRequest) (
+	arg finance.TransferTxParams,
+	violation []*errdetails.BadRequest_FieldViolation,
+) {
+	fromAccountID, err := utils.ConvertBase64ToUUID(req.GetFromAccountId())
+	if err != nil {
+		violation = append(violation, pkgGrpc.FieldViolation("from_account_id", err))
+	}
+	arg.FromAccountID = fromAccountID
+
+	toAccountID, err := utils.ConvertBase64ToUUID(req.GetToAccountId())
+	if err != nil {
+		violation = append(violation, pkgGrpc.FieldViolation("to_account_id", err))
+	}
+	arg.ToAccountID = toAccountID
+
+	arg.Amount = req.GetAmount()
 	return
 }

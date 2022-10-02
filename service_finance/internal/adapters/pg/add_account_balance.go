@@ -10,7 +10,7 @@ import (
 
 const updateAccountBalance = `UPDATE accounts
 								SET balance = balance + $1
-							  WHERE id = $2 RETURNING *`
+							  WHERE account_id = $2 RETURNING *`
 
 func (r PGFinanceRepository) AddAccountBalance(ctx context.Context, arg finance.AddAccountBalanceParams) (finance.Account, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "PGFinanceRepository.AddAccountBalance")

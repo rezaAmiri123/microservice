@@ -254,8 +254,6 @@ github.com/prometheus/procfs v0.6.0/go.mod h1:cz+aTbrPOrUb4q7XlbU9ygM+/jj0fzG6c1
 github.com/prometheus/procfs v0.7.3/go.mod h1:cz+aTbrPOrUb4q7XlbU9ygM+/jj0fzG6c1xBZuNvfVA=
 github.com/prometheus/procfs v0.8.0 h1:ODq8ZFEaYeCaZOJlZZdJA2AbQR98dSHSM1KW/You5mo=
 github.com/prometheus/procfs v0.8.0/go.mod h1:z7EfXMXOkbkqb9IINtpCn86r/to3BnA0uaxHdg830/4=
-github.com/rezaAmiri123/microservice/service_user v0.0.0-20220927131814-5af724d74a86 h1:JZ+wZKIhJTuGZcidqRp+etr8ADDPT9dDHR+Bb+tInxg=
-github.com/rezaAmiri123/microservice/service_user v0.0.0-20220927131814-5af724d74a86/go.mod h1:tTGEZYwT8pG2yh7DvpJkXXvapO1w/oTOq8944k4YWLk=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.6.1 h1:/FiVV8dS/e+YqF2JvO3yXRFbBLTIuSDkuC7aBOAvL+k=
 github.com/segmentio/kafka-go v0.4.35 h1:TAsQ7q1SjS39PcFvU0zDJhCuVAxHomy7xOAfbdSuhzs=
