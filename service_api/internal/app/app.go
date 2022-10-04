@@ -1,6 +1,6 @@
 package app
 
-import "github.com/rezaAmiri123/microservice/service_api/internal/app/commands"
+import command "github.com/rezaAmiri123/microservice/service_api/internal/app/commands"
 
 type Application struct {
 	Commands Commands
@@ -11,5 +11,6 @@ type Queries struct {
 }
 
 type Commands struct {
-	CreateUser *commands.CreateUserHandler
+	CreateUser *command.CreateUserHandler
+	Login      *command.LoginHandler
 }

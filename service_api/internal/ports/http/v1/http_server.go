@@ -109,6 +109,7 @@ func NewHttpServer(
 
 	userGroup := v1.Group("/users")
 	userGroup.POST("/register", httpServer.CreateUser())
+	userGroup.POST("/login", httpServer.Login())
 
 	return e, nil
 }

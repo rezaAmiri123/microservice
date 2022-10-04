@@ -14,7 +14,8 @@ require (
 	github.com/labstack/echo/v4 v4.9.0
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/prometheus/client_golang v1.13.0
-	github.com/rezaAmiri123/microservice/pkg v0.0.0-20220915112118-0dbdbf6dfa4d
+	github.com/rezaAmiri123/microservice/pkg v0.0.0-20220927124653-e36732549ab7
+	github.com/rezaAmiri123/microservice/service_finance v0.0.0-00010101000000-000000000000
 	github.com/rezaAmiri123/microservice/service_user v0.0.0-00010101000000-000000000000
 	github.com/rezaAmiri123/test-microservice v0.0.0-20220908112505-ed25ec411f4a
 	github.com/spf13/viper v1.13.0

@@ -20,6 +20,7 @@ func (a *Agent) setupApplication() error {
 	application := &app.Application{
 		Commands: app.Commands{
 			CreateUser: commands.NewCreateUserHandler(userClient, a.logger),
+			Login:      commands.NewLoginHandler(userClient, a.logger),
 		},
 		Queries: app.Queries{},
 	}

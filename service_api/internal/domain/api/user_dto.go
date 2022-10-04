@@ -1,6 +1,10 @@
 package api
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type CreateUserRequest struct {
 	Username string `json:"username" validate:"required,min=6,max=30"`
@@ -16,4 +20,16 @@ type CreateUserResponse struct {
 	Email    string    `json:"email" validate:"required,min=3,max=250,email"`
 	Bio      string    `json:"bio"`
 	Image    string    `json:"image"`
+}
+
+type LoginRequest struct {
+	Username string `json:"username" validate:"required,min=6,max=30"`
+	Password string `json:"password" validate:"required,min=8,max=15"`
+}
+
+type LoginResponse struct {
+	AccessToken           string    `json:"access_token"`
+	RefreshToken          string    `json:"refresh_token"`
+	AccessTokenExpiresAt  time.Time `json:"access_token_expires_at"`
+	RefreshTokenExpiresAt time.Time `json:"refresh_token_expires_at"`
 }
