@@ -88,6 +88,40 @@
         ]
       }
     },
+    "/v1/login_verify": {
+      "post": {
+        "summary": "Login verify user",
+        "description": "Use this API to verify login user payload",
+        "operationId": "UserService_LoginVerify",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/grpcLoginVerifyUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/grpcLoginVerifyUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/v1/update_user": {
       "patch": {
         "summary": "Update user",
@@ -183,6 +217,34 @@
           "format": "date-time"
         },
         "refreshTokenExpiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "grpcLoginVerifyUserRequest": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "grpcLoginVerifyUserResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "byte"
+        },
+        "username": {
+          "type": "string"
+        },
+        "issuedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expiredAt": {
           "type": "string",
           "format": "date-time"
         }

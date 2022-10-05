@@ -16,6 +16,7 @@ type UserServiceMetric struct {
 	CreateUserGrpcRequests prometheus.Counter
 	UpdateUserGrpcRequests prometheus.Counter
 	LoginRequests          prometheus.Counter
+	LoginVerifyRequests    prometheus.Counter
 	SuccessGrpcRequests    prometheus.Counter
 	ErrorGrpcRequests      prometheus.Counter
 	// SuccessKafkaMessages prometheus.Counter
@@ -35,6 +36,10 @@ func NewUserServiceMetric(cfg *Config) *UserServiceMetric {
 		LoginRequests: promauto.NewCounter(prometheus.CounterOpts{
 			Name: fmt.Sprintf("%s_login_grpc_requests_total", cfg.MetricServiceHostPort),
 			Help: "The total of login grpc requests",
+		}),
+		LoginVerifyRequests: promauto.NewCounter(prometheus.CounterOpts{
+			Name: fmt.Sprintf("%s_login_verify_grpc_requests_total", cfg.MetricServiceHostPort),
+			Help: "The total of login verify grpc requests",
 		}),
 		SuccessGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
 			Name: fmt.Sprintf("%s_success_grpc_requsts_total", cfg.MetricServiceHostPort),

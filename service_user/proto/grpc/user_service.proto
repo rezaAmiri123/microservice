@@ -53,4 +53,14 @@ service UserService{
 			summary: "Login user";
         };
     }
+	rpc LoginVerify (LoginVerifyUserRequest) returns (LoginVerifyUserResponse) {
+        option (google.api.http) = {
+            post: "/v1/login_verify"
+            body: "*"
+        };
+		option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+			description: "Use this API to verify login user payload";
+			summary: "Login verify user";
+        };
+    }
 }
