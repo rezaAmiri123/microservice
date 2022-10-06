@@ -36,9 +36,9 @@ func (m *MockMaker) EXPECT() *MockMakerMockRecorder {
 }
 
 // CreateToken mocks base method.
-func (m *MockMaker) CreateToken(username string, duration time.Duration) (string, *token.Payload, error) {
+func (m *MockMaker) CreateToken(username, userID string, duration time.Duration) (string, *token.Payload, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateToken", username, duration)
+	ret := m.ctrl.Call(m, "CreateToken", username, userID, duration)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(*token.Payload)
 	ret2, _ := ret[2].(error)
@@ -46,9 +46,9 @@ func (m *MockMaker) CreateToken(username string, duration time.Duration) (string
 }
 
 // CreateToken indicates an expected call of CreateToken.
-func (mr *MockMakerMockRecorder) CreateToken(username, duration interface{}) *gomock.Call {
+func (mr *MockMakerMockRecorder) CreateToken(username, userID, duration interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateToken", reflect.TypeOf((*MockMaker)(nil).CreateToken), username, duration)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateToken", reflect.TypeOf((*MockMaker)(nil).CreateToken), username, userID, duration)
 }
 
 // VerifyToken mocks base method.

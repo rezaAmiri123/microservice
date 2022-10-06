@@ -7,7 +7,7 @@ import "google/protobuf/timestamp.proto";
 option go_package = "github.com/rezaAmiri123/microservice/service_user/proto/grpc";
 
 message User {
-    bytes user_uuid = 1;
+    string user_uuid = 1;
     string username = 2;
     string email = 3;
     string bio = 4;

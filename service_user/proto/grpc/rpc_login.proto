@@ -26,8 +26,9 @@ message LoginVerifyUserRequest {
 }
 
 message LoginVerifyUserResponse {
-    bytes id = 1;
+    string id = 1;
     string username = 2;
-    google.protobuf.Timestamp issued_at = 3;
-    google.protobuf.Timestamp expired_at = 4;
+    string user_id = 3;
+    google.protobuf.Timestamp issued_at = 4;
+    google.protobuf.Timestamp expired_at = 5;
 }

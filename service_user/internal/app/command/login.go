@@ -44,6 +44,7 @@ func (h LoginHandler) Handle(ctx context.Context, arg *user.LoginRequestParams) 
 
 	accessToken, accessPayload, err := h.maker.CreateToken(
 		u.Username,
+		u.UserID.String(),
 		h.makerConfig.AccessTokenDuration,
 	)
 	if err != nil {
@@ -52,6 +53,7 @@ func (h LoginHandler) Handle(ctx context.Context, arg *user.LoginRequestParams) 
 	}
 	refreshToken, refreshPayload, err := h.maker.CreateToken(
 		u.Username,
+		u.UserID.String(),
 		h.makerConfig.RefreshTokenDuration,
 	)
 	if err != nil {
