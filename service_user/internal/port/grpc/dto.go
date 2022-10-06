@@ -7,8 +7,9 @@ import (
 )
 
 func UserToGrpc(u *user.User) *userService.User {
+	userID, _ := u.UserID.MarshalBinary()
 	res := &userService.User{}
-	res.UserUuid = u.UserID[:]
+	res.UserUuid = userID
 	res.Username = u.Username
 	res.Email = u.Email
 	res.Bio = u.Bio

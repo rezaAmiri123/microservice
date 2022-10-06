@@ -7,14 +7,14 @@ import (
 )
 
 type CreateAccountRequest struct {
-	OwnerId  uuid.UUID `json:"owner_id" validate:"required"`
-	Balance  int64     `json:"balance" validate:"required"`
-	Currency string    `json:"amount" validate:"required"`
+	OwnerId  string `json:"owner_id" validate:"required"`
+	Balance  int64  `json:"balance" validate:"required"`
+	Currency string `json:"currency" validate:"required"`
 }
 
 type CreateAccountResponse struct {
-	AccountId uuid.UUID `json:"account_id" validate:"required"`
-	OwnerId   uuid.UUID `json:"owner_id" validate:"required`
+	AccountId string    `json:"account_id" validate:"required"`
+	OwnerId   string    `json:"owner_id" validate:"required`
 	Balance   int64     `json:"balance" validate:"required"`
 	Currency  string    `json:"currency"`
 	CreatedAt time.Time `json:"created_at"`

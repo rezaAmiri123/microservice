@@ -11,7 +11,7 @@ func (a *Agent) setupLogger() error {
 		LogEncoder: a.LogEncoder,
 	})
 	appLogger.InitLogger()
-	appLogger.WithName("WalletService")
+	appLogger.WithName("ApiService")
 	a.logger = appLogger
 	return nil
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/opentracing/opentracing-go"
-	"github.com/rezaAmiri123/microservice/pkg/utils"
 	"github.com/rezaAmiri123/microservice/service_api/internal/domain/api"
 	financeservice "github.com/rezaAmiri123/microservice/service_finance/proto/grpc"
 	"github.com/rezaAmiri123/test-microservice/pkg/logger"
@@ -31,9 +30,14 @@ func (h *CreateAccountHandler) Handle(ctx context.Context, req *api.CreateAccoun
 	defer span.Finish()
 
 	ctx = tracing.InjectTextMapCarrierToGrpcMetaData(ctx, span.Context())
-
+	// utils.ConvertBase64ToUUID(req.OwnerId)
+	// var x uuid.UUID
+	// ownerID, _ := uuid.Parse(req.OwnerId)
+	// fmt.Println("**************************************************")
+	// fmt.Println(ownerID)
+	// fmt.Println(ownerID.MarshalBinary())
 	rpcReq := &financeservice.CreateAccountRequest{
-		OwnerId:  req.OwnerId[:],
+		OwnerId:  req.OwnerId,
 		Balance:  req.Balance,
 		Currency: req.Currency,
 	}
@@ -43,11 +47,9 @@ func (h *CreateAccountHandler) Handle(ctx context.Context, req *api.CreateAccoun
 	}
 
 	account := t.Account
-	accountID, _ := utils.ConvertBase64ToUUID(account.AccountId)
-	ownerID, _ := utils.ConvertBase64ToUUID(account.OwnerId)
 	res := &api.CreateAccountResponse{
-		OwnerId:   ownerID,
-		AccountId: accountID,
+		OwnerId:   account.OwnerId,
+		AccountId: account.AccountId,
 		Balance:   account.Balance,
 		Currency:  account.Currency,
 		CreatedAt: account.CreatedAt.AsTime(),

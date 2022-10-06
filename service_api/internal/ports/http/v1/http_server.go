@@ -10,6 +10,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/service_api/internal/app"
 	"github.com/rezaAmiri123/microservice/service_api/internal/metrics"
+	apimiddleware "github.com/rezaAmiri123/microservice/service_api/internal/ports/http/middleware"
 	"github.com/rezaAmiri123/test-microservice/docs"
 	"github.com/rezaAmiri123/test-microservice/pkg/logger"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -62,7 +63,7 @@ func NewHttpServer(
 		log:      log,
 		// authClient: authClient,
 	}
-	// mw := apimiddleware.NewMiddlewareManager(log, authClient)
+	mw := apimiddleware.NewMiddlewareManager(log, application)
 	//router := newEchoRouter(httpServer)
 	e := echo.New()
 
@@ -110,6 +111,9 @@ func NewHttpServer(
 	userGroup := v1.Group("/users")
 	userGroup.POST("/register", httpServer.CreateUser())
 	userGroup.POST("/login", httpServer.Login())
+
+	financeGroup := v1.Group("/finance")
+	financeGroup.POST("/account/create", httpServer.CreateAccount(), mw.AuthMiddleware)
 
 	return e, nil
 }

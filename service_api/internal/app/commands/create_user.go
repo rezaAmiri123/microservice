@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/pkg/utils"
@@ -44,7 +43,6 @@ func (h *CreateUserHandler) Handle(ctx context.Context, req *api.CreateUserReque
 	if err != nil {
 		return &api.CreateUserResponse{}, err
 	}
-	fmt.Println(u.User)
 	user := u.User
 	userID, err := utils.ConvertBase64ToUUID(user.UserUuid)
 	if err != nil {

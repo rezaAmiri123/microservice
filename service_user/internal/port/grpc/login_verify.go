@@ -22,9 +22,9 @@ func (s *UserGRPCServer) LoginVerify(ctx context.Context, req *userService.Login
 		s.cfg.Metric.ErrorGrpcRequests.Inc()
 		return nil, status.Errorf(codes.InvalidArgument, "invalid access token: %s", err)
 	}
-
+	id, err := payload.ID.MarshalBinary()
 	res := &userService.LoginVerifyUserResponse{
-		Id:        payload.ID[:],
+		Id:        id,
 		Username:  payload.Username,
 		IssuedAt:  timestamppb.New(payload.IssuedAt),
 		ExpiredAt: timestamppb.New(payload.ExpiredAt),

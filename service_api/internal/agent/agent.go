@@ -27,6 +27,9 @@ type Config struct {
 	GRPCUserClientAddr string `mapstructure:"GRPC_USER_CLIENT_ADDR"`
 	GRPCUserClientPort int    `mapstructure:"GRPC_USER_CLIENT_PORT"`
 
+	GRPCFinanceClientAddr string `mapstructure:"GRPC_FINANCE_CLIENT_ADDR"`
+	GRPCFinanceClientPort int    `mapstructure:"GRPC_FINANCE_CLIENT_PORT"`
+
 	// Http server address
 	HttpServerAddr string `mapstructure:"HTTP_SERVER_ADDR"`
 	HttpServerPort int    `mapstructure:"HTTP_SERVER_PORT"`
@@ -50,7 +53,8 @@ type Config struct {
 type Agent struct {
 	Config
 
-	GRPCUserClientTLSConfig *tls.Config
+	GRPCUserClientTLSConfig    *tls.Config
+	GRPCFinanceClientTLSConfig *tls.Config
 
 	logger     logger.Logger
 	metric     *metrics.ApiServiceMetric

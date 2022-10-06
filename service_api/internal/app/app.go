@@ -11,6 +11,8 @@ type Queries struct {
 }
 
 type Commands struct {
-	CreateUser *command.CreateUserHandler
-	Login      *command.LoginHandler
+	CreateUser    *command.CreateUserHandler
+	CreateAccount *command.CreateAccountHandler
+	Login         *command.LoginHandler
+	LoginVerify   *command.LoginVerifyHandler
 }

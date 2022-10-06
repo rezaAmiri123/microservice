@@ -94,12 +94,10 @@
       "type": "object",
       "properties": {
         "accountId": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "ownerId": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "balance": {
           "type": "string",
@@ -122,8 +120,7 @@
       "type": "object",
       "properties": {
         "ownerId": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "balance": {
           "type": "string",
@@ -146,12 +143,10 @@
       "type": "object",
       "properties": {
         "fromAccountId": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "toAccountId": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "amount": {
           "type": "string",
@@ -171,16 +166,13 @@
       "type": "object",
       "properties": {
         "transferId": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "fromAccountId": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "toAccountId": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "amount": {
           "type": "string",
