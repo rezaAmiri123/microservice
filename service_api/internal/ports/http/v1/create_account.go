@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/service_api/internal/domain/api"
+	"github.com/rezaAmiri123/microservice/service_api/internal/utils"
 )
 
 func (h *HttpServer) CreateAccount() echo.HandlerFunc {
@@ -27,6 +28,9 @@ func (h *HttpServer) CreateAccount() echo.HandlerFunc {
 			h.traceErr(span, err)
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
+
+		payload := utils.PayloadFromCtx(ctx)
+		req.OwnerId = payload.UserID
 
 		res, err := h.app.Commands.CreateAccount.Handle(ctx, req)
 		if err != nil {

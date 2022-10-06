@@ -3,8 +3,8 @@ package commands
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/opentracing/opentracing-go"
-	"github.com/rezaAmiri123/microservice/pkg/utils"
 	"github.com/rezaAmiri123/microservice/service_api/internal/domain/api"
 	userservice "github.com/rezaAmiri123/microservice/service_user/proto/grpc"
 	"github.com/rezaAmiri123/test-microservice/pkg/logger"
@@ -44,7 +44,7 @@ func (h *CreateUserHandler) Handle(ctx context.Context, req *api.CreateUserReque
 		return &api.CreateUserResponse{}, err
 	}
 	user := u.User
-	userID, err := utils.ConvertBase64ToUUID(user.UserUuid)
+	userID, err := uuid.Parse(user.UserUuid)
 	if err != nil {
 		return &api.CreateUserResponse{}, err
 	}

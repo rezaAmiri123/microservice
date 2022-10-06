@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/opentracing/opentracing-go"
-	"github.com/rezaAmiri123/microservice/pkg/utils"
 	"github.com/rezaAmiri123/microservice/service_api/internal/domain/api"
 	financeservice "github.com/rezaAmiri123/microservice/service_finance/proto/grpc"
 	"github.com/rezaAmiri123/test-microservice/pkg/logger"
@@ -33,8 +32,8 @@ func (h *CreateTransferHandler) Handle(ctx context.Context, req *api.CreateTrans
 	ctx = tracing.InjectTextMapCarrierToGrpcMetaData(ctx, span.Context())
 
 	rpcReq := &financeservice.CreateTransferRequest{
-		FromAccountId: req.FromAccountId[:],
-		ToAccountId:   req.ToAccountId[:],
+		FromAccountId: req.FromAccountId,
+		ToAccountId:   req.ToAccountId,
 		Amount:        req.Amount,
 	}
 	t, err := h.client.CreateTransfer(ctx, rpcReq)
@@ -43,13 +42,13 @@ func (h *CreateTransferHandler) Handle(ctx context.Context, req *api.CreateTrans
 	}
 
 	transfer := t.Transfer
-	TransferID, _ := utils.ConvertBase64ToUUID(transfer.TransferId)
-	FromAccountId, _ := utils.ConvertBase64ToUUID(transfer.FromAccountId)
-	ToAccountId, _ := utils.ConvertBase64ToUUID(transfer.ToAccountId)
+	// TransferID, _ := utils.ConvertBase64ToUUID(transfer.TransferId)
+	// FromAccountId, _ := utils.ConvertBase64ToUUID(transfer.FromAccountId)
+	// ToAccountId, _ := utils.ConvertBase64ToUUID(transfer.ToAccountId)
 	res := &api.CreateTransferResponse{
-		TransferID:    TransferID,
-		FromAccountId: FromAccountId,
-		ToAccountId:   ToAccountId,
+		TransferID:    transfer.TransferId,
+		FromAccountId: transfer.FromAccountId,
+		ToAccountId:   transfer.ToAccountId,
 		Amount:        transfer.Amount,
 		CreatedAt:     transfer.CreatedAt.AsTime(),
 		UpdatedAt:     transfer.UpdatedAt.AsTime(),
