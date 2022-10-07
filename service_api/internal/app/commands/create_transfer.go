@@ -32,6 +32,7 @@ func (h *CreateTransferHandler) Handle(ctx context.Context, req *api.CreateTrans
 	ctx = tracing.InjectTextMapCarrierToGrpcMetaData(ctx, span.Context())
 
 	rpcReq := &financeservice.CreateTransferRequest{
+		OwnerId:       req.OwnerId,
 		FromAccountId: req.FromAccountId,
 		ToAccountId:   req.ToAccountId,
 		Amount:        req.Amount,

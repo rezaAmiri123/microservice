@@ -114,6 +114,7 @@ func NewHttpServer(
 
 	financeGroup := v1.Group("/finance")
 	financeGroup.POST("/account/create", httpServer.CreateAccount(), mw.AuthMiddleware)
+	financeGroup.POST("/transfer/create", httpServer.CreateTransfer(), mw.AuthMiddleware)
 
 	return e, nil
 }

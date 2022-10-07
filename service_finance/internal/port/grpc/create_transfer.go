@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/opentracing/opentracing-go"
@@ -19,7 +20,7 @@ func (s *FinanceGRPCServer) CreateTransfer(ctx context.Context, req *financeServ
 
 	s.cfg.Metric.CreateTransferGrpcRequests.Inc()
 
-	arg, violations := validateCreateTransferRequest(req)
+	arg, violations := s.validateCreateTransferRequest(ctx, req)
 	if violations != nil {
 		return nil, pkgGrpc.InvalidArgumentError(violations)
 	}
@@ -39,7 +40,7 @@ func (s *FinanceGRPCServer) CreateTransfer(ctx context.Context, req *financeServ
 	return res, nil
 }
 
-func validateCreateTransferRequest(req *financeService.CreateTransferRequest) (
+func (s *FinanceGRPCServer) validateCreateTransferRequest(ctx context.Context, req *financeService.CreateTransferRequest) (
 	arg finance.TransferTxParams,
 	violation []*errdetails.BadRequest_FieldViolation,
 ) {
@@ -48,6 +49,16 @@ func validateCreateTransferRequest(req *financeService.CreateTransferRequest) (
 		violation = append(violation, pkgGrpc.FieldViolation("from_account_id", err))
 	}
 	arg.FromAccountID = fromAccountID
+
+	ownerID, err := uuid.Parse(req.GetOwnerId())
+	if err != nil {
+		violation = append(violation, pkgGrpc.FieldViolation("owner_id", err))
+	}
+	account, err := s.cfg.App.Queries.GetAccountByID.Handle(ctx, arg.FromAccountID)
+	if account.OwnerID != ownerID {
+		err = fmt.Errorf("owner has not permission to this account")
+		violation = append(violation, pkgGrpc.FieldViolation("owner_id", err))
+	}
 
 	toAccountID, err := uuid.Parse(req.GetToAccountId())
 	if err != nil {

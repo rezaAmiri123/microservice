@@ -7,9 +7,10 @@ import "transfer.proto";
 option go_package = "github.com/rezaAmiri123/microservice/service_finance/proto/grpc";
 
 message CreateTransferRequest {
-    string from_account_id = 1;
-    string to_account_id = 2;
-    int64 amount = 3;
+    string owner_id = 1;
+    string from_account_id = 2;
+    string to_account_id = 3;
+    int64 amount = 4;
 }
 
 message CreateTransferResponse {

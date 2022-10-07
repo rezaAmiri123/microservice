@@ -15,4 +15,7 @@ type Commands struct {
 	CreateAccount *command.CreateAccountHandler
 	Login         *command.LoginHandler
 	LoginVerify   *command.LoginVerifyHandler
+
+	// Transfer
+	CreateTransfer *command.CreateTransferHandler
 }

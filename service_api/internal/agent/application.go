@@ -32,7 +32,8 @@ func (a *Agent) setupApplication() error {
 			Login:       commands.NewLoginHandler(userClient, a.logger),
 			LoginVerify: commands.NewLoginVerifyHandler(userClient, a.logger),
 			// Finance RPC
-			CreateAccount: commands.NewCreateAccountHandler(financeClient, a.logger),
+			CreateAccount:  commands.NewCreateAccountHandler(financeClient, a.logger),
+			CreateTransfer: commands.NewCreateTransferHandler(financeClient, a.logger),
 		},
 		Queries: app.Queries{},
 	}

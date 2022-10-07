@@ -7,6 +7,7 @@ import (
 	"github.com/rezaAmiri123/microservice/service_finance/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/service_finance/internal/app"
 	"github.com/rezaAmiri123/microservice/service_finance/internal/app/commands"
+	"github.com/rezaAmiri123/microservice/service_finance/internal/app/queries"
 )
 
 func (a *Agent) setupApplication() error {
@@ -30,7 +31,9 @@ func (a *Agent) setupApplication() error {
 			CreateAccount:  commands.NewCreateAccountHandler(repo, a.logger),
 			CreateTransfer: commands.NewCreateTransferHandler(repo, a.logger),
 		},
-		Queries: app.Queries{},
+		Queries: app.Queries{
+			GetAccountByID: queries.NewGetAccountByIDHandler(repo, a.logger),
+		},
 	}
 	a.Application = application
 	return nil

@@ -12,7 +12,7 @@ type CreateAccountRequest struct {
 
 type CreateAccountResponse struct {
 	AccountId string    `json:"account_id" validate:"required"`
-	OwnerId   string    `json:"owner_id" validate:"required`
+	OwnerId   string    `json:"owner_id" validate:"required"`
 	Balance   int64     `json:"balance" validate:"required"`
 	Currency  string    `json:"currency"`
 	CreatedAt time.Time `json:"created_at"`
@@ -20,6 +20,7 @@ type CreateAccountResponse struct {
 }
 
 type CreateTransferRequest struct {
+	OwnerId       string `json:"owner_id"`
 	FromAccountId string `json:"from_account_id" validate:"required"`
 	ToAccountId   string `json:"to_account_id" validate:"required"`
 	Amount        int64  `json:"amount" validate:"required"`

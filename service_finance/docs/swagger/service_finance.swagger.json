@@ -142,6 +142,9 @@
     "grpcCreateTransferRequest": {
       "type": "object",
       "properties": {
+        "ownerId": {
+          "type": "string"
+        },
         "fromAccountId": {
           "type": "string"
         },
