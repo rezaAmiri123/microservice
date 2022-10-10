@@ -1,0 +1,217 @@
+version: "3.8"
+
+services:
+  service_user:
+    container_name: service_user
+    build:
+      context: service_user/
+      dockerfile: Dockerfile
+    ports:
+      - "5080:5080"
+    expose:
+      - '5080'
+#    volumes:
+#      - ./:/app
+    restart: always
+    environment:
+      - database-test=host.docker.internal_TEST
+#      - POSTGRES_PORT=5432
+#      - REDIS_ADDR=host.docker.internal:6379
+#      - MONGO_URI=mongodb://host.docker.internal:27017
+#      - JAEGER_HOST=host.docker.internal:6831
+#      - KAFKA_BROKERS=host.docker.internal:9092
+    depends_on:
+      - postgesql
+      - jaeger
+      - grafana
+      - prometheus
+      - zoo1
+      - kafka
+    networks: [ "microservice" ]
+
+  service_finance:
+    container_name: service_finance
+    build:
+      context: service_finance/
+      dockerfile: Dockerfile
+    ports:
+      - "6080:6080"
+    expose:
+      - '6080'
+#    volumes:
+#      - ./:/app
+    restart: always
+    environment:
+      - database-test=host.docker.internal_TEST
+#      - POSTGRES_PORT=5432
+#      - REDIS_ADDR=host.docker.internal:6379
+#      - MONGO_URI=mongodb://host.docker.internal:27017
+#      - JAEGER_HOST=host.docker.internal:6831
+#      - KAFKA_BROKERS=host.docker.internal:9092
+    depends_on:
+      - postgesql
+      - jaeger
+      - grafana
+      - prometheus
+      - zoo1
+      - kafka
+    networks: [ "microservice" ]
+
+  service_api:
+    container_name: service_api
+    build:
+      context: service_api/
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    expose:
+      - '8080'
+#    volumes:
+#      - ./:/app
+    restart: always
+    environment:
+      - database-test=host.docker.internal_TEST
+#      - POSTGRES_PORT=5432
+#      - REDIS_ADDR=host.docker.internal:6379
+#      - MONGO_URI=mongodb://host.docker.internal:27017
+#      - JAEGER_HOST=host.docker.internal:6831
+#      - KAFKA_BROKERS=host.docker.internal:9092
+    depends_on:
+      - service_finance
+      - service_user
+      - postgesql
+      - jaeger
+      - grafana
+      - prometheus
+      - zoo1
+      - kafka
+    networks: [ "microservice" ]
+
+  postgesql:
+    image: postgres:12-alpine
+    container_name: microservice_postgesql
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=microservice
+    volumes:
+      - pgdata3:/var/lib/postgresql/data
+    networks: [ "microservice" ]
+
+  jaeger:
+    container_name: microservice_jaeger
+    restart: always
+    image: jaegertracing/all-in-one:1.21
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+    hostname: microservice_jaeger
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "14250:14250"
+      - "9411:9411"
+    networks: [ "microservice" ]
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: microservice_prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./monitoring/prometheus_docker.yml:/etc/prometheus/prometheus.yml:ro
+    networks: [ "microservice" ]
+#  node_exporter:
+#    container_name: node_exporter_container
+#    restart: always
+#    image: prom/node-exporter
+#    ports:
+#      - '9101:9100'
+#    networks: [ "microservices" ]
+  zoo1:
+    image: zookeeper:3.4.9
+    restart: always
+    hostname: zoo1
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_PORT: 2181
+      ZOO_SERVERS: server.1=zoo1:2888:3888
+    volumes:
+      - zoo_volumes:/data
+      - zoo_volumes:/datalog
+    networks: [ "microservice" ]
+
+  kafka:
+    image: confluentinc/cp-kafka:5.5.1
+    restart: always
+    hostname: kafka
+    ports:
+      - "9092:9092"
+      - "9999:9999"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-kafka}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_JMX_PORT: 9999
+      KAFKA_JMX_HOSTNAME: ${DOCKER_HOST_IP:-kafka}
+    volumes:
+      - kafka_volumes:/var/lib/kafka/data
+    depends_on:
+      - zoo1
+    networks: [ "microservice" ]
+
+  grafana:
+    container_name: grafana_container
+    restart: always
+    image: grafana/grafana
+    ports:
+      - '3005:3000'
+    networks: [ "microservice" ]
+
+  rabbitmq:
+    # There is a prebuilt RabbitMQ image; see
+    # https://hub.docker.com/_/rabbitmq/ for details.
+    # This variant is built on Alpine Linux (it's smaller) and includes
+    # the management UI.
+    image: 'rabbitmq:3.6-management-alpine'
+    restart: always
+    ports:
+      # The standard AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+
+    # Run this container on a private network for this application.
+    # This is necessary for magic Docker DNS to work: other containers
+    # also running on this network will see a host name "rabbitmq"
+    # (the name of this section) and the internal port 5672, even though
+    # that's not explicitly published above.
+    networks: [ "microservice" ]
+volumes:
+  data_container:
+  kafka_volumes:
+  zoo_volumes:
+  pgdata3:
+
+networks:
+  microservice:
+    name: microservice

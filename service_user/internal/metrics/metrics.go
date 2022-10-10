@@ -26,27 +26,27 @@ type UserServiceMetric struct {
 func NewUserServiceMetric(cfg *Config) *UserServiceMetric {
 	return &UserServiceMetric{
 		CreateUserGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
-			Name: fmt.Sprintf("%s_create_user_grpc_requests_total", cfg.MetricServiceHostPort),
+			Name: fmt.Sprintf("%s_create_user_grpc_requests_total", cfg.MetricServiceName),
 			Help: "The total of create user grpc requests",
 		}),
 		UpdateUserGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
-			Name: fmt.Sprintf("%s_update_user_grpc_requests_total", cfg.MetricServiceHostPort),
+			Name: fmt.Sprintf("%s_update_user_grpc_requests_total", cfg.MetricServiceName),
 			Help: "The total of update user grpc requests",
 		}),
 		LoginRequests: promauto.NewCounter(prometheus.CounterOpts{
-			Name: fmt.Sprintf("%s_login_grpc_requests_total", cfg.MetricServiceHostPort),
+			Name: fmt.Sprintf("%s_login_grpc_requests_total", cfg.MetricServiceName),
 			Help: "The total of login grpc requests",
 		}),
 		LoginVerifyRequests: promauto.NewCounter(prometheus.CounterOpts{
-			Name: fmt.Sprintf("%s_login_verify_grpc_requests_total", cfg.MetricServiceHostPort),
+			Name: fmt.Sprintf("%s_login_verify_grpc_requests_total", cfg.MetricServiceName),
 			Help: "The total of login verify grpc requests",
 		}),
 		SuccessGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
-			Name: fmt.Sprintf("%s_success_grpc_requsts_total", cfg.MetricServiceHostPort),
+			Name: fmt.Sprintf("%s_success_grpc_requsts_total", cfg.MetricServiceName),
 			Help: "The total number of success grpc requests",
 		}),
 		ErrorGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
-			Name: fmt.Sprintf("%s_error_grpc_requsts_total", cfg.MetricServiceHostPort),
+			Name: fmt.Sprintf("%s_error_grpc_requsts_total", cfg.MetricServiceName),
 			Help: "The total number of error grpc requests",
 		}),
 		// SuccessKafkaMessages: promauto.NewCounter(prometheus.CounterOpts{

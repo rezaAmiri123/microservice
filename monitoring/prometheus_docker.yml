@@ -16,13 +16,14 @@ scrape_configs:
     static_configs:
       - targets: [ 'service_user:8001' ]
 
-  # - job_name: 'library_service'
-  #   static_configs:
-  #     - targets: [ 'library_service:8001' ]
+  - job_name: 'service_finance'
+    static_configs:
+      - targets: [ 'service_finance:8001' ]
 
-  # - job_name: 'message_service'
-  #   static_configs:
-  #     - targets: [ 'message_service:8001' ]
+  - job_name: 'service_api'
+    static_configs:
+      - targets: [ 'service_api:8001' ]
+  
 
   # - job_name: 'api_service'
   #   static_configs:

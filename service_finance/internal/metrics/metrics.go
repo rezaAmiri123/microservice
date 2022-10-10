@@ -24,11 +24,11 @@ type FinanceServiceMetric struct {
 func NewFinanceServiceMetric(cfg *Config) *FinanceServiceMetric {
 	return &FinanceServiceMetric{
 		CreateAccountGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
-			Name: fmt.Sprintf("%s_create_account_grpc_requests_total", cfg.MetricServiceHostPort),
+			Name: fmt.Sprintf("%s_create_account_grpc_requests_total", cfg.MetricServiceName),
 			Help: "The total of create account grpc requests",
 		}),
 		CreateTransferGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
-			Name: fmt.Sprintf("%s_create_transfer_grpc_requests_total", cfg.MetricServiceHostPort),
+			Name: fmt.Sprintf("%s_create_transfer_grpc_requests_total", cfg.MetricServiceName),
 			Help: "The total of create transfer grpc requests",
 		}),
 		// UpdateUserGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
@@ -40,11 +40,11 @@ func NewFinanceServiceMetric(cfg *Config) *FinanceServiceMetric {
 		// 	Help: "The total of login grpc requests",
 		// }),
 		SuccessGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
-			Name: fmt.Sprintf("%s_success_grpc_requsts_total", cfg.MetricServiceHostPort),
+			Name: fmt.Sprintf("%s_success_grpc_requsts_total", cfg.MetricServiceName),
 			Help: "The total number of success grpc requests",
 		}),
 		ErrorGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
-			Name: fmt.Sprintf("%s_error_grpc_requsts_total", cfg.MetricServiceHostPort),
+			Name: fmt.Sprintf("%s_error_grpc_requsts_total", cfg.MetricServiceName),
 			Help: "The total number of error grpc requests",
 		}),
 	}
