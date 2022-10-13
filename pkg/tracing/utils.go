@@ -2,7 +2,9 @@ package tracing
 
 import (
 	"context"
+
 	"github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go/ext"
 	"github.com/segmentio/kafka-go"
 	"google.golang.org/grpc/metadata"
 )
@@ -21,55 +23,54 @@ import (
 //	return ctx, serverSpan
 //}
 
-//func GetTextMapCarrierFromMetaData(ctx context.Context) opentracing.TextMapCarrier {
-//	metadataMap := make(opentracing.TextMapCarrier)
-//	if md, ok := metadata.FromIncomingContext(ctx); ok {
-//		for key := range md.Copy() {
-//			metadataMap.Set(key, md.Get(key)[0])
+//	func GetTextMapCarrierFromMetaData(ctx context.Context) opentracing.TextMapCarrier {
+//		metadataMap := make(opentracing.TextMapCarrier)
+//		if md, ok := metadata.FromIncomingContext(ctx); ok {
+//			for key := range md.Copy() {
+//				metadataMap.Set(key, md.Get(key)[0])
+//			}
 //		}
+//		return metadataMap
 //	}
-//	return metadataMap
-//}
 //
-//func StartGrpcServerTracerSpan(ctx context.Context, operationName string) (context.Context, opentracing.Span) {
-//	textMapCarrierFromMetaData := GetTextMapCarrierFromMetaData(ctx)
+//	func StartGrpcServerTracerSpan(ctx context.Context, operationName string) (context.Context, opentracing.Span) {
+//		textMapCarrierFromMetaData := GetTextMapCarrierFromMetaData(ctx)
 //
-//	span, err := opentracing.GlobalTracer().Extract(opentracing.TextMap, textMapCarrierFromMetaData)
-//	if err != nil {
-//		serverSpan := opentracing.GlobalTracer().StartSpan(operationName)
+//		span, err := opentracing.GlobalTracer().Extract(opentracing.TextMap, textMapCarrierFromMetaData)
+//		if err != nil {
+//			serverSpan := opentracing.GlobalTracer().StartSpan(operationName)
+//			ctx = opentracing.ContextWithSpan(ctx, serverSpan)
+//			return ctx, serverSpan
+//		}
+//
+//		serverSpan := opentracing.GlobalTracer().StartSpan(operationName, ext.RPCServerOption(span))
 //		ctx = opentracing.ContextWithSpan(ctx, serverSpan)
+//
 //		return ctx, serverSpan
 //	}
-//
-//	serverSpan := opentracing.GlobalTracer().StartSpan(operationName, ext.RPCServerOption(span))
-//	ctx = opentracing.ContextWithSpan(ctx, serverSpan)
-//
-//	return ctx, serverSpan
-//}
-//
-//func StartKafkaConsumerTracerSpan(ctx context.Context, headers []kafka.Header, operationName string) (context.Context, opentracing.Span) {
-//	carrierFromKafkaHeaders := TextMapCarrierFromKafkaMessageHeaders(headers)
-//
-//	spanCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap, carrierFromKafkaHeaders)
-//	if err != nil {
-//		serverSpan := opentracing.GlobalTracer().StartSpan(operationName)
-//		ctx = opentracing.ContextWithSpan(ctx, serverSpan)
-//		return ctx, serverSpan
-//	}
-//
-//	serverSpan := opentracing.GlobalTracer().StartSpan(operationName, ext.RPCServerOption(spanCtx))
-//	ctx = opentracing.ContextWithSpan(ctx, serverSpan)
-//
-//	return ctx, serverSpan
-//}
+func StartKafkaConsumerTracerSpan(ctx context.Context, headers []kafka.Header, operationName string) (context.Context, opentracing.Span) {
+	carrierFromKafkaHeaders := TextMapCarrierFromKafkaMessageHeaders(headers)
 
-//func TextMapCarrierFromKafkaMessageHeaders(headers []kafka.Header) opentracing.TextMapCarrier {
-//	textMap := make(map[string]string, len(headers))
-//	for _, header := range headers {
-//		textMap[header.Key] = string(header.Value)
-//	}
-//	return opentracing.TextMapCarrier(textMap)
-//}
+	spanCtx, err := opentracing.GlobalTracer().Extract(opentracing.TextMap, carrierFromKafkaHeaders)
+	if err != nil {
+		serverSpan := opentracing.GlobalTracer().StartSpan(operationName)
+		ctx = opentracing.ContextWithSpan(ctx, serverSpan)
+		return ctx, serverSpan
+	}
+
+	serverSpan := opentracing.GlobalTracer().StartSpan(operationName, ext.RPCServerOption(spanCtx))
+	ctx = opentracing.ContextWithSpan(ctx, serverSpan)
+
+	return ctx, serverSpan
+}
+
+func TextMapCarrierFromKafkaMessageHeaders(headers []kafka.Header) opentracing.TextMapCarrier {
+	textMap := make(map[string]string, len(headers))
+	for _, header := range headers {
+		textMap[header.Key] = string(header.Value)
+	}
+	return opentracing.TextMapCarrier(textMap)
+}
 
 func InjectTextMapCarrierToGrpcMetaData(ctx context.Context, spanCtx opentracing.SpanContext) context.Context {
 	if textMapCarrier, err := InjectTextMapCarrier(spanCtx); err == nil {
