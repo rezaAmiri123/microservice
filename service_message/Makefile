@@ -51,4 +51,4 @@ proto_message:
 	protoc \
 		--go_out=proto/kafka --go_opt=paths=source_relative \
 		--go-grpc_out=proto/kafka --go-grpc_opt=paths=source_relative \
-		--proto_path=proto/kafka  proto/kafka/email.proto
+		--proto_path=proto/kafka  proto/kafka/*.proto

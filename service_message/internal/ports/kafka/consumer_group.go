@@ -37,8 +37,8 @@ func (s *messageProcessor) ProcessMessage(ctx context.Context, r *kafka.Reader, 
 		}
 		s.logProcessMessage(m, workerID)
 		switch m.Topic {
-		case s.cfg.KafkaTopics.EmailCreate.TopicName:
-			s.processCreateEmail(ctx, r, m)
+		case s.cfg.KafkaTopics.UserCreate.TopicName:
+			s.processCreateUser(ctx, r, m)
 		}
 	}
 }

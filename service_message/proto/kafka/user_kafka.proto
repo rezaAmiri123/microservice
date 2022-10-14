@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package kafkaMessages;
+
+option go_package="github.com/rezaAmiri123/microservice/service_message/proto/kafka";
+
+message CreateUser{
+  string UserID = 1;
+  string Username = 2;
+  string Email = 3;
+  string Bio = 4;
+  string Image = 5;
+}

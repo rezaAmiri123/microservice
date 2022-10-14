@@ -17,8 +17,8 @@ func (a *Agent) setupKafka() error {
 			InitTopics: a.KafkaInitTopics,
 		},
 		KafkaTopics: kafka.KafkaTopics{
-			EmailCreate: kafkaClient.TopicConfig{
-				TopicName: kafkaClient.CreateEmailTopic,
+			UserCreate: kafkaClient.TopicConfig{
+				TopicName: kafkaClient.CreateUserTopic,
 			},
 		},
 	}
@@ -30,7 +30,7 @@ func (a *Agent) setupKafka() error {
 	//}
 	//
 	topics := []string{
-		kafkaCfg.KafkaTopics.EmailCreate.TopicName,
+		kafkaCfg.KafkaTopics.UserCreate.TopicName,
 	}
 	// TODO we need a context to can ended goroutine
 	go cg.ConsumeTopic(ctx, topics, kafka.PoolSize, messageMessageProcessor.ProcessMessage)

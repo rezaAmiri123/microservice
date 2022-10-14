@@ -9,5 +9,5 @@ type Config struct {
 	Kafka       kafkaClient.Config
 }
 type KafkaTopics struct {
-	EmailCreate kafkaClient.TopicConfig
+	UserCreate kafkaClient.TopicConfig
 }

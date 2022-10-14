@@ -38,6 +38,9 @@ type Config struct {
 	PGDBName   string `mapstructure:"POSTGRES_DB_NAME"`
 	PGPassword string `mapstructure:"POSTGRES_PASSWORD"`
 
+	// kafka config
+	KafkaBrokers []string `mapstructure:"KAFKA_BROKERS"`
+
 	// applogger.Config
 	LogLevel   string `mapstructure:"LOG_LEVEL"`
 	LogDevMode bool   `mapstructure:"LOG_DEV_MOD"`

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
+	kafkaClient "github.com/rezaAmiri123/microservice/pkg/kafka"
 	"github.com/rezaAmiri123/microservice/pkg/token"
 	"github.com/rezaAmiri123/microservice/pkg/token/jwt"
 	"github.com/rezaAmiri123/microservice/service_user/internal/adapters/pg"
@@ -36,9 +37,11 @@ func (a *Agent) setupApplication() error {
 		RefreshTokenDuration: a.RefreshTokenDuration,
 	}
 
+	producer := kafkaClient.NewProducer(a.logger, a.KafkaBrokers)
+
 	application := &app.Application{
 		Commands: app.Commands{
-			CreateUser: command.NewCreateUserHandler(repo, a.logger),
+			CreateUser: command.NewCreateUserHandler(repo, a.logger, producer),
 			UpdateUser: command.NewUpdateUserHandler(repo, a.logger),
 			Login:      command.NewLoginHandler(repo, a.logger, maker, makerConfig),
 		},

@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 
+	// sqlPg "github.com/lib/pq"
 	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/service_message/internal/domain/message"
 )
 
-const createEmail = `INSERT INTO users (from_email, to_email, subject, body) VALUES ($1, $2, $3, $4) RETURNING *`
+const createEmail = `INSERT INTO emails (user_id, from_email, to_email, subject, body) VALUES ($1, $2, $3, $4, $5) RETURNING *`
 
 func (r *PGMessageRepository) CreateEmail(ctx context.Context, arg *message.CreateEmailParams) (*message.Email, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "PGMessageRepository.CreateEmail")
@@ -18,7 +19,9 @@ func (r *PGMessageRepository) CreateEmail(ctx context.Context, arg *message.Crea
 	if err := r.DB.QueryRowxContext(
 		ctx,
 		createEmail,
+		&arg.UserID,
 		&arg.From,
+		// sqlPg.Array(&arg.To),
 		&arg.To,
 		&arg.Subject,
 		&arg.Body,

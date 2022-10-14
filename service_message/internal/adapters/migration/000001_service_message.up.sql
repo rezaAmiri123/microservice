@@ -2,6 +2,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE emails (
     email_id        UUID            PRIMARY KEY     NOT NULL DEFAULT uuid_generate_v4(),
+    user_id         UUID                            NOT NULL ,
     from_email      VARCHAR(128)                    NOT NULL ,
     to_email        TEXT []                         NOT NULL ,
     subject         VARCHAR(128)                    NOT NULL ,
