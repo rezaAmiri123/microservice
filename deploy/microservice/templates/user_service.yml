@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-deployment
+  labels:
+    app: user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      initContainers:
+        - name: init-mydb
+          image: busybox:1.28
+          # command: [ 'sh', '-c', "until nslookup postgres.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mysql; sleep 2; done" ]
+          command: [ 'sh', '-c', "sleep 20" ]
+      containers:
+        - name: user
+#          image: nginx:1.16
+          image: reza879/service_user:182c3b2
+          envFrom:
+          - configMapRef:
+              name: user-configuration
+          ports:
+            - containerPort: 5080
+          # env:
+          #   - name: HTTP_SERVER_PORT
+          #     value: '5080'
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 8002
+          #     httpHeaders:
+          #       - name: Custom-Header
+          #         value: Awesome
+          #   initialDelaySeconds: 10
+          #   periodSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  labels:
+    app: user
+spec:
+  selector:
+    app: user
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 5080
+      targetPort: 5080
+      nodePort: 30000

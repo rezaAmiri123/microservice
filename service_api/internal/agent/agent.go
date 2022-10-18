@@ -34,6 +34,9 @@ type Config struct {
 	HttpServerAddr string `mapstructure:"HTTP_SERVER_ADDR"`
 	HttpServerPort int    `mapstructure:"HTTP_SERVER_PORT"`
 
+	// check alive
+	HttpKeepAliveServerHostPort string `mapstructure:"HTTP_KEEP_ALIVE_SERVER_HOST_PORT"`
+
 	// applogger.Config
 	LogLevel   string `mapstructure:"LOG_LEVEL"`
 	LogDevMode bool   `mapstructure:"LOG_DEV_MOD"`
@@ -84,6 +87,7 @@ func NewAgent(config Config) (*Agent, error) {
 		a.setupTracing,
 		a.setupApplication,
 		//a.setupAuthClient,
+		a.setupKeepAlive,
 		a.setupHttpServer,
 		// a.setupGrpcServer,
 		//a.setupGRPCServer,

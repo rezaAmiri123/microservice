@@ -51,3 +51,7 @@ user_proto:
 		--grpc-gateway_out=proto/grpc --grpc-gateway_opt=paths=source_relative \
         --openapiv2_out=docs/swagger --openapiv2_opt=allow_merge=true,merge_file_name=service_user \
 		--proto_path=proto/grpc proto/grpc/*.proto
+
+make_image:
+	docker build -f Dockerfile -t reza879/service_user:$(git rev-parse --short HEAD) .
+	docker push reza879/service_user:$(git rev-parse --short HEAD)
