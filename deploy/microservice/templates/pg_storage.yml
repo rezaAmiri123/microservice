@@ -1,3 +1,5 @@
+# to install microk8s
+# sudo snap install microk8s --classic --edge
 kind: PersistentVolume
 apiVersion: v1
 metadata:
