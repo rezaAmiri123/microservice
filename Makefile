@@ -22,7 +22,7 @@ k8s_install:
 	helm install microservice deploy/microservice/
 
 k8s_update:
-	helm upgrade test-microservice deploy/test-microservice/
+	helm upgrade microservice deploy/microservice/
 
 k8s_uninstall:
 	helm uninstall microservice 

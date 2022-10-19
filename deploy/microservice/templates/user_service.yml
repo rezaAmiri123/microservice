@@ -17,12 +17,12 @@ spec:
       initContainers:
         - name: init-mydb
           image: busybox:1.28
-          # command: [ 'sh', '-c', "until nslookup postgres.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for mysql; sleep 2; done" ]
-          command: [ 'sh', '-c', "sleep 20" ]
+          command: [ 'sh', '-c', "until nslookup postgres-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for postgres; sleep 2; done" ]
+          # command: [ 'sh', '-c', "sleep 20" ]
       containers:
         - name: user
 #          image: nginx:1.16
-          image: reza879/service_user:182c3b2
+          image: reza879/service_user:a7387fb
           envFrom:
           - configMapRef:
               name: user-configuration
