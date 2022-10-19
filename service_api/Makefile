@@ -15,6 +15,7 @@ psql:
 
 evans:
 	evans --host localhost --port 5080 -r repl
+	# evans --host 192.168.39.213 --port 30003 -r repl
 
 # set evanse header
 # header Authorization='Bearer xxxxx'
@@ -27,6 +28,7 @@ migratecreate:
 
 migrateup:
 	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose up
+	# postgresql://postgres:postgres@192.168.39.213:30001/microservice_finance?sslmode=disable
 
 migrateup1:
 	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose up 1
@@ -43,3 +45,7 @@ migrateforce:
 
 test_coverage:
 	go test --cover ./...
+
+make_image:
+	docker build -f Dockerfile -t reza879/service_api:$(git rev-parse --short HEAD) .
+	docker push reza879/service_api:$(git rev-parse --short HEAD)
