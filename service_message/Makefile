@@ -27,6 +27,7 @@ migratecreate:
 
 migrateup:
 	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose up
+	# postgresql://postgres:postgres@192.168.39.213:30001/microservice_message?sslmode=disable
 
 migrateup1:
 	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose up 1
@@ -52,3 +53,7 @@ proto_message:
 		--go_out=proto/kafka --go_opt=paths=source_relative \
 		--go-grpc_out=proto/kafka --go-grpc_opt=paths=source_relative \
 		--proto_path=proto/kafka  proto/kafka/*.proto
+
+make_image:
+	docker build -f Dockerfile -t reza879/service_message:$(git rev-parse --short HEAD) .
+	docker push reza879/service_message:$(git rev-parse --short HEAD)

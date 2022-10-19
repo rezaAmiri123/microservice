@@ -18,7 +18,7 @@ docker_down:
 #=====================================================
 # kuberneties
 k8s_install:
-	# helm install postgres bitnami/postgresql
+	helm install kafka bitnami/kafka
 	helm install microservice deploy/microservice/
 
 k8s_update:
@@ -26,8 +26,11 @@ k8s_update:
 
 k8s_uninstall:
 	helm uninstall microservice 
-	# helm uninstall postgres 
+	helm uninstall kafka
 
-make_service_user_image:
-	cd service_user && docker build -f Dockerfile -t reza879/service_user:$(git rev-parse --short HEAD) . && cd ..
-	docker push reza879/service_user:$(git rev-parse --short HEAD)
+# postgresql://postgres:postgres@192.168.39.213:30001/microservice?sslmode=disable
+# createdb --username=postgres --owner=postgres microservice_finance
+# createdb --username=postgres --owner=postgres microservice_message
+# migrate -path internal/adapters/migration -database "postgresql://postgres:postgres@192.168.39.213:30001/microservice_finance?sslmode=disable" -verbose up
+# migrate -path internal/adapters/migration -database "postgresql://postgres:postgres@192.168.39.213:30001/microservice?sslmode=disable" -verbose up
+# migrate -path internal/adapters/migration -database "postgresql://postgres:postgres@192.168.39.213:30001/microservice_message?sslmode=disable" -verbose up
