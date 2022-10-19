@@ -12,6 +12,7 @@ COPY app.env .
 # COPY start.sh .
 # COPY wait-for.sh .
 COPY internal/adapters/migration ./internal/adapters/migration
+RUN apk add --no-cache bash
 
 # EXPOSE 8080
 CMD [ "/app/main" ]
