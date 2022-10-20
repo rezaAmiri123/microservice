@@ -38,3 +38,7 @@ func ExtractMetadata(ctx context.Context) *Metadata {
 	}
 	return mtdt
 }
+
+func AttachToContextMatadata(ctx context.Context, key, value string) context.Context {
+	return metadata.AppendToOutgoingContext(ctx, key, value)
+}

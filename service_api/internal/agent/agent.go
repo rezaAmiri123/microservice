@@ -27,6 +27,10 @@ type Config struct {
 	GRPCUserClientAddr string `mapstructure:"GRPC_USER_CLIENT_ADDR"`
 	GRPCUserClientPort int    `mapstructure:"GRPC_USER_CLIENT_PORT"`
 
+	GRPCUserClientTLSCertFile string `mapstructure:"GRPC_USER_CLIENT_TLS_CERT_FILE"`
+	GRPCUserClientTLSKeyFile  string `mapstructure:"GRPC_USER_CLIENT_TLS_KEY_FILE"`
+	GRPCUserClientTLSCAFile   string `mapstructure:"GRPC_USER_CLIENT_TLS_CA_FILE"`
+
 	GRPCFinanceClientAddr string `mapstructure:"GRPC_FINANCE_CLIENT_ADDR"`
 	GRPCFinanceClientPort int    `mapstructure:"GRPC_FINANCE_CLIENT_PORT"`
 

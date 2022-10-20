@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"crypto/tls"
 	"io"
 	"sync"
 	"time"
@@ -21,7 +22,6 @@ import (
 )
 
 type Config struct {
-	// ServerTLSConfig *tls.Config
 	// token
 	SecretKey            string        `mapstructure:"SECRET_KEY"`
 	AccessTokenDuration  time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
@@ -29,6 +29,12 @@ type Config struct {
 
 	GRPCServerAddr string `mapstructure:"GRPC_SERVER_ADDR"`
 	GRPCServerPort int    `mapstructure:"GRPC_SERVER_PORT"`
+
+	GRPCServerTLSCertFile      string `mapstructure:"GRPC_SERVER_TLS_CERT_FILE"`
+	GRPCServerTLSKeyFile       string `mapstructure:"GRPC_SERVER_TLS_KEY_FILE"`
+	GRPCServerTLSCAFile        string `mapstructure:"GRPC_SERVER_TLS_CA_FILE"`
+	GRPCServerTLSServerAddress string `mapstructure:"GRPC_SERVER_TLS_SERVER_ADDRESS"`
+
 	//DBConfig     adapters.GORMConfig
 	// postgres.Config
 	PGDriver   string `mapstructure:"POSTGRES_DRIVER"`
@@ -59,6 +65,8 @@ type Config struct {
 
 type Agent struct {
 	Config
+
+	GrpcServerTLSConfig *tls.Config
 
 	logger logger.Logger
 	metric *metrics.UserServiceMetric

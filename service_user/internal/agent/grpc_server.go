@@ -1,13 +1,13 @@
 package agent
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net"
 	"time"
 
-	// grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
-
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	pkgTLS "github.com/rezaAmiri123/microservice/pkg/auth/tls"
 	userGrpc "github.com/rezaAmiri123/microservice/service_user/internal/port/grpc"
 	userService "github.com/rezaAmiri123/microservice/service_user/proto/grpc"
 
@@ -17,10 +17,8 @@ import (
 	grpc_opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 
-	// "github.com/rezaAmiri123/test-microservice/pkg/auth"
-	// "github.com/rezaAmiri123/test-microservice/pkg/interceptors"
-
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/reflection"
 )
@@ -72,6 +70,24 @@ func (a *Agent) setupGrpcServer() error {
 			// im.Logger,
 		)),
 	)
+
+	if a.GRPCServerTLSCertFile != "" && a.GRPCServerTLSKeyFile != "" {
+		tlsConfig := pkgTLS.TLSConfig{
+			CAFile:         a.GRPCServerTLSCAFile,
+			CertFile:       a.GRPCServerTLSCertFile,
+			KeyFile:        a.GRPCServerTLSKeyFile,
+			ServerAddress:  a.GRPCServerTLSServerAddress,
+			Server:         true,
+			ClientAuthType: tls.RequireAndVerifyClientCert,
+		}
+		t, err := pkgTLS.SetupTLSConfig(tlsConfig)
+		if err != nil {
+			return err
+		}
+		creds := credentials.NewTLS(t)
+		opts = append(opts, grpc.Creds(creds))
+	}
+
 	serverConfig := &userGrpc.Config{App: a.Application, Metric: a.metric, Logger: a.logger, Maker: a.Maker}
 	server, _ := userGrpc.NewUserGRPCServer(serverConfig)
 	grpcServer := grpc.NewServer(opts...)

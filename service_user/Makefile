@@ -4,6 +4,27 @@ DB_PASSWORD=postgres
 DB_ADDR=microservice_postgesql
 DB_URL=postgresql://$(DB_USER):$(DB_PASSWORD)@$(api_postgesql):5432/$(DB_NAME)?sslmode=disable
 MIGRATION_PATH=internal/adapters/migration
+
+.PHONY: gencert
+gencert:
+	cfssl gencert \
+		-initca tls/config/ca-csr.json | cfssljson -bare ca
+	cfssl gencert \
+		-ca=ca.pem \
+		-ca-key=ca-key.pem \
+		-config=tls/config/ca-config.json \
+		-profile=server \
+		tls/config/server-csr.json | cfssljson -bare server
+	cfssl gencert \
+		-ca=ca.pem \
+		-ca-key=ca-key.pem \
+		-config=tls/config/ca-config.json \
+		-profile=client \
+		tls/config/client-csr.json | cfssljson -bare client
+		mv *.pem *.csr tls
+
+####################################
+# database
 # DB_URL=postgresql://postgres:postgres@192.168.39.213:30001/microservice?sslmode=disable
 createdb:
 	docker exec -it $(DB_ADDR) createdb --username=$(DB_USER) --owner=$(DB_USER) $(DB_NAME)
