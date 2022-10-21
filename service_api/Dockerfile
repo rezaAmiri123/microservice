@@ -12,6 +12,10 @@ COPY app.env .
 # COPY start.sh .
 # COPY wait-for.sh .
 # COPY internal/adapters/migration ./internal/adapters/migration
+# COPY ../service_user/tls/ca.pem ./service_user/tls/ca.pem
+# COPY ../service_user/tls/client.pem ./service_user/tls/client.pem
+# COPY ../service_user/tls/client-key.pem ./service_user/tls/client-key.pem
+
 RUN apk add --no-cache bash
 # EXPOSE 8080
 CMD [ "/app/main" ]

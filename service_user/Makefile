@@ -39,6 +39,9 @@ evans:
 	evans --host localhost --port 5080 -r repl
 	# evans --host 192.168.39.213 --port 30000 -r repl
 
+evans_tls:
+	evans --host localhost --port 5080 -t --servername localhost --cacert tls/ca.pem --cert tls/client.pem --certkey tls/client-key.pem -r repl
+
 # set evanse header
 # header Authorization='Bearer xxxxx'
 
@@ -79,3 +82,6 @@ user_proto:
 make_image:
 	docker build -f Dockerfile -t reza879/service_user:$(git rev-parse --short HEAD) .
 	docker push reza879/service_user:$(git rev-parse --short HEAD)
+
+docker_bash:
+	docker exec -it service_user bash

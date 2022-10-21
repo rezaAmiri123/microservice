@@ -66,14 +66,14 @@ services:
       - "8080:8080"
     expose:
       - '8080'
-#    volumes:
-#      - ./:/app
+    volumes:
+     - ./service_user:/app/service_user
     restart: always
     environment:
-      - database-test=host.docker.internal_TEST
-#      - POSTGRES_PORT=5432
-#      - REDIS_ADDR=host.docker.internal:6379
-#      - MONGO_URI=mongodb://host.docker.internal:27017
+      - GRPC_USER_CLIENT_TLS_CA_FILE=service_user/tls/ca.pem
+      - GRPC_USER_CLIENT_TLS_CERT_FILE=service_user/tls/client.pem
+      - GRPC_USER_CLIENT_TLS_KEY_FILE=service_user/tls/client-key.pem
+      - GRPC_USER_CLIENT_TLS_SERVER_ADDRESS=service_user
 #      - JAEGER_HOST=host.docker.internal:6831
 #      - KAFKA_BROKERS=host.docker.internal:9092
     depends_on:

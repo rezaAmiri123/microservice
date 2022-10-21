@@ -14,6 +14,11 @@ COPY app.env .
 COPY internal/adapters/migration ./internal/adapters/migration
 RUN apk add --no-cache bash
 
+COPY tls/ca.pem ./tls/ca.pem
+COPY tls/server.pem ./tls/server.pem
+COPY tls/server-key.pem ./tls/server-key.pem
+
+
 # EXPOSE 8080
 CMD [ "/app/main" ]
 # ENTRYPOINT [ "/app/start.sh" ]

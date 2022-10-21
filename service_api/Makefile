@@ -49,3 +49,6 @@ test_coverage:
 make_image:
 	docker build -f Dockerfile -t reza879/service_api:$(git rev-parse --short HEAD) .
 	docker push reza879/service_api:$(git rev-parse --short HEAD)
+
+docker_bash:
+	docker exec -it service_api bash

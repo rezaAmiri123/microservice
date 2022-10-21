@@ -1,8 +1,10 @@
 package agent
 
 import (
+	"crypto/tls"
 	"fmt"
 
+	pkgTLS "github.com/rezaAmiri123/microservice/pkg/auth/tls"
 	pkgGrpc "github.com/rezaAmiri123/microservice/pkg/grpc"
 	"github.com/rezaAmiri123/microservice/service_api/internal/app"
 	"github.com/rezaAmiri123/microservice/service_api/internal/app/commands"
@@ -11,8 +13,23 @@ import (
 )
 
 func (a *Agent) setupApplication() error {
+	var clientTLSConfig *tls.Config
+	if a.GRPCUserClientTLSCertFile != "" && a.GRPCUserClientTLSKeyFile != "" {
+		tlsConfig := pkgTLS.TLSConfig{
+			CAFile:        a.GRPCUserClientTLSCAFile,
+			CertFile:      a.GRPCUserClientTLSCertFile,
+			KeyFile:       a.GRPCUserClientTLSKeyFile,
+			ServerAddress: a.GRPCUserClientTLSServerAddress,
+			Server:        false,
+		}
+		t, err := pkgTLS.SetupTLSConfig(tlsConfig)
+		if err != nil {
+			return err
+		}
+		clientTLSConfig = t
+	}
 	addr := fmt.Sprintf("%s:%d", a.GRPCUserClientAddr, a.GRPCUserClientPort)
-	userConn, err := pkgGrpc.NewGrpcClient(addr, a.GRPCUserClientTLSConfig, a.logger)
+	userConn, err := pkgGrpc.NewGrpcClient(addr, clientTLSConfig, a.logger)
 	if err != nil {
 		return err
 	}

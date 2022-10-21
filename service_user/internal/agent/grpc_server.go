@@ -79,6 +79,7 @@ func (a *Agent) setupGrpcServer() error {
 			ServerAddress:  a.GRPCServerTLSServerAddress,
 			Server:         true,
 			ClientAuthType: tls.RequireAndVerifyClientCert,
+			// ClientAuthType: tls.NoClientCert,
 		}
 		t, err := pkgTLS.SetupTLSConfig(tlsConfig)
 		if err != nil {
