@@ -7,6 +7,32 @@ import (
 	"io/ioutil"
 )
 
+const (
+	NoClientCert               = "NoClientCert"
+	RequestClientCert          = "RequestClientCert"
+	RequireAnyClientCert       = "RequireAnyClientCert"
+	VerifyClientCertIfGiven    = "VerifyClientCertIfGiven"
+	RequireAndVerifyClientCert = "RequireAndVerifyClientCert"
+)
+
+func GetClientAuthType(authType string) tls.ClientAuthType {
+	switch authType {
+	case NoClientCert:
+		return tls.NoClientCert
+	case RequestClientCert:
+		return tls.RequestClientCert
+	case RequireAnyClientCert:
+		return tls.RequireAnyClientCert
+	case VerifyClientCertIfGiven:
+		return tls.VerifyClientCertIfGiven
+	case RequireAndVerifyClientCert:
+		return tls.RequireAndVerifyClientCert
+	default:
+		return tls.NoClientCert
+
+	}
+}
+
 func SetupTLSConfig(cfg TLSConfig) (*tls.Config, error) {
 	var err error
 	tlsConfig := &tls.Config{}

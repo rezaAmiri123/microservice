@@ -1,7 +1,6 @@
 package agent
 
 import (
-	"crypto/tls"
 	"fmt"
 	"net"
 	"time"
@@ -71,14 +70,14 @@ func (a *Agent) setupGrpcServer() error {
 		)),
 	)
 
-	if a.GRPCServerTLSCertFile != "" && a.GRPCServerTLSKeyFile != "" {
+	if a.GRPCServerTLSEnabled {
 		tlsConfig := pkgTLS.TLSConfig{
 			CAFile:         a.GRPCServerTLSCAFile,
 			CertFile:       a.GRPCServerTLSCertFile,
 			KeyFile:        a.GRPCServerTLSKeyFile,
 			ServerAddress:  a.GRPCServerTLSServerAddress,
 			Server:         true,
-			ClientAuthType: tls.RequireAndVerifyClientCert,
+			ClientAuthType: pkgTLS.GetClientAuthType(a.GRPCServerTLSClientAuthType),
 			// ClientAuthType: tls.NoClientCert,
 		}
 		t, err := pkgTLS.SetupTLSConfig(tlsConfig)

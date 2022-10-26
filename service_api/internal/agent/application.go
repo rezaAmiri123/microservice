@@ -14,7 +14,7 @@ import (
 
 func (a *Agent) setupApplication() error {
 	var clientTLSConfig *tls.Config
-	if a.GRPCUserClientTLSCertFile != "" && a.GRPCUserClientTLSKeyFile != "" {
+	if a.GRPCUserClientTLSEnabled {
 		tlsConfig := pkgTLS.TLSConfig{
 			CAFile:        a.GRPCUserClientTLSCAFile,
 			CertFile:      a.GRPCUserClientTLSCertFile,

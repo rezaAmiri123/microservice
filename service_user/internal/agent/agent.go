@@ -30,10 +30,12 @@ type Config struct {
 	GRPCServerAddr string `mapstructure:"GRPC_SERVER_ADDR"`
 	GRPCServerPort int    `mapstructure:"GRPC_SERVER_PORT"`
 
-	GRPCServerTLSCertFile      string `mapstructure:"GRPC_SERVER_TLS_CERT_FILE"`
-	GRPCServerTLSKeyFile       string `mapstructure:"GRPC_SERVER_TLS_KEY_FILE"`
-	GRPCServerTLSCAFile        string `mapstructure:"GRPC_SERVER_TLS_CA_FILE"`
-	GRPCServerTLSServerAddress string `mapstructure:"GRPC_SERVER_TLS_SERVER_ADDRESS"`
+	GRPCServerTLSEnabled        bool   `mapstructure:"GRPC_SERVER_TLS_ENABLED"`
+	GRPCServerTLSClientAuthType string `mapstructure:"GRPC_SERVER_TLS_CLIENT_AUTH_TYPE"`
+	GRPCServerTLSCertFile       string `mapstructure:"GRPC_SERVER_TLS_CERT_FILE"`
+	GRPCServerTLSKeyFile        string `mapstructure:"GRPC_SERVER_TLS_KEY_FILE"`
+	GRPCServerTLSCAFile         string `mapstructure:"GRPC_SERVER_TLS_CA_FILE"`
+	GRPCServerTLSServerAddress  string `mapstructure:"GRPC_SERVER_TLS_SERVER_ADDRESS"`
 
 	//DBConfig     adapters.GORMConfig
 	// postgres.Config
