@@ -125,6 +125,21 @@ func (mr *MockRepositoryMockRecorder) GetAccountByID(ctx, accountID interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccountByID", reflect.TypeOf((*MockRepository)(nil).GetAccountByID), ctx, accountID)
 }
 
+// ListTransfer mocks base method.
+func (m *MockRepository) ListTransfer(ctx context.Context, arg finance.ListTransferParams) (finance.ListTransferResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListTransfer", ctx, arg)
+	ret0, _ := ret[0].(finance.ListTransferResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListTransfer indicates an expected call of ListTransfer.
+func (mr *MockRepositoryMockRecorder) ListTransfer(ctx, arg interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTransfer", reflect.TypeOf((*MockRepository)(nil).ListTransfer), ctx, arg)
+}
+
 // TransferTx mocks base method.
 func (m *MockRepository) TransferTx(ctx context.Context, arg finance.TransferTxParams) (finance.TransferTxResult, error) {
 	m.ctrl.T.Helper()
