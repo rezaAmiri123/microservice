@@ -8,12 +8,12 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
-	"github.com/rezaAmiri123/microservice/service_api/internal/utils"
+	"github.com/rezaAmiri123/microservice/pkg/auth"
 )
 
 func (mw *MiddlewareManager) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		authorizationHeader := c.Request().Header.Get(utils.AuthorizationHeaderKey)
+		authorizationHeader := c.Request().Header.Get(auth.AuthorizationHeaderKey)
 		// authorizationHeader := ctx.GetHeader(authorizationHeaderKey)
 		if len(authorizationHeader) == 0 {
 			err := errors.New("authorization header is not provided")
@@ -28,7 +28,7 @@ func (mw *MiddlewareManager) AuthMiddleware(next echo.HandlerFunc) echo.HandlerF
 		}
 
 		authorizationType := strings.ToLower(fields[0])
-		if authorizationType != utils.AuthorizationTypeBearer {
+		if authorizationType != auth.AuthorizationTypeBearer {
 			err := fmt.Errorf("unsupported authorization type %s", authorizationType)
 			return c.JSON(http.StatusUnauthorized, err)
 		}
@@ -41,7 +41,7 @@ func (mw *MiddlewareManager) AuthMiddleware(next echo.HandlerFunc) echo.HandlerF
 
 		c.Set("payload", payload)
 
-		ctx := context.WithValue(c.Request().Context(), utils.AuthorizationPayloadKey, payload)
+		ctx := context.WithValue(c.Request().Context(), auth.AuthorizationPayloadKey, payload)
 		c.SetRequest(c.Request().WithContext(ctx))
 
 		// mw.logger.Info(

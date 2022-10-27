@@ -36,6 +36,7 @@ func NewGrpcClient(
 	opts = append(opts, grpc.WithChainUnaryInterceptor(
 		grpc_retry.UnaryClientInterceptor(retryOpts...),
 		im.ClientRequestLoggerInterceptor(),
+		im.ClientRequestPayloadInterceptor(),
 	))
 	if clientTLSConfig != nil {
 		clientCreds := credentials.NewTLS(clientTLSConfig)

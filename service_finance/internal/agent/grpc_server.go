@@ -10,6 +10,7 @@ import (
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	grpc_opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	pkgGrpc "github.com/rezaAmiri123/microservice/pkg/grpc"
 	financeGrpc "github.com/rezaAmiri123/microservice/service_finance/internal/port/grpc"
 	financeService "github.com/rezaAmiri123/microservice/service_finance/proto/grpc"
 	"google.golang.org/grpc"
@@ -25,7 +26,7 @@ const (
 )
 
 func (a *Agent) setupGrpcServer() error {
-
+	im := pkgGrpc.NewInterceptorManager(a.logger)
 	var opts []grpc.ServerOption
 	opts = append(opts,
 		grpc.KeepaliveParams(keepalive.ServerParameters{
@@ -44,7 +45,7 @@ func (a *Agent) setupGrpcServer() error {
 			grpc_prometheus.UnaryServerInterceptor,
 			grpc_recovery.UnaryServerInterceptor(),
 			// grpc_auth.UnaryServerInterceptor(auth.Authenticate),
-			// im.Logger,
+			im.Payload,
 		)),
 	)
 	serverConfig := &financeGrpc.Config{App: a.Application, Metric: a.metric, Logger: a.logger}

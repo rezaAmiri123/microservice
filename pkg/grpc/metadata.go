@@ -11,6 +11,7 @@ const (
 	GrpcGatewayUserAgentHeader = "grpcgateway-user-agent"
 	UserAgentHeader            = "user-agent"
 	XForwardedForHeader        = "x-forwarded-for"
+	Payload                    = "payload"
 )
 
 type Metadata struct {

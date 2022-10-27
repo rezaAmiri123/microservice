@@ -2,6 +2,7 @@
 package token
 
 import (
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -47,6 +48,26 @@ func (payload *Payload) Valid() error {
 		return ErrExpiredToken
 	}
 	return nil
+}
+
+// Jsonify payload
+func (payload Payload) Marshal() string {
+
+	jsonData, err := json.Marshal(payload)
+	if err != nil {
+		panic(err)
+	}
+	return string(jsonData)
+
+}
+func UnarshalPayload(str string) (Payload, error) {
+	var payload Payload
+	err := json.Unmarshal([]byte(str), &payload)
+	if err != nil {
+		return Payload{}, err
+	}
+	return payload, nil
+
 }
 
 type Config struct {

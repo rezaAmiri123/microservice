@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type FinanceServiceClient interface {
 	CreateAccount(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*CreateAccountResponse, error)
 	CreateTransfer(ctx context.Context, in *CreateTransferRequest, opts ...grpc.CallOption) (*CreateTransferResponse, error)
+	ListTransfer(ctx context.Context, in *ListTransferRequest, opts ...grpc.CallOption) (*ListTransferResponse, error)
 }
 
 type financeServiceClient struct {
@@ -52,12 +53,22 @@ func (c *financeServiceClient) CreateTransfer(ctx context.Context, in *CreateTra
 	return out, nil
 }
 
+func (c *financeServiceClient) ListTransfer(ctx context.Context, in *ListTransferRequest, opts ...grpc.CallOption) (*ListTransferResponse, error) {
+	out := new(ListTransferResponse)
+	err := c.cc.Invoke(ctx, "/grpc.financeService/ListTransfer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FinanceServiceServer is the server API for FinanceService service.
 // All implementations must embed UnimplementedFinanceServiceServer
 // for forward compatibility
 type FinanceServiceServer interface {
 	CreateAccount(context.Context, *CreateAccountRequest) (*CreateAccountResponse, error)
 	CreateTransfer(context.Context, *CreateTransferRequest) (*CreateTransferResponse, error)
+	ListTransfer(context.Context, *ListTransferRequest) (*ListTransferResponse, error)
 	mustEmbedUnimplementedFinanceServiceServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedFinanceServiceServer) CreateAccount(context.Context, *CreateA
 }
 func (UnimplementedFinanceServiceServer) CreateTransfer(context.Context, *CreateTransferRequest) (*CreateTransferResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTransfer not implemented")
+}
+func (UnimplementedFinanceServiceServer) ListTransfer(context.Context, *ListTransferRequest) (*ListTransferResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTransfer not implemented")
 }
 func (UnimplementedFinanceServiceServer) mustEmbedUnimplementedFinanceServiceServer() {}
 
@@ -120,6 +134,24 @@ func _FinanceService_CreateTransfer_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FinanceService_ListTransfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTransferRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FinanceServiceServer).ListTransfer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc.financeService/ListTransfer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FinanceServiceServer).ListTransfer(ctx, req.(*ListTransferRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FinanceService_ServiceDesc is the grpc.ServiceDesc for FinanceService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var FinanceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateTransfer",
 			Handler:    _FinanceService_CreateTransfer_Handler,
+		},
+		{
+			MethodName: "ListTransfer",
+			Handler:    _FinanceService_ListTransfer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

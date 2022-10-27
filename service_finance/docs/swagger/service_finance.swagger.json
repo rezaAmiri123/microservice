@@ -87,6 +87,40 @@
           "financeService"
         ]
       }
+    },
+    "/v1/list_transfer": {
+      "post": {
+        "summary": "List transfera",
+        "description": "Use this API to list transfers",
+        "operationId": "financeService_ListTransfer",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/grpcListTransferResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/grpcListTransferRequest"
+            }
+          }
+        ],
+        "tags": [
+          "financeService"
+        ]
+      }
     }
   },
   "definitions": {
@@ -162,6 +196,52 @@
       "properties": {
         "transfer": {
           "$ref": "#/definitions/grpcTransfer"
+        }
+      }
+    },
+    "grpcListTransferRequest": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "string",
+          "format": "int64"
+        },
+        "size": {
+          "type": "string",
+          "format": "int64"
+        },
+        "order": {
+          "type": "string"
+        }
+      }
+    },
+    "grpcListTransferResponse": {
+      "type": "object",
+      "properties": {
+        "TotalCount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "TotalPages": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Page": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Size": {
+          "type": "string",
+          "format": "int64"
+        },
+        "HasMore": {
+          "type": "boolean"
+        },
+        "transfers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/grpcTransfer"
+          }
         }
       }
     },

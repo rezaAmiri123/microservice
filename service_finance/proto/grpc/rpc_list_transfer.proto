@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package grpc;
+
+import "transfer.proto";
+
+option go_package = "github.com/rezaAmiri123/microservice/service_finance/proto/grpc";
+
+message ListTransferRequest{
+    int64 page = 1;
+    int64 size = 2;
+    string order = 3;
+  }
+
+message ListTransferResponse {
+  int64 TotalCount = 1;
+  int64 TotalPages = 2;
+  int64 Page = 3;
+  int64 Size = 4;
+  bool HasMore = 5;
+  repeated Transfer transfers = 6;
+}

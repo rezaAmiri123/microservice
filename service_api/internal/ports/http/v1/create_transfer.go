@@ -5,8 +5,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/opentracing/opentracing-go"
+	"github.com/rezaAmiri123/microservice/pkg/auth"
 	"github.com/rezaAmiri123/microservice/service_api/internal/domain/api"
-	"github.com/rezaAmiri123/microservice/service_api/internal/utils"
 )
 
 func (h *HttpServer) CreateTransfer() echo.HandlerFunc {
@@ -29,7 +29,7 @@ func (h *HttpServer) CreateTransfer() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 
-		payload := utils.PayloadFromCtx(ctx)
+		payload := auth.PayloadFromCtx(ctx)
 		req.OwnerId = payload.UserID
 
 		res, err := h.app.Commands.CreateTransfer.Handle(ctx, req)
