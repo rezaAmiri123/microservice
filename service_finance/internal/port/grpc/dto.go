@@ -27,3 +27,19 @@ func TransferToGrpc(f *finance.Transfer) *financeService.Transfer {
 	res.UpdatedAt = timestamppb.New(f.UpdatedAt)
 	return res
 }
+
+func TransferListToGrpc(f *finance.ListTransferResult) *financeService.ListTransferResponse {
+	res := &financeService.ListTransferResponse{}
+	res.TotalCount = f.TotalCount
+	res.TotalPages = f.TotalPages
+	res.Page = f.Page
+	res.Size = f.Size
+	res.HasMore = f.HasMore
+
+	list := make([]*financeService.Transfer, 0, len(f.Transfers))
+	for _, transfer := range f.Transfers {
+		list = append(list, TransferToGrpc(transfer))
+	}
+	res.Transfers = list
+	return res
+}

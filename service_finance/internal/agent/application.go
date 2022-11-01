@@ -33,6 +33,7 @@ func (a *Agent) setupApplication() error {
 		},
 		Queries: app.Queries{
 			GetAccountByID: queries.NewGetAccountByIDHandler(repo, a.logger),
+			GetTransfers:   queries.NewGetTransfersHandler(repo, a.logger),
 		},
 	}
 	a.Application = application

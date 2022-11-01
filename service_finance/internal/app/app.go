@@ -12,6 +12,7 @@ type Application struct {
 
 type Queries struct {
 	GetAccountByID *queries.GetAccountByIDHandler
+	GetTransfers   *queries.GetTransfersHandler
 }
 
 type Commands struct {

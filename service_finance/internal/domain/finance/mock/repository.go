@@ -126,10 +126,10 @@ func (mr *MockRepositoryMockRecorder) GetAccountByID(ctx, accountID interface{})
 }
 
 // ListTransfer mocks base method.
-func (m *MockRepository) ListTransfer(ctx context.Context, arg finance.ListTransferParams) (finance.ListTransferResult, error) {
+func (m *MockRepository) ListTransfer(ctx context.Context, arg finance.ListTransferParams) (*finance.ListTransferResult, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListTransfer", ctx, arg)
-	ret0, _ := ret[0].(finance.ListTransferResult)
+	ret0, _ := ret[0].(*finance.ListTransferResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

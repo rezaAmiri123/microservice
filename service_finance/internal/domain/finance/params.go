@@ -1,13 +1,16 @@
 package finance
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"github.com/rezaAmiri123/microservice/pkg/pagnation"
+)
 
 type (
-	FilterParams struct {
-		Page  int64  `json:"page"`
-		Size  int64  `json:"size"`
-		Order string `json:"order"`
-	}
+	// FilterParams struct {
+	// 	Page  int64  `json:"page"`
+	// 	Size  int64  `json:"size"`
+	// 	Order string `json:"order"`
+	// }
 
 	ListResult struct {
 		TotalCount int64 `json:"total_count"`
@@ -30,12 +33,12 @@ type (
 	}
 
 	ListTransferParams struct {
-		FilterParams
+		Paginate pagnation.Pagination
 	}
 
 	ListTransferResult struct {
 		ListResult
-		Transfers []Transfer
+		Transfers []*Transfer
 	}
 
 	CreateEntryParams struct {

@@ -15,6 +15,7 @@ type Config struct {
 type FinanceServiceMetric struct {
 	CreateAccountGrpcRequests  prometheus.Counter
 	CreateTransferGrpcRequests prometheus.Counter
+	ListTransferGrpcRequests   prometheus.Counter
 	// UpdateUserGrpcRequests prometheus.Counter
 	// LoginRequests          prometheus.Counter
 	SuccessGrpcRequests prometheus.Counter
@@ -30,6 +31,10 @@ func NewFinanceServiceMetric(cfg *Config) *FinanceServiceMetric {
 		CreateTransferGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
 			Name: fmt.Sprintf("%s_create_transfer_grpc_requests_total", cfg.MetricServiceName),
 			Help: "The total of create transfer grpc requests",
+		}),
+		ListTransferGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
+			Name: fmt.Sprintf("%s_list_transfer_grpc_requests_total", cfg.MetricServiceName),
+			Help: "The total of list transfer grpc requests",
 		}),
 		// UpdateUserGrpcRequests: promauto.NewCounter(prometheus.CounterOpts{
 		// 	Name: fmt.Sprintf("%s_update_user_grpc_requests_total", cfg.MetricServiceHostPort),
