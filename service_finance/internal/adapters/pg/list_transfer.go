@@ -12,10 +12,15 @@ const (
 	// listTransfer = `SELECT transfer_id, from_account_id, to_account_id, amount, updated_at, created_at
 	// 					FROM transfers
 	// 					ORDER BY COALESCE(NULLIF($3, ''), created_at) OFFSET $1 LIMIT $2`
-	listTransfer = `SELECT transfer_id, from_account_id, to_account_id, amount, updated_at, created_at 
-						FROM transfers 
-						ORDER BY $3 OFFSET $1 LIMIT $2`
-	getTotalTransferCount = `SELECT COUNT(transfer_id) FROM transfers`
+	listTransfer = `SELECT t.transfer_id, t.from_account_id, t.to_account_id, t.amount, t.updated_at, t.created_at 
+						FROM transfers AS t
+						INNER JOIN accounts AS a ON a.account_id = t.from_account_id
+						WHERE a.owner_id = $1
+						ORDER BY $4 OFFSET $2 LIMIT $3`
+
+	getTotalTransferCount = `SELECT COUNT(transfer_id) FROM transfers AS t
+								INNER JOIN accounts AS a ON a.account_id = t.from_account_id
+								WHERE a.owner_id = $1`
 )
 
 func (r PGFinanceRepository) ListTransfer(ctx context.Context, arg finance.ListTransferParams) (*finance.ListTransferResult, error) {
@@ -23,7 +28,7 @@ func (r PGFinanceRepository) ListTransfer(ctx context.Context, arg finance.ListT
 	defer span.Finish()
 
 	var totalCount int
-	if err := r.GetDB().GetContext(ctx, &totalCount, getTotalTransferCount); err != nil {
+	if err := r.GetDB().GetContext(ctx, &totalCount, getTotalTransferCount, arg.OwnerID); err != nil {
 		return nil, fmt.Errorf("database connot get transfer count: %w", err)
 	}
 
@@ -39,7 +44,13 @@ func (r PGFinanceRepository) ListTransfer(ctx context.Context, arg finance.ListT
 	}
 
 	var transfersList = make([]*finance.Transfer, 0, arg.Paginate.GetSize())
-	rows, err := r.GetDB().QueryxContext(ctx, listTransfer, arg.Paginate.GetOffset(), arg.Paginate.GetLimit(), arg.Paginate.GetOrderBy())
+	rows, err := r.GetDB().QueryxContext(
+		ctx,
+		listTransfer,
+		arg.OwnerID,
+		arg.Paginate.GetOffset(),
+		arg.Paginate.GetLimit(),
+		arg.Paginate.GetOrderBy())
 	if err != nil {
 		return nil, fmt.Errorf("database connot get transfer list: %w", err)
 	}

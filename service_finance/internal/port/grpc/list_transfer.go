@@ -2,8 +2,11 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/opentracing/opentracing-go"
+	"github.com/rezaAmiri123/microservice/pkg/auth"
 	pkgGrpc "github.com/rezaAmiri123/microservice/pkg/grpc"
 	"github.com/rezaAmiri123/microservice/pkg/pagnation"
 	"github.com/rezaAmiri123/microservice/service_finance/internal/domain/finance"
@@ -45,5 +48,13 @@ func (s *FinanceGRPCServer) validateListTransferRequest(ctx context.Context, req
 	arg.Paginate = page
 
 	// TODO make filter based on user
+	payload := auth.PayloadFromCtx(ctx)
+	fmt.Println(payload)
+	ownerID, err := uuid.Parse(payload.UserID)
+	if err != nil {
+		err = fmt.Errorf("owner id is wrong: %v", err)
+		violation = append(violation, pkgGrpc.FieldViolation("owner_id", err))
+	}
+	arg.OwnerID = ownerID
 	return
 }

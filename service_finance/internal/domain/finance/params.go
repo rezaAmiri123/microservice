@@ -33,6 +33,7 @@ type (
 	}
 
 	ListTransferParams struct {
+		OwnerID  uuid.UUID `json:"owner_id"`
 		Paginate pagnation.Pagination
 	}
 
