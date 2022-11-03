@@ -46,14 +46,13 @@ func (h *CreateTransferHandler) Handle(ctx context.Context, req *api.CreateTrans
 	// TransferID, _ := utils.ConvertBase64ToUUID(transfer.TransferId)
 	// FromAccountId, _ := utils.ConvertBase64ToUUID(transfer.FromAccountId)
 	// ToAccountId, _ := utils.ConvertBase64ToUUID(transfer.ToAccountId)
-	res := &api.CreateTransferResponse{
-		TransferID:    transfer.TransferId,
-		FromAccountId: transfer.FromAccountId,
-		ToAccountId:   transfer.ToAccountId,
-		Amount:        transfer.Amount,
-		CreatedAt:     transfer.CreatedAt.AsTime(),
-		UpdatedAt:     transfer.UpdatedAt.AsTime(),
-	}
+	res := &api.CreateTransferResponse{}
+	res.TransferID = transfer.TransferId
+	res.FromAccountId = transfer.FromAccountId
+	res.ToAccountId = transfer.ToAccountId
+	res.Amount = transfer.Amount
+	res.CreatedAt = transfer.CreatedAt.AsTime()
+	res.UpdatedAt = transfer.UpdatedAt.AsTime()
 
 	return res, nil
 }

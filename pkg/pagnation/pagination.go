@@ -19,7 +19,14 @@ type PaginationImpl struct {
 
 // NewPaginationQuery Pagination query constructor
 func NewPaginationQuery(size int, page int, orderBy string) Pagination {
-	return &PaginationImpl{Size: size, Page: page, OrderBy: orderBy}
+	p := &PaginationImpl{Size: defaultSize, Page: 1, OrderBy: orderBy}
+	if size > 1 {
+		p.Size = size
+	}
+	if page > 1 {
+		p.Page = page
+	}
+	return p
 }
 
 func NewPaginationFromQueryParams(size string, page string) Pagination {

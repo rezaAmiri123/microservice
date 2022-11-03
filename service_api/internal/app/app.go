@@ -1,6 +1,9 @@
 package app
 
-import command "github.com/rezaAmiri123/microservice/service_api/internal/app/commands"
+import (
+	command "github.com/rezaAmiri123/microservice/service_api/internal/app/commands"
+	query "github.com/rezaAmiri123/microservice/service_api/internal/app/queries"
+)
 
 type Application struct {
 	Commands Commands
@@ -8,6 +11,7 @@ type Application struct {
 }
 
 type Queries struct {
+	GetTransfers *query.GetTransfersHandler
 }
 
 type Commands struct {

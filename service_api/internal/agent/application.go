@@ -8,6 +8,7 @@ import (
 	pkgGrpc "github.com/rezaAmiri123/microservice/pkg/grpc"
 	"github.com/rezaAmiri123/microservice/service_api/internal/app"
 	"github.com/rezaAmiri123/microservice/service_api/internal/app/commands"
+	"github.com/rezaAmiri123/microservice/service_api/internal/app/queries"
 	financerpc "github.com/rezaAmiri123/microservice/service_finance/proto/grpc"
 	userrpc "github.com/rezaAmiri123/microservice/service_user/proto/grpc"
 )
@@ -52,7 +53,9 @@ func (a *Agent) setupApplication() error {
 			CreateAccount:  commands.NewCreateAccountHandler(financeClient, a.logger),
 			CreateTransfer: commands.NewCreateTransferHandler(financeClient, a.logger),
 		},
-		Queries: app.Queries{},
+		Queries: app.Queries{
+			GetTransfers: queries.NewGetTransfersHandler(financeClient, a.logger),
+		},
 	}
 
 	a.Application = application
