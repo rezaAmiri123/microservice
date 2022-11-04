@@ -1,6 +1,10 @@
 package logger
 
-import "time"
+import (
+	"time"
+
+	"github.com/rezaAmiri123/microservice/pkg/logger/tag"
+)
 
 const (
 	Topic     = "topic"
@@ -17,6 +21,15 @@ const (
 	REPLY    = "REPLY"
 	TIME     = "TIME"
 )
+
+type TagLogger interface {
+	Debug(msg string, tags ...tag.Tag)
+	Info(msg string, tags ...tag.Tag)
+	Warn(msg string, tags ...tag.Tag)
+	Error(msg string, tags ...tag.Tag)
+	Fatal(msg string, tags ...tag.Tag)
+	WithTags(tags ...tag.Tag) TagLogger
+}
 
 // Logger methods interface
 type Logger interface {
