@@ -1,0 +1,16 @@
+type: google.api.Service
+config_version: 3
+http:
+  rules:
+    - selector: userspb.UserService.CreateUser
+      post: /api/users
+      body: "*"
+    - selector: userspb.UserService.UpdateUser
+      put: /api/users
+      body: "*"
+    - selector: userspb.UserService.Login
+      post: /api/login
+      body: "*"
+    - selector: userspb.UserService.LoginVerify
+      ppst: /api/login-verify
+      body: "*"

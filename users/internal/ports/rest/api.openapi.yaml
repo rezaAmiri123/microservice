@@ -1,0 +1,33 @@
+openapiOptions:
+  file:
+    - file: "userspb/api.proto"
+      option:
+        info:
+          title: users
+          version: "1.0.0"
+        basePath: /
+  method:
+    - method: userspb.UserService.CreateUser
+      option:
+        operationId: createUser
+        tags:
+          - User
+        summary: Create a new user
+    - method: userspb.UserService.UpdateUser
+      option:
+        operationId: updateUser
+        tags:
+          - User
+        summary: Update a user
+    - method: userspb.UserService.Login
+      option:
+        operationId: Login
+        tags:
+          - User
+        summary: login
+    - method: userspb.UserService.LoginVerify
+      option:
+        operationId: loginVerify
+        tags:
+          - User
+        summary: Login verify
