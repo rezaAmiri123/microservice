@@ -24,3 +24,11 @@ evans_tls:
 
 # set evanse header
 # header Authorization='Bearer xxxxx'
+
+user_proto:
+	protoc \
+		--go_out=userspb --go_opt=paths=source_relative \
+		--go-grpc_out=userspb --go-grpc_opt=paths=source_relative \
+		--grpc-gateway_out=userspb --grpc-gateway_opt=paths=source_relative \
+        --openapiv2_out=internal/ports/rest/ --openapiv2_opt=allow_merge=true,merge_file_name=api \
+		--proto_path=userspb userspb/*.proto

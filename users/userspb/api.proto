@@ -1,16 +1,67 @@
 syntax = "proto3";
 
 package userspb;
-
+option go_package = "github.com/rezaAmiri123/microservice/users/userspb";
 //option go_package = "github.com/rezaAmiri123/microservice/service_user/proto/grpc";
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "User Service API";
+    version: "1.2";
+    contact: {
+      name: "User service";
+      url: "https://github.com/rezaAmiri123/microservice/users";
+      // email: "example@example.com";
+    };
+  };
+};
 
 service UserService{
-  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
-  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {}
-  rpc Login (LoginUserRequest) returns (LoginUserResponse) {}
-  rpc LoginVerify (LoginVerifyUserRequest) returns (LoginVerifyUserResponse) {}
+  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/register_user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to register a new user";
+      summary: "Register new user";
+    };
+  }
+  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      patch: "/v1/update_user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to update user";
+      summary: "Update user";
+    };
+  }
+  rpc Login (LoginUserRequest) returns (LoginUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/login"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to login user and get access token & refresh token";
+      summary: "Login user";
+    };
+  }
+  rpc LoginVerify (LoginVerifyUserRequest) returns (LoginVerifyUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/login_verify"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to verify login user payload";
+      summary: "Login verify user";
+    };
+  }
 }
+
 message User {
   string user_uuid = 1;
   string username = 2;
@@ -57,7 +108,7 @@ message LoginVerifyUserResponse {
   google.protobuf.Timestamp issued_at = 4;
   google.protobuf.Timestamp expired_at = 5;
 }
-message CreateUserRequest {
+message RegisterUserRequest {
   string username = 1;
   string password = 2;
   string email = 3;
@@ -65,6 +116,6 @@ message CreateUserRequest {
   string image = 5;
 }
 
-message CreateUserResponse {
-  User user = 1;
+message RegisterUserResponse {
+  string id = 1;
 }

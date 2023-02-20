@@ -73,7 +73,10 @@ func (a *Agent) setupGrpcServer() error {
 		opts = append(opts, grpc.Creds(creds))
 	}
 
-	serverConfig := &userGrpc.Config{}
+	serverConfig := &userGrpc.Config{
+		App:    a.Application,
+		Logger: a.logger,
+	}
 	grpcServer, _ := userGrpc.NewGrpcServer(serverConfig, opts...)
 	//grpcServer := grpc.NewServer(opts...)
 	//userService.RegisterUserServiceServer(grpcServer, server)

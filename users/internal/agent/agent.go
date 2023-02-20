@@ -2,6 +2,8 @@ package agent
 
 import (
 	"context"
+	"github.com/rezaAmiri123/microservice/pkg/logger"
+	"github.com/rezaAmiri123/microservice/users/internal/app"
 	"io"
 	"net/http"
 	"sync"
@@ -63,12 +65,12 @@ type Agent struct {
 
 	//GrpcServerTLSConfig *tls.Config
 
-	//logger logger.Logger
+	logger logger.Logger
 	//metric *metrics.UserServiceMetric
 	httpServer *http.Server
 	grpcServer *grpc.Server
 	//repository  user.Repository
-	//Application *app.Application
+	Application *app.Application
 	//Maker       token.Maker
 	// AuthClient  auth.AuthClient
 

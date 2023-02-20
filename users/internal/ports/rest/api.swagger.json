@@ -1,15 +1,18 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "users",
-    "version": "1.0.0"
+    "title": "User Service API",
+    "version": "1.2",
+    "contact": {
+      "name": "User service",
+      "url": "https://github.com/rezaAmiri123/microservice/users"
+    }
   },
   "tags": [
     {
       "name": "UserService"
     }
   ],
-  "basePath": "/",
   "consumes": [
     "application/json"
   ],
@@ -17,10 +20,11 @@
     "application/json"
   ],
   "paths": {
-    "/api/login": {
+    "/v1/login": {
       "post": {
-        "summary": "login",
-        "operationId": "Login",
+        "summary": "Login user",
+        "description": "Use this API to login user and get access token \u0026 refresh token",
+        "operationId": "UserService_Login",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -46,19 +50,20 @@
           }
         ],
         "tags": [
-          "User"
+          "UserService"
         ]
       }
     },
-    "/api/users": {
+    "/v1/login_verify": {
       "post": {
-        "summary": "Create a new user",
-        "operationId": "createUser",
+        "summary": "Login verify user",
+        "description": "Use this API to verify login user payload",
+        "operationId": "UserService_LoginVerify",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/userspbCreateUserResponse"
+              "$ref": "#/definitions/userspbLoginVerifyUserResponse"
             }
           },
           "default": {
@@ -74,17 +79,54 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/userspbCreateUserRequest"
+              "$ref": "#/definitions/userspbLoginVerifyUserRequest"
             }
           }
         ],
         "tags": [
-          "User"
+          "UserService"
         ]
-      },
-      "put": {
-        "summary": "Update a user",
-        "operationId": "updateUser",
+      }
+    },
+    "/v1/register_user": {
+      "post": {
+        "summary": "Register new user",
+        "description": "Use this API to register a new user",
+        "operationId": "UserService_RegisterUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/userspbRegisterUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userspbRegisterUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/update_user": {
+      "patch": {
+        "summary": "Update user",
+        "description": "Use this API to update user",
+        "operationId": "UserService_UpdateUser",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -110,7 +152,7 @@
           }
         ],
         "tags": [
-          "User"
+          "UserService"
         ]
       }
     }
@@ -140,34 +182,6 @@
           "items": {
             "$ref": "#/definitions/protobufAny"
           }
-        }
-      }
-    },
-    "userspbCreateUserRequest": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "bio": {
-          "type": "string"
-        },
-        "image": {
-          "type": "string"
-        }
-      }
-    },
-    "userspbCreateUserResponse": {
-      "type": "object",
-      "properties": {
-        "user": {
-          "$ref": "#/definitions/userspbUser"
         }
       }
     },
@@ -207,6 +221,14 @@
         }
       }
     },
+    "userspbLoginVerifyUserRequest": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
+    },
     "userspbLoginVerifyUserResponse": {
       "type": "object",
       "properties": {
@@ -226,6 +248,34 @@
         "expiredAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "userspbRegisterUserRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        }
+      }
+    },
+    "userspbRegisterUserResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
         }
       }
     },

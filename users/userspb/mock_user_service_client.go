@@ -15,39 +15,6 @@ type MockUserServiceClient struct {
 	mock.Mock
 }
 
-// CreateUser provides a mock function with given fields: ctx, in, opts
-func (_m *MockUserServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
-	_va := make([]interface{}, len(opts))
-	for _i := range opts {
-		_va[_i] = opts[_i]
-	}
-	var _ca []interface{}
-	_ca = append(_ca, ctx, in)
-	_ca = append(_ca, _va...)
-	ret := _m.Called(_ca...)
-
-	var r0 *CreateUserResponse
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *CreateUserRequest, ...grpc.CallOption) (*CreateUserResponse, error)); ok {
-		return rf(ctx, in, opts...)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, *CreateUserRequest, ...grpc.CallOption) *CreateUserResponse); ok {
-		r0 = rf(ctx, in, opts...)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*CreateUserResponse)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, *CreateUserRequest, ...grpc.CallOption) error); ok {
-		r1 = rf(ctx, in, opts...)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // Login provides a mock function with given fields: ctx, in, opts
 func (_m *MockUserServiceClient) Login(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error) {
 	_va := make([]interface{}, len(opts))
@@ -106,6 +73,39 @@ func (_m *MockUserServiceClient) LoginVerify(ctx context.Context, in *LoginVerif
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, *LoginVerifyUserRequest, ...grpc.CallOption) error); ok {
+		r1 = rf(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// RegisterUser provides a mock function with given fields: ctx, in, opts
+func (_m *MockUserServiceClient) RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error) {
+	_va := make([]interface{}, len(opts))
+	for _i := range opts {
+		_va[_i] = opts[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, in)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 *RegisterUserResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *RegisterUserRequest, ...grpc.CallOption) (*RegisterUserResponse, error)); ok {
+		return rf(ctx, in, opts...)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *RegisterUserRequest, ...grpc.CallOption) *RegisterUserResponse); ok {
+		r0 = rf(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*RegisterUserResponse)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *RegisterUserRequest, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)
