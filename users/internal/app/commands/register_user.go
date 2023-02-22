@@ -18,11 +18,11 @@ type (
 	RegisterUserHandler struct {
 		logger    logger.Logger
 		repo      domain.UserRepository
-		publisher ddd.EventPublisher
+		publisher ddd.EventPublisher[ddd.AggregateEvent]
 	}
 )
 
-func NewRegisterUserHandler(repo domain.UserRepository, logger logger.Logger, publisher ddd.EventPublisher) *RegisterUserHandler {
+func NewRegisterUserHandler(repo domain.UserRepository, logger logger.Logger, publisher ddd.EventPublisher[ddd.AggregateEvent]) *RegisterUserHandler {
 	if repo == nil {
 		panic("userRepo is nil")
 	}
@@ -45,7 +45,7 @@ func (h RegisterUserHandler) Handle(ctx context.Context, reg RegisterUser) error
 	}
 
 	// publish domain events
-	if err = h.publisher.Publish(ctx, u.GetEvents()...); err != nil {
+	if err = h.publisher.Publish(ctx, u.Events()...); err != nil {
 		h.logger.Errorf("cannot publish user event: %v", err)
 		return err
 	}

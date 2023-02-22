@@ -16,9 +16,11 @@ var (
 	ErrUserAlreadyDisabled   = errors.Wrap(errors.ErrBadRequest, "the user is already disabled")
 )
 
+const UserAggregate = "users.UserAggregate"
+
 // User is user model
 type User struct {
-	ddd.AggregateBase
+	ddd.Aggregate
 	//ID        string    `json:"id" db:"id"`
 	Username  string    `json:"username" db:"username" validate:"required,min=6,max=30"`
 	Password  string    `json:"password" db:"password" validate:"required,min=8,max=15"`
@@ -32,9 +34,7 @@ type User struct {
 
 func NewUser(id string) *User {
 	return &User{
-		AggregateBase: ddd.AggregateBase{
-			ID: id,
-		},
+		Aggregate: ddd.NewAggregate(id, UserAggregate),
 	}
 }
 func RegisterUser(id, username, password, email string) (*User, error) {
@@ -59,7 +59,7 @@ func RegisterUser(id, username, password, email string) (*User, error) {
 	if err := user.hashPassword(); err != nil {
 		return nil, errors.ErrInternal.Msgf("failed to hash password: %w", err.Error())
 	}
-	user.AddEvent(&UserRegistered{
+	user.AddEvent(UserRegisteredEvent, &UserRegistered{
 		User: user,
 	})
 	return user, nil
@@ -72,7 +72,7 @@ func (u *User) Enable() error {
 
 	u.Enabled = true
 
-	u.AddEvent(&UserEnabled{
+	u.AddEvent(UserEnabledEvent, &UserEnabled{
 		User: u,
 	})
 	return nil
@@ -84,7 +84,7 @@ func (u *User) Disable() error {
 
 	u.Enabled = false
 
-	u.AddEvent(&UserDisabled{
+	u.AddEvent(UserDisabledEvent, &UserDisabled{
 		User: u,
 	})
 

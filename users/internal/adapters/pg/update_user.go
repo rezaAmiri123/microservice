@@ -23,7 +23,7 @@ func (r *PGUserRepository) Update(ctx context.Context, user *domain.User) error 
 	if err := r.DB.QueryRowxContext(
 		ctx,
 		updateUser,
-		user.GetID(),
+		user.ID(),
 		&user.Username,
 		//&user.Password,
 		&user.Email,

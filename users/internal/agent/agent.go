@@ -86,12 +86,12 @@ func NewAgent(config Config) (*Agent, error) {
 		shutdowns: make(chan struct{}),
 	}
 	setupsFn := []func() error{
-		//a.setupLogger,
+		a.setupLogger,
 		//a.setupMetric,
 
 		//a.setupRepository,
 		//a.setupTracing,
-		//a.setupApplication,
+		a.setupApplication,
 		//a.setupAuthClient,
 		a.setupGrpcServer,
 		a.setupHttpServer,

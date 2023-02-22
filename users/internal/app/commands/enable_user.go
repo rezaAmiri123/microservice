@@ -15,11 +15,11 @@ type (
 	EnableUserHandler struct {
 		logger    logger.Logger
 		repo      domain.UserRepository
-		publisher ddd.EventPublisher
+		publisher ddd.EventPublisher[ddd.AggregateEvent]
 	}
 )
 
-func NewEnableUserHandler(repo domain.UserRepository, logger logger.Logger, publisher ddd.EventPublisher) *EnableUserHandler {
+func NewEnableUserHandler(repo domain.UserRepository, logger logger.Logger, publisher ddd.EventPublisher[ddd.AggregateEvent]) *EnableUserHandler {
 	if repo == nil {
 		panic("userRepo is nil")
 	}
@@ -43,7 +43,7 @@ func (h EnableUserHandler) Handle(ctx context.Context, reg EnableUser) error {
 	}
 
 	// publish domain events
-	if err = h.publisher.Publish(ctx, u.GetEvents()...); err != nil {
+	if err = h.publisher.Publish(ctx, u.Events()...); err != nil {
 		return err
 	}
 

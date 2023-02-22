@@ -54,6 +54,6 @@ func (a *Agent) setupGrpcEndpoint(mux *chi.Mux) error {
 	}
 
 	// mount the GRPC gateway
-	mux.Mount("/api/users", gateway)
+	mux.Mount("/v1", gateway)
 	return nil
 }

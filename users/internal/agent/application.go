@@ -26,7 +26,7 @@ func (a *Agent) setupApplication() error {
 	repo := pg.NewPGUserRepository(dbConn, a.logger)
 
 	// setup Driven adapters
-	domainDispatcher := ddd.NewEventDispatcher()
+	domainDispatcher := ddd.NewEventDispatcher[ddd.AggregateEvent]()
 
 	application := &app.Application{
 		Commands: app.Commands{

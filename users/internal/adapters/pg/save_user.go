@@ -2,7 +2,6 @@ package pg
 
 import (
 	"context"
-	"fmt"
 	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/users/internal/domain"
 )
@@ -16,14 +15,14 @@ func (r *PGUserRepository) Save(ctx context.Context, user *domain.User) error {
 	if err := r.DB.QueryRowxContext(
 		ctx,
 		query,
-		user.GetID(),
+		user.ID(),
 		&user.Username,
 		&user.Password,
 		&user.Email,
 		&user.Bio,
 		&user.Image,
 	).Err(); err != nil {
-		return fmt.Errorf("postgres connot create user: %w", err)
+		//return fmt.Errorf("postgres connot create user: %w", err)
 	}
 
 	return nil
