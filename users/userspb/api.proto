@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package userspb;
 option go_package = "github.com/rezaAmiri123/microservice/users/userspb";
-//option go_package = "github.com/rezaAmiri123/microservice/service_user/proto/grpc";
+
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";

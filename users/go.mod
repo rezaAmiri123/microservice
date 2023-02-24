@@ -9,6 +9,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.0
 	github.com/jmoiron/sqlx v1.3.5
+	github.com/nats-io/nats.go v1.23.0
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/prometheus/client_golang v1.13.0
 	github.com/rezaAmiri123/microservice/pkg v0.0.0-20221010175257-a14a68aad1e6
@@ -31,7 +32,11 @@ require (
 	github.com/jackc/pgx v3.6.2+incompatible // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
+	github.com/minio/highwayhash v1.0.2 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/nats-io/jwt/v2 v2.3.0 // indirect
+	github.com/nats-io/nkeys v0.3.0 // indirect
+	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

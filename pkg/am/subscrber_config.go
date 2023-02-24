@@ -67,7 +67,7 @@ func (s MessageFilter) configureSubscriberConfig(cfg *SubscriberConfig) {
 type GroupName string
 
 func (n GroupName) configureSubscriberConfig(cfg *SubscriberConfig) {
-	cfg.groupName = n
+	cfg.groupName = string(n)
 }
 
 func (t AckType) configureSubscriberConfig(cfg *SubscriberConfig) {
