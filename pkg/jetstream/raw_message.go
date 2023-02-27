@@ -26,6 +26,7 @@ func (m *rawMessage) Ack() error {
 	m.acked = true
 	return m.ackFn()
 }
+
 func (m *rawMessage) NAck() error {
 	if m.acked {
 		return nil
@@ -33,13 +34,16 @@ func (m *rawMessage) NAck() error {
 	m.acked = true
 	return m.nackFn()
 }
+
 func (m rawMessage) Extend() error {
 	return m.extendFn()
 }
+
 func (m *rawMessage) Kill() error {
 	if m.acked {
 		return nil
 	}
+
 	m.acked = true
 	return m.killFn()
 }

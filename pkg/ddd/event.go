@@ -6,6 +6,10 @@ import (
 )
 
 type (
+	EventOption interface {
+		configureEvent(*event)
+	}
+
 	EventPayload interface{}
 
 	Event interface {

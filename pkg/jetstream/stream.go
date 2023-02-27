@@ -5,21 +5,26 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/nats-io/nats.go"
 	"github.com/rezaAmiri123/microservice/pkg/am"
+	"github.com/rezaAmiri123/microservice/pkg/logger"
+	"sync"
 )
 
-const maxReties = 5
+const maxRetries = 5
 
 type Stream struct {
 	streamName string
 	js         nats.JetStreamContext
+	mu         sync.Mutex
+	logger     logger.Logger
 }
 
-var _ am.MessageStream[am.RawMessage, am.RawMessage] = (*Stream)(nil)
+var _ am.RawMessageStream = (*Stream)(nil)
 
-func NewStream(streamName string, js nats.JetStreamContext) *Stream {
+func NewStream(streamName string, js nats.JetStreamContext, logger logger.Logger) *Stream {
 	return &Stream{
 		streamName: streamName,
 		js:         js,
+		logger:     logger,
 	}
 }
 
@@ -32,7 +37,7 @@ func (s *Stream) Publish(ctx context.Context, topicName string, rawMsg am.RawMes
 		Data: rawMsg.Data(),
 	})
 	if err != nil {
-		return err
+		return
 	}
 
 	var p nats.PubAckFuture
@@ -41,12 +46,13 @@ func (s *Stream) Publish(ctx context.Context, topicName string, rawMsg am.RawMes
 		Data:    data,
 	}, nats.MsgId(rawMsg.ID()))
 	if err != nil {
-		return err
+		return
 	}
 
 	// retry a handful of times to publish the messages
 	go func(future nats.PubAckFuture, tries int) {
 		var err error
+
 		for {
 			select {
 			case <-future.Ok(): // publish acknowledged
@@ -55,21 +61,27 @@ func (s *Stream) Publish(ctx context.Context, topicName string, rawMsg am.RawMes
 				// TODO add some variable delay between tries
 				tries = tries - 1
 				if tries <= 0 {
-					// TODO do more than give up
+					//s.logger.Error().Msgf("unable to publish message after %d tries", maxRetries)
 					return
 				}
 				future, err = s.js.PublishMsgAsync(future.Msg())
 				if err != nil {
 					// TODO do more than give up
+					//s.logger.Error().Err(err).Msg("failed to publish a message")
 					return
 				}
 			}
 		}
-	}(p, maxReties)
-	return nil
+	}(p, maxRetries)
+
+	return
 }
-func (s *Stream) Subscribe(topicName string, handler am.MessageHandler[am.RawMessage], options ...am.SubscriberOption) error {
+
+func (s *Stream) Subscribe(topicName string, handler am.RawMessageHandler, options ...am.SubscriberOption) error {
 	var err error
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	subCfg := am.NewSubscriberConfig(options)
 
@@ -77,9 +89,10 @@ func (s *Stream) Subscribe(topicName string, handler am.MessageHandler[am.RawMes
 		nats.MaxDeliver(subCfg.MaxRedeliver()),
 	}
 	cfg := &nats.ConsumerConfig{
-		MaxDeliver: subCfg.MaxRedeliver(),
+		MaxDeliver:     subCfg.MaxRedeliver(),
+		DeliverSubject: topicName,
+		FilterSubject:  topicName,
 	}
-
 	if groupName := subCfg.GroupName(); groupName != "" {
 		cfg.DeliverSubject = groupName
 		cfg.DeliverGroup = groupName
@@ -110,16 +123,18 @@ func (s *Stream) Subscribe(topicName string, handler am.MessageHandler[am.RawMes
 	} else {
 		_, err = s.js.QueueSubscribe(topicName, groupName, s.handleMsg(subCfg, handler), opts...)
 	}
+
 	return nil
 }
-func (s *Stream) handleMsg(cfg am.SubscriberConfig, handler am.MessageHandler[am.RawMessage]) func(*nats.Msg) {
+
+func (s *Stream) handleMsg(cfg am.SubscriberConfig, handler am.RawMessageHandler) func(*nats.Msg) {
 	return func(natsMsg *nats.Msg) {
 		var err error
 
 		m := &StreamMessage{}
 		err = proto.Unmarshal(natsMsg.Data, m)
 		if err != nil {
-			// TODO Nak? ... logging?
+			//s.logger.Warn().Err(err).Msg("failed to unmarshal the *nats.Msg")
 			return
 		}
 
@@ -145,7 +160,7 @@ func (s *Stream) handleMsg(cfg am.SubscriberConfig, handler am.MessageHandler[am
 		if cfg.AckType() == am.AckTypeAuto {
 			err = msg.Ack()
 			if err != nil {
-				// TODO logging?
+				//s.logger.Warn().Err(err).Msg("failed to auto-Ack a message")
 			}
 		}
 
@@ -153,12 +168,13 @@ func (s *Stream) handleMsg(cfg am.SubscriberConfig, handler am.MessageHandler[am
 		case err = <-errc:
 			if err == nil {
 				if ackErr := msg.Ack(); ackErr != nil {
-					// TODO logging?
+					//s.logger.Warn().Err(err).Msg("failed to Ack a message")
 				}
 				return
 			}
+			//s.logger.Error().Err(err).Msg("error while handling message")
 			if nakErr := msg.NAck(); nakErr != nil {
-				// TODO logging?
+				//s.logger.Warn().Err(err).Msg("failed to Nack a message")
 			}
 		case <-wCtx.Done():
 			// TODO logging?

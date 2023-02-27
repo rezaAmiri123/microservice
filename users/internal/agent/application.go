@@ -36,11 +36,17 @@ func (a *Agent) setupApplication() error {
 	if err = userspb.Registrations(reg); err != nil {
 		return err
 	}
-	js, _ := a.nats()
-	eventStream := am.NewEventStream(reg, jetstream.NewStream("stream", js))
+	js, err := a.nats()
+	if err != nil {
+		return err
+	}
+	stream := jetstream.NewStream("stream", js, a.logger)
+	eventStream := am.NewEventStream(reg, stream)
+	commandStream := am.NewCommandStream(reg, stream)
 	domainDispatcher := ddd.NewEventDispatcher[ddd.AggregateEvent]()
-	integrationEventHandlers := commands.NewIntegrationEventHandlers(eventStream)
-	handlers.RegisterIntegrationEventHandlers(integrationEventHandlers, domainDispatcher)
+	domainEventHandlers := handlers.NewDomainEventHandlers(eventStream)
+	//integrationEventHandlers := commands.NewIntegrationEventHandlers(eventStream)
+	handlers.RegisterDomainEventHandlers(domainEventHandlers, domainDispatcher)
 
 	application := &app.Application{
 		Commands: app.Commands{
@@ -51,6 +57,11 @@ func (a *Agent) setupApplication() error {
 	}
 	a.Application = application
 
+	commandHandler := handlers.NewCommandHandlers(application)
+	if err = handlers.RegisterCommandHandlers(commandStream, commandHandler); err != nil {
+		// TODO there is a problem
+		//return err
+	}
 	return nil
 }
 
