@@ -8,34 +8,41 @@ import (
 	"github.com/rezaAmiri123/microservice/users/userspb"
 )
 
-func RegisterDomainEventHandlers(eventHandlers ddd.EventHandler[ddd.AggregateEvent], domainSubscriber ddd.EventSubscriber[ddd.AggregateEvent]) {
-	domainSubscriber.Subscribe(eventHandlers,
+//func RegisterDomainEventHandlers(eventHandlers ddd.EventHandler[ddd.AggregateEvent], domainSubscriber ddd.EventSubscriber[ddd.AggregateEvent]) {
+//	domainSubscriber.Subscribe(eventHandlers,
+//		domain.UserRegisteredEvent,
+//		domain.UserEnabledEvent,
+//		domain.UserDisabledEvent,
+//	)
+//}
+func RegisterDomainEventHandlers(subscriber ddd.EventSubscriber[ddd.AggregateEvent], handlers ddd.EventHandler[ddd.AggregateEvent]) {
+	subscriber.Subscribe(handlers,
 		domain.UserRegisteredEvent,
 		domain.UserEnabledEvent,
 		domain.UserDisabledEvent,
 	)
 }
 
-type DomainEventHandlers[T ddd.AggregateEvent] struct {
+type domainHandlers[T ddd.AggregateEvent] struct {
 	publisher am.MessagePublisher[ddd.Event]
 }
 
-var _ ddd.EventHandler[ddd.AggregateEvent] = (*DomainEventHandlers[ddd.AggregateEvent])(nil)
+var _ ddd.EventHandler[ddd.AggregateEvent] = (*domainHandlers[ddd.AggregateEvent])(nil)
 
-func NewDomainEventHandlers(publisher am.MessagePublisher[ddd.Event]) *DomainEventHandlers[ddd.AggregateEvent] {
-	return &DomainEventHandlers[ddd.AggregateEvent]{
+func NewDomainEventHandlers(publisher am.MessagePublisher[ddd.Event]) ddd.EventHandler[ddd.AggregateEvent] {
+	return &domainHandlers[ddd.AggregateEvent]{
 		publisher: publisher,
 	}
 }
 
-func (h DomainEventHandlers[T]) HandleEvent(ctx context.Context, event T) error {
+func (h domainHandlers[T]) HandleEvent(ctx context.Context, event T) error {
 	switch event.EventName() {
 	case domain.UserRegisteredEvent:
 		return h.onUserRegistered(ctx, event)
 	}
 	return nil
 }
-func (h DomainEventHandlers[T]) onUserRegistered(ctx context.Context, event ddd.AggregateEvent) error {
+func (h domainHandlers[T]) onUserRegistered(ctx context.Context, event ddd.AggregateEvent) error {
 	payload := event.Payload().(*domain.UserRegistered)
 	return h.publisher.Publish(ctx, userspb.UserAggregateChannel,
 		ddd.NewEvent(userspb.UserRegisteredEvent, &userspb.UserRegistered{

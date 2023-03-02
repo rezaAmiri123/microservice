@@ -36,6 +36,7 @@ func ValidateImplements(checkV interface{}) BuildOption {
 		if !t.Implements(checkT) {
 			return fmt.Errorf("%T does not implement %T", v, checkV)
 		}
+
 		return nil
 	}
 }

@@ -1,18 +1,18 @@
 package pg
 
 import (
-	"github.com/jmoiron/sqlx"
+	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
 	"github.com/rezaAmiri123/microservice/users/internal/domain"
 )
 
-func NewPGUserRepository(db *sqlx.DB, log logger.Logger) *PGUserRepository {
+func NewPGUserRepository(db postgres.DB, log logger.Logger) *PGUserRepository {
 	return &PGUserRepository{DB: db, Logger: log}
 }
 
 // News Repository
 type PGUserRepository struct {
-	DB     *sqlx.DB
+	DB     postgres.DB
 	Logger logger.Logger
 	//Metric *metrics.UserServiceMetric
 }

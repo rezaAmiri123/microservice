@@ -28,10 +28,12 @@ func RegisterKey(reg Registry, key string, v interface{}, s Serializer, d Deseri
 	if t.Kind() == reflect.Ptr {
 		t = t.Elem()
 	}
+
 	return reg.register(key, func() interface{} {
 		return reflect.New(t).Interface()
 	}, s, d, os)
 }
+
 func RegisterFactory(reg Registry, key string, fn func() interface{}, s Serializer, d Deserializer,
 	os []BuildOption,
 ) error {

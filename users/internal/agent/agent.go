@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
 	"github.com/rezaAmiri123/microservice/users/internal/app"
 	"io"
@@ -65,7 +66,8 @@ type Agent struct {
 
 	//GrpcServerTLSConfig *tls.Config
 
-	logger logger.Logger
+	container di.Container
+	logger    logger.Logger
 	//metric *metrics.UserServiceMetric
 	httpServer *http.Server
 	grpcServer *grpc.Server
@@ -83,6 +85,7 @@ type Agent struct {
 func NewAgent(config Config) (*Agent, error) {
 	a := &Agent{
 		Config:    config,
+		container: di.New(),
 		shutdowns: make(chan struct{}),
 	}
 	setupsFn := []func() error{
