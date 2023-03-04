@@ -121,21 +121,10 @@ func (a *Agent) setupApplication() error {
 			c.Get(constants.RegistryKey).(registry.Registry),
 			c.Get(constants.ApplicationKey).(*app.Application),
 			c.Get(constants.ReplyPublisherKey).(am.ReplyPublisher),
-			//tm.InboxHandler(c.Get(constants.InboxStoreKey).(tm.InboxStore)),
+			tm.InboxHandler(c.Get(constants.InboxStoreKey).(tm.InboxStore)),
 		), nil
 	})
-	//outboxProcessor := tm.NewOutboxProcessor(
-	//	stream,
-	//	postgres.NewOutboxStore(constants.OutboxTableName, dbConn),
-	//)
-	//
-	//a.container.AddScoped("domainEventHandlers", func(c di.Container) (any, error) {
-	//	return domainEventHandlers, nil
-	//})
-	//commandHandler := handlers.NewCommandHandlers(application)
-	//a.container.AddScoped("commandHandlers", func(c di.Container) (any, error) {
-	//	return commandHandler, nil
-	//})
+
 	outboxProcessor := tm.NewOutboxProcessor(
 		stream,
 		postgres.NewOutboxStore(constants.OutboxTableName, dbConn),
