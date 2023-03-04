@@ -2,8 +2,9 @@ package ddd
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type (
@@ -37,7 +38,11 @@ type (
 
 var _ Reply = (*reply)(nil)
 
-func NewReply(name string, payload ReplyPayload, options ...ReplyOption) reply {
+func NewReply(name string, payload ReplyPayload, options ...ReplyOption) Reply {
+	return newReply(name, payload, options...)
+}
+
+func newReply(name string, payload ReplyPayload, options ...ReplyOption) reply {
 	rep := reply{
 		Entity:     NewEntity(uuid.New().String(), name),
 		payload:    payload,
@@ -48,10 +53,11 @@ func NewReply(name string, payload ReplyPayload, options ...ReplyOption) reply {
 	for _, option := range options {
 		option.configureReply(&rep)
 	}
+
 	return rep
 }
 
-func (e reply) ReplyName() string     { return e.name }
+func (e reply) ReplyName() string     { return e.EntityName() }
 func (e reply) Payload() ReplyPayload { return e.payload }
 func (e reply) Metadata() Metadata    { return e.metadata }
 func (e reply) OccurredAt() time.Time { return e.occurredAt }

@@ -1,8 +1,9 @@
 package ddd
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type (
@@ -30,20 +31,26 @@ type (
 
 var _ Event = (*event)(nil)
 
-func NewEvent(name string, payload EventPayload, options ...EventOption) event {
+func NewEvent(name string, payload EventPayload, options ...EventOption) Event {
+	return newEvent(name, payload, options...)
+}
+
+func newEvent(name string, payload EventPayload, options ...EventOption) event {
 	evt := event{
 		Entity:     NewEntity(uuid.New().String(), name),
 		payload:    payload,
 		metadata:   make(Metadata),
 		occurredAt: time.Now(),
 	}
+
 	for _, option := range options {
 		option.configureEvent(&evt)
 	}
+
 	return evt
 }
 
-func (e event) EventName() string     { return e.name }
+func (e event) EventName() string     { return e.EntityName() }
 func (e event) Payload() EventPayload { return e.payload }
 func (e event) Metadata() Metadata    { return e.metadata }
 func (e event) OccurredAt() time.Time { return e.occurredAt }

@@ -11,16 +11,17 @@ type EventSourcedAggregate interface {
 	ddd.Eventer
 	Versioner
 	EventApplier
-	EventCommiter
+	EventCommitter
 }
+
 type AggregateStoreMiddleware func(store AggregateStore) AggregateStore
+
 type AggregateStore interface {
 	Load(ctx context.Context, aggregate EventSourcedAggregate) error
 	Save(ctx context.Context, aggregate EventSourcedAggregate) error
 }
 
 func AggregateStoreWithMiddleware(store AggregateStore, mws ...AggregateStoreMiddleware) AggregateStore {
-	//	var s AggregateStore
 	s := store
 	// middleware are applied in reverse; this makes the first middleware
 	// in the slice the outermost i.e. first to enter, last to exit

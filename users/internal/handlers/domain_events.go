@@ -8,13 +8,6 @@ import (
 	"github.com/rezaAmiri123/microservice/users/userspb"
 )
 
-//func RegisterDomainEventHandlers(eventHandlers ddd.EventHandler[ddd.AggregateEvent], domainSubscriber ddd.EventSubscriber[ddd.AggregateEvent]) {
-//	domainSubscriber.Subscribe(eventHandlers,
-//		domain.UserRegisteredEvent,
-//		domain.UserEnabledEvent,
-//		domain.UserDisabledEvent,
-//	)
-//}
 func RegisterDomainEventHandlers(subscriber ddd.EventSubscriber[ddd.AggregateEvent], handlers ddd.EventHandler[ddd.AggregateEvent]) {
 	subscriber.Subscribe(handlers,
 		domain.UserRegisteredEvent,
@@ -24,12 +17,12 @@ func RegisterDomainEventHandlers(subscriber ddd.EventSubscriber[ddd.AggregateEve
 }
 
 type domainHandlers[T ddd.AggregateEvent] struct {
-	publisher am.MessagePublisher[ddd.Event]
+	publisher am.EventPublisher
 }
 
 var _ ddd.EventHandler[ddd.AggregateEvent] = (*domainHandlers[ddd.AggregateEvent])(nil)
 
-func NewDomainEventHandlers(publisher am.MessagePublisher[ddd.Event]) ddd.EventHandler[ddd.AggregateEvent] {
+func NewDomainEventHandlers(publisher am.EventPublisher) ddd.EventHandler[ddd.AggregateEvent] {
 	return &domainHandlers[ddd.AggregateEvent]{
 		publisher: publisher,
 	}

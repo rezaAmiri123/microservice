@@ -6,7 +6,10 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/rezaAmiri123/microservice/pkg/am"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
+	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"sync"
+	"time"
 )
 
 const maxRetries = 5
@@ -15,10 +18,11 @@ type Stream struct {
 	streamName string
 	js         nats.JetStreamContext
 	mu         sync.Mutex
+	subs       []*nats.Subscription
 	logger     logger.Logger
 }
 
-var _ am.RawMessageStream = (*Stream)(nil)
+var _ am.MessageStream = (*Stream)(nil)
 
 func NewStream(streamName string, js nats.JetStreamContext, logger logger.Logger) *Stream {
 	return &Stream{
@@ -28,13 +32,20 @@ func NewStream(streamName string, js nats.JetStreamContext, logger logger.Logger
 	}
 }
 
-func (s *Stream) Publish(ctx context.Context, topicName string, rawMsg am.RawMessage) (err error) {
+func (s *Stream) Publish(ctx context.Context, topicName string, rawMsg am.Message) (err error) {
 	var data []byte
 
+	metadata, err := structpb.NewStruct(rawMsg.Metadata())
+	if err != nil {
+		return err
+	}
+
 	data, err = proto.Marshal(&StreamMessage{
-		Id:   rawMsg.ID(),
-		Name: rawMsg.MessageName(),
-		Data: rawMsg.Data(),
+		Id:       rawMsg.ID(),
+		Name:     rawMsg.MessageName(),
+		Data:     rawMsg.Data(),
+		Metadata: metadata,
+		SentAt:   timestamppb.New(rawMsg.SentAt()),
 	})
 	if err != nil {
 		return
@@ -77,7 +88,7 @@ func (s *Stream) Publish(ctx context.Context, topicName string, rawMsg am.RawMes
 	return
 }
 
-func (s *Stream) Subscribe(topicName string, handler am.RawMessageHandler, options ...am.SubscriberOption) error {
+func (s *Stream) Subscribe(topicName string, handler am.MessageHandler, options ...am.SubscriberOption) (am.Subscription, error) {
 	var err error
 
 	s.mu.Lock()
@@ -115,19 +126,36 @@ func (s *Stream) Subscribe(topicName string, handler am.RawMessageHandler, optio
 
 	_, err = s.js.AddConsumer(s.streamName, cfg)
 	if err != nil {
-		return err
+		return nil, err
 	}
+
+	var sub *nats.Subscription
 
 	if groupName := subCfg.GroupName(); groupName == "" {
-		_, err = s.js.Subscribe(topicName, s.handleMsg(subCfg, handler), opts...)
+		sub, err = s.js.Subscribe(topicName, s.handleMsg(subCfg, handler), opts...)
 	} else {
-		_, err = s.js.QueueSubscribe(topicName, groupName, s.handleMsg(subCfg, handler), opts...)
+		sub, err = s.js.QueueSubscribe(topicName, groupName, s.handleMsg(subCfg, handler), opts...)
 	}
 
+	s.subs = append(s.subs, sub)
+
+	return subscription{sub}, nil
+}
+
+func (s *Stream) Unsubscribe() error {
+	for _, sub := range s.subs {
+		if !sub.IsValid() {
+			continue
+		}
+		err := sub.Drain()
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
-func (s *Stream) handleMsg(cfg am.SubscriberConfig, handler am.RawMessageHandler) func(*nats.Msg) {
+func (s *Stream) handleMsg(cfg am.SubscriberConfig, handler am.MessageHandler) func(*nats.Msg) {
 	var filters map[string]struct{}
 	if len(cfg.MessageFilters()) > 0 {
 		filters = make(map[string]struct{})
@@ -157,15 +185,18 @@ func (s *Stream) handleMsg(cfg am.SubscriberConfig, handler am.RawMessageHandler
 		}
 
 		msg := &rawMessage{
-			id:       m.GetId(),
-			name:     m.GetName(),
-			subject:  natsMsg.Subject,
-			data:     m.GetData(),
-			acked:    false,
-			ackFn:    func() error { return natsMsg.Ack() },
-			nackFn:   func() error { return natsMsg.Nak() },
-			extendFn: func() error { return natsMsg.InProgress() },
-			killFn:   func() error { return natsMsg.Term() },
+			id:         m.GetId(),
+			name:       m.GetName(),
+			subject:    natsMsg.Subject,
+			data:       m.GetData(),
+			metadata:   m.GetMetadata().AsMap(),
+			sentAt:     m.SentAt.AsTime(),
+			receivedAt: time.Now(),
+			acked:      false,
+			ackFn:      func() error { return natsMsg.Ack() },
+			nackFn:     func() error { return natsMsg.Nak() },
+			extendFn:   func() error { return natsMsg.InProgress() },
+			killFn:     func() error { return natsMsg.Term() },
 		}
 
 		wCtx, cancel := context.WithTimeout(context.Background(), cfg.AckWait())

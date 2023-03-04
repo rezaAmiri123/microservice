@@ -1,6 +1,8 @@
 package es
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Snapshot interface {
 	SnapshotName() string
@@ -29,6 +31,7 @@ func LoadSnapshot(v interface{}, snapshot Snapshot, version int) error {
 	if err := agg.ApplySnapshot(snapshot); err != nil {
 		return err
 	}
-	agg.setVersion(version)
+	agg.SetVersion(version)
+
 	return nil
 }

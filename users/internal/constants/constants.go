@@ -6,7 +6,7 @@ const ServiceName = "users"
 // GRPC Service Names
 const (
 	//StoresServiceName    = "STORES"
-	CustomersServiceName = "USERS"
+	UsersServiceName = "USERS"
 )
 
 // Dependency Injection Keys
@@ -14,6 +14,7 @@ const (
 	RegistryKey                 = "registry"
 	DomainDispatcherKey         = "domainDispatcher"
 	DatabaseTransactionKey      = "tx"
+	DatabaseKey                 = "dbConn"
 	MessagePublisherKey         = "messagePublisher"
 	MessageSubscriberKey        = "messageSubscriber"
 	EventPublisherKey           = "eventPublisher"
@@ -21,22 +22,28 @@ const (
 	ReplyPublisherKey           = "replyPublisher"
 	SagaStoreKey                = "sagaStore"
 	InboxStoreKey               = "inboxStore"
-	ApplicationKey              = "app"
+	ApplicationKey              = "application"
 	DomainEventHandlersKey      = "domainEventHandlers"
 	IntegrationEventHandlersKey = "integrationEventHandlers"
 	CommandHandlersKey          = "commandHandlers"
 	ReplyHandlersKey            = "replyHandlers"
+	LoggerKey                   = "logger"
 
 	UsersRepoKey = "usersRepo"
 )
 
 // Repository Table Names
 const (
-	OutboxTableName    = ServiceName + ".outbox"
-	InboxTableName     = ServiceName + ".inbox"
-	EventsTableName    = ServiceName + ".events"
-	SnapshotsTableName = ServiceName + ".snapshots"
-	SagasTableName     = ServiceName + ".sagas"
+	//OutboxTableName    = ServiceName + ".outbox"
+	//InboxTableName     = ServiceName + ".inbox"
+	//EventsTableName    = ServiceName + ".events"
+	//SnapshotsTableName = ServiceName + ".snapshots"
+	//SagasTableName     = ServiceName + ".sagas"
+	OutboxTableName    = "outbox"
+	InboxTableName     = "inbox"
+	EventsTableName    = "events"
+	SnapshotsTableName = "snapshots"
+	SagasTableName     = "sagas"
 
 	UsersTableName = ServiceName + ".users"
 )

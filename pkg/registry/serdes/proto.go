@@ -24,12 +24,14 @@ func (c ProtoSerde) Register(v registry.Registrable, options ...registry.BuildOp
 	}
 	return registry.Register(c.r, v, c.serialize, c.deserialize, options)
 }
+
 func (c ProtoSerde) RegisterKey(key string, v interface{}, options ...registry.BuildOption) error {
 	if !reflect.TypeOf(v).Implements(protoT) {
 		return fmt.Errorf("%T does not implement proto.Message", v)
 	}
 	return registry.RegisterKey(c.r, key, v, c.serialize, c.deserialize, options)
 }
+
 func (c ProtoSerde) RegisterFactory(key string, fn func() interface{}, options ...registry.BuildOption) error {
 	if v := fn(); v == nil {
 		return fmt.Errorf("%s factory returns a nil value", key)
@@ -38,9 +40,11 @@ func (c ProtoSerde) RegisterFactory(key string, fn func() interface{}, options .
 	}
 	return registry.RegisterFactory(c.r, key, fn, c.serialize, c.deserialize, options)
 }
-func (c ProtoSerde) serialize(v interface{}) ([]byte, error) {
+
+func (ProtoSerde) serialize(v interface{}) ([]byte, error) {
 	return proto.Marshal(v.(proto.Message))
 }
-func (c ProtoSerde) deserialize(data []byte, v interface{}) error {
+
+func (ProtoSerde) deserialize(data []byte, v interface{}) error {
 	return proto.Unmarshal(data, v.(proto.Message))
 }

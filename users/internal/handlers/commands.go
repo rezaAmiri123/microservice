@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/rezaAmiri123/microservice/pkg/am"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
+	"github.com/rezaAmiri123/microservice/pkg/registry"
 	"github.com/rezaAmiri123/microservice/users/internal/app"
 	"github.com/rezaAmiri123/microservice/users/userspb"
 )
@@ -12,16 +13,18 @@ type commandHandlers struct {
 	app *app.Application
 }
 
-func NewCommandHandlers(app *app.Application) ddd.CommandHandler[ddd.Command] {
-	return commandHandlers{
+func NewCommandHandlers(reg registry.Registry, app *app.Application, replyPublisher am.ReplyPublisher, mws ...am.MessageHandlerMiddleware) am.MessageHandler {
+	return am.NewCommandHandler(reg, replyPublisher, commandHandlers{
 		app: app,
-	}
+	}, mws...)
 }
 
-func RegisterCommandHandlers(subscriber am.RawMessageSubscriber, handlers am.RawMessageHandler) error {
-	return subscriber.Subscribe(userspb.CommandChannel, handlers, am.MessageFilter{
+func RegisterCommandHandlers(subscriber am.MessageSubscriber, handlers am.MessageHandler) error {
+	_, err := subscriber.Subscribe(userspb.CommandChannel, handlers, am.MessageFilter{
 		userspb.AuthorizeUserCommand,
 	}, am.GroupName("user-commands"))
+	//})
+	return err
 }
 
 func (h commandHandlers) HandleCommand(ctx context.Context, cmd ddd.Command) (ddd.Reply, error) {

@@ -3,6 +3,7 @@ package agent
 import (
 	"fmt"
 	userGrpc "github.com/rezaAmiri123/microservice/users/internal/ports/grpc"
+	"google.golang.org/grpc/reflection"
 	"net"
 	"time"
 
@@ -17,7 +18,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
-	"google.golang.org/grpc/reflection"
 )
 
 const (
@@ -72,16 +72,19 @@ func (a *Agent) setupGrpcServer() error {
 		creds := credentials.NewTLS(t)
 		opts = append(opts, grpc.Creds(creds))
 	}
-
-	serverConfig := &userGrpc.Config{
-		App:    a.Application,
-		Logger: a.logger,
-	}
-	grpcServer, _ := userGrpc.NewGrpcServer(serverConfig, opts...)
-	//grpcServer := grpc.NewServer(opts...)
-	//userService.RegisterUserServiceServer(grpcServer, server)
+	//application := a.container.Get(constants.ApplicationKey).(*app.Application)
+	//serverConfig := &userGrpc.Config{
+	//	App:    application,
+	//	Logger: a.logger,
+	//}
+	grpcServer := grpc.NewServer(opts...)
 	reflection.Register(grpcServer)
 	grpc_prometheus.Register(grpcServer)
+	_ = userGrpc.RegisterServerTx(a.container, grpcServer)
+	//grpcServer := grpc.NewServer(opts...)
+	//userService.RegisterUserServiceServer(grpcServer, server)
+	//reflection.Register(grpcServer)
+
 	grpcAddress := fmt.Sprintf("%s:%d", a.Config.GRPCServerAddr, a.Config.GRPCServerPort)
 	listener, err := net.Listen("tcp", grpcAddress)
 	if err != nil {

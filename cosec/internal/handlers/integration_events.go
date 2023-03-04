@@ -5,6 +5,7 @@ import (
 	"github.com/rezaAmiri123/microservice/cosec/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/am"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
+	"github.com/rezaAmiri123/microservice/pkg/registry"
 	"github.com/rezaAmiri123/microservice/pkg/sec"
 )
 
@@ -14,19 +15,17 @@ type integrationHandlers[T ddd.Event] struct {
 
 var _ ddd.EventHandler[ddd.Event] = (*integrationHandlers[ddd.Event])(nil)
 
-func NewIntegrationEventHandlers(saga sec.Orchestrator[*domain.CreateOrderData]) ddd.EventHandler[ddd.Event] {
-	return integrationHandlers[ddd.Event]{
-		orchestrator: saga,
-	}
+func NewIntegrationEventHandlers(reg registry.Registry, orchestrator sec.Orchestrator[*domain.CreateOrderData], mws ...am.MessageHandlerMiddleware) am.MessageHandler {
+	return am.NewEventHandler(reg, integrationHandlers[ddd.Event]{
+		orchestrator: orchestrator,
+	}, mws...)
 }
-func RegisterIntegrationEventHandlers(subscriber am.EventSubscriber, handlers ddd.EventHandler[ddd.Event]) (err error) {
-	evtMsgHandler := am.MessageHandlerFunc[am.IncomingEventMessage](func(ctx context.Context, eventMsg am.IncomingEventMessage) error {
-		return handlers.HandleEvent(ctx, eventMsg)
-	})
 
-	return subscriber.Subscribe("orderingpb.OrderAggregateChannel", evtMsgHandler, am.MessageFilter{
-		//"orderingpb.OrderCreatedEvent",
+func RegisterIntegrationEventHandlers(subscriber am.MessageSubscriber, handlers am.MessageHandler) (err error) {
+	_, err = subscriber.Subscribe("orderingpb.OrderAggregateChannel", handlers, am.MessageFilter{
+		"orderingpb.OrderCreatedEvent",
 	}, am.GroupName("cosec-ordering"))
+	return
 }
 
 func (h integrationHandlers[T]) HandleEvent(ctx context.Context, event T) error {

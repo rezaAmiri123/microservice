@@ -1,11 +1,14 @@
 package di
 
-import "context"
+import (
+	"context"
+)
 
 func Get(ctx context.Context, key string) any {
-	ctn, ok := ctx.Value(key).(*container)
+	ctn, ok := ctx.Value(containerKey).(*container)
 	if !ok {
 		panic("container does not exist on context")
 	}
+
 	return ctn.Get(key)
 }

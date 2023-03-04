@@ -45,6 +45,8 @@ type Config struct {
 	// kafka config
 	KafkaBrokers []string `mapstructure:"KAFKA_BROKERS"`
 
+	NatsURL    string `mapstructure:"NATS_URL"`
+	NatsStream string `mapstructure:"NATS_STREAM"`
 	// applogger.Config
 	LogLevel   string `mapstructure:"LOG_LEVEL"`
 	LogDevMode bool   `mapstructure:"LOG_DEV_MOD"`

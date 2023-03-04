@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"github.com/nats-io/nats.go"
@@ -9,17 +10,19 @@ import (
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/jetstream"
+	"github.com/rezaAmiri123/microservice/pkg/logger"
 	"github.com/rezaAmiri123/microservice/pkg/registry"
 	"github.com/rezaAmiri123/microservice/pkg/tm"
 	"github.com/rezaAmiri123/microservice/users/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/users/internal/app"
 	"github.com/rezaAmiri123/microservice/users/internal/app/commands"
+	"github.com/rezaAmiri123/microservice/users/internal/constants"
 	"github.com/rezaAmiri123/microservice/users/internal/handlers"
 	"github.com/rezaAmiri123/microservice/users/userspb"
 )
 
 func (a *Agent) setupApplication() error {
-	dbConn, err := postgres.NewPsqlDB(postgres.Config{
+	dbConn, err := postgres.NewDB(postgres.Config{
 		PGDriver:   a.PGDriver,
 		PGHost:     a.PGHost,
 		PGPort:     a.PGPort,
@@ -30,7 +33,10 @@ func (a *Agent) setupApplication() error {
 	if err != nil {
 		return fmt.Errorf("cannot load db: %w", err)
 	}
-	a.container.AddSingleton("db", func(c di.Container) (any, error) {
+	//if err = postgres.MigrateUp(dbConn, migrations.FS); err != nil {
+	//	return err
+	//}
+	a.container.AddSingleton(constants.DatabaseKey, func(c di.Container) (any, error) {
 		return dbConn, nil
 	})
 
@@ -39,7 +45,7 @@ func (a *Agent) setupApplication() error {
 
 	// setup Driven adapters
 	reg := registry.New()
-	a.container.AddSingleton("registry", func(c di.Container) (any, error) {
+	a.container.AddSingleton(constants.RegistryKey, func(c di.Container) (any, error) {
 		return reg, nil
 	})
 	if err = userspb.Registrations(reg); err != nil {
@@ -49,82 +55,109 @@ func (a *Agent) setupApplication() error {
 	if err != nil {
 		return err
 	}
-	stream := jetstream.NewStream("stream", js, a.logger)
-	a.container.AddSingleton("stream", func(c di.Container) (any, error) {
-		return stream, nil
+	stream := jetstream.NewStream(a.NatsStream, js, a.logger)
+	//a.container.AddSingleton("stream", func(c di.Container) (any, error) {
+	//	return stream, nil
+	//})
+	a.container.AddScoped(constants.DatabaseTransactionKey, func(c di.Container) (any, error) {
+		return dbConn.Begin()
 	})
-	eventStream := am.NewEventStream(reg, stream)
-	//commandStream := am.NewCommandStream(reg, stream)
-	domainDispatcher := ddd.NewEventDispatcher[ddd.AggregateEvent]()
-	a.container.AddSingleton("domainDispatcher", func(c di.Container) (any, error) {
-		return domainDispatcher, nil
+	a.container.AddSingleton(constants.DomainDispatcherKey, func(c di.Container) (any, error) {
+		return ddd.NewEventDispatcher[ddd.AggregateEvent](), nil
 	})
-	a.container.AddSingleton("outboxProcessor", func(c di.Container) (any, error) {
-		return tm.NewOutboxProcessor(
-			c.Get("stream").(am.RawMessageStream),
-			postgres.NewOutboxStore("users.outbox", c.Get("db").(*sql.DB)),
+
+	a.container.AddScoped(constants.UsersRepoKey, func(c di.Container) (any, error) {
+		return pg.NewPGUserRepository(c.Get(constants.DatabaseTransactionKey).(*sql.Tx), a.logger), nil
+	})
+	a.container.AddScoped(constants.MessagePublisherKey, func(c di.Container) (any, error) {
+		tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
+		outboxStore := postgres.NewOutboxStore(constants.OutboxTableName, tx)
+		return am.NewMessagePublisher(
+			stream,
+			tm.OutboxPublisher(outboxStore),
 		), nil
 	})
-	a.container.AddScoped("tx", func(c di.Container) (any, error) {
-		db := c.Get("db").(*sql.DB)
-		return db.Begin()
-	})
-	a.container.AddScoped("users", func(c di.Container) (any, error) {
-		return pg.NewPGUserRepository(c.Get("tx").(*sql.Tx), a.logger), nil
+	a.container.AddScoped(constants.MessageSubscriberKey, func(c di.Container) (any, error) {
+		return am.NewMessageSubscriber(stream), nil
 	})
 
-	a.container.AddScoped("txStream", func(c di.Container) (any, error) {
-		tx := c.Get("tx").(*sql.Tx)
-		outboxStore := postgres.NewOutboxStore("userss.outbox", tx)
-		return am.RawMessageStreamWithMiddleware(
-			c.Get("stream").(am.RawMessageStream),
-			tm.NewOutboxStreamMiddleware(outboxStore),
+	a.container.AddScoped(constants.EventPublisherKey, func(c di.Container) (any, error) {
+		return am.NewEventPublisher(
+			c.Get(constants.RegistryKey).(registry.Registry),
+			c.Get(constants.MessagePublisherKey).(am.MessagePublisher),
 		), nil
 	})
-	a.container.AddScoped("eventStream", func(c di.Container) (any, error) {
-		return am.NewEventStream(c.Get("registry").(registry.Registry), c.Get("txStream").(am.RawMessageStream)), nil
-	})
-	a.container.AddScoped("replyStream", func(c di.Container) (any, error) {
-		return am.NewReplyStream(c.Get("registry").(registry.Registry), c.Get("txStream").(am.RawMessageStream)), nil
-	})
-	a.container.AddScoped("inboxMiddleware", func(c di.Container) (any, error) {
-		tx := c.Get("tx").(*sql.Tx)
-		inboxStore := postgres.NewInboxStore("users.inbox", tx)
-		return tm.NewInboxHandlerMiddleware(inboxStore), nil
-	})
-	domainEventHandlers := handlers.NewDomainEventHandlers(eventStream)
-	//integrationEventHandlers := commands.NewIntegrationEventHandlers(eventStream)
-	//handlers.RegisterDomainEventHandlers(domainEventHandlers, domainDispatcher)
 
-	application := &app.Application{
-		Commands: app.Commands{
-			RegisterUser: commands.NewRegisterUserHandler(repo, a.logger, domainDispatcher),
-			EnableUser:   commands.NewEnableUserHandler(repo, a.logger, domainDispatcher),
-		},
-		Queries: app.Queries{},
-	}
-	a.Application = application
+	a.container.AddScoped(constants.ReplyPublisherKey, func(c di.Container) (any, error) {
+		return am.NewReplyPublisher(
+			c.Get(constants.RegistryKey).(registry.Registry),
+			c.Get(constants.MessagePublisherKey).(am.MessagePublisher),
+		), nil
+	})
 
-	a.container.AddScoped("app", func(c di.Container) (any, error) {
+	a.container.AddScoped(constants.InboxStoreKey, func(c di.Container) (any, error) {
+		tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
+		return postgres.NewInboxStore(constants.InboxTableName, tx), nil
+	})
+
+	a.container.AddScoped(constants.ApplicationKey, func(c di.Container) (any, error) {
+		domainDispatcher := a.container.Get(constants.DomainDispatcherKey).(*ddd.EventDispatcher[ddd.AggregateEvent])
+		application := &app.Application{
+			Commands: app.Commands{
+				RegisterUser: commands.NewRegisterUserHandler(repo, a.logger, domainDispatcher),
+				EnableUser:   commands.NewEnableUserHandler(repo, a.logger, domainDispatcher),
+			},
+			Queries: app.Queries{},
+		}
+		a.Application = application
 		return application, nil
 	})
-	a.container.AddScoped("domainEventHandlers", func(c di.Container) (any, error) {
-		return domainEventHandlers, nil
+	a.container.AddScoped(constants.DomainEventHandlersKey, func(c di.Container) (any, error) {
+		return handlers.NewDomainEventHandlers(c.Get(constants.EventPublisherKey).(am.EventPublisher)), nil
 	})
-	commandHandler := handlers.NewCommandHandlers(application)
-	a.container.AddScoped("commandHandlers", func(c di.Container) (any, error) {
-		return commandHandler, nil
+
+	a.container.AddScoped(constants.CommandHandlersKey, func(c di.Container) (any, error) {
+		return handlers.NewCommandHandlers(
+			c.Get(constants.RegistryKey).(registry.Registry),
+			c.Get(constants.ApplicationKey).(*app.Application),
+			c.Get(constants.ReplyPublisherKey).(am.ReplyPublisher),
+			//tm.InboxHandler(c.Get(constants.InboxStoreKey).(tm.InboxStore)),
+		), nil
 	})
+	//outboxProcessor := tm.NewOutboxProcessor(
+	//	stream,
+	//	postgres.NewOutboxStore(constants.OutboxTableName, dbConn),
+	//)
+	//
+	//a.container.AddScoped("domainEventHandlers", func(c di.Container) (any, error) {
+	//	return domainEventHandlers, nil
+	//})
+	//commandHandler := handlers.NewCommandHandlers(application)
+	//a.container.AddScoped("commandHandlers", func(c di.Container) (any, error) {
+	//	return commandHandler, nil
+	//})
+	outboxProcessor := tm.NewOutboxProcessor(
+		stream,
+		postgres.NewOutboxStore(constants.OutboxTableName, dbConn),
+	)
 	handlers.RegisterDomainEventHandlersTx(a.container)
 	if err = handlers.RegisterCommandHandlersTx(a.container); err != nil {
-		// TODO command handlers not working
-		//return err
+		return err
 	}
+
+	startOutboxProcessor(context.Background(), outboxProcessor, a.container.Get(constants.LoggerKey).(logger.Logger))
 	return nil
 }
-
+func startOutboxProcessor(ctx context.Context, outboxProcessor tm.OutboxProcessor, logger logger.Logger) {
+	go func() {
+		err := outboxProcessor.Start(ctx)
+		if err != nil {
+			//logger.Error().Err(err).Msg("customers outbox processor encountered an error")
+		}
+	}()
+}
 func (a *Agent) nats() (nats.JetStreamContext, error) {
-	nc, err := nats.Connect("localhost")
+	nc, err := nats.Connect(a.NatsURL)
 	if err != nil {
 		return nil, err
 	}
@@ -135,8 +168,8 @@ func (a *Agent) nats() (nats.JetStreamContext, error) {
 	}
 
 	_, err = js.AddStream(&nats.StreamConfig{
-		Name:     "stream",
-		Subjects: []string{fmt.Sprintf("%s.>", "stream")},
+		Name:     a.NatsStream,
+		Subjects: []string{fmt.Sprintf("%s.>", a.NatsStream)},
 	})
 
 	return js, err

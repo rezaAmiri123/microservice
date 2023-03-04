@@ -5,6 +5,7 @@ import (
 	"github.com/rezaAmiri123/microservice/users/internal/app"
 	"github.com/rezaAmiri123/microservice/users/userspb"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 type (
@@ -23,4 +24,10 @@ func NewGrpcServer(cfg *Config, opts ...grpc.ServerOption) (*grpc.Server, error)
 	gsrv := grpc.NewServer(opts...)
 	userspb.RegisterUserServiceServer(gsrv, srv)
 	return gsrv, nil
+}
+
+func NewGrpc(opts ...grpc.ServerOption) *grpc.Server {
+	srv := grpc.NewServer(opts...)
+	reflection.Register(srv)
+	return srv
 }

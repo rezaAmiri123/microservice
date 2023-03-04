@@ -1,3 +1,11 @@
+DB_NAME=users
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_ADDR=microservice_postgesql
+DB_URL=postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_ADDR):5432/$(DB_NAME)?sslmode=disable
+MIGRATION_PATH=internal/adapters/migrations
+
+
 install-tools:
 	echo installing tools
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
@@ -32,3 +40,25 @@ user_proto:
 		--grpc-gateway_out=userspb --grpc-gateway_opt=paths=source_relative \
         --openapiv2_out=internal/ports/rest/ --openapiv2_opt=allow_merge=true,merge_file_name=api \
 		--proto_path=userspb userspb/*.proto
+
+migratecreate:
+	migrate create -ext sql -dir $(MIGRATION_PATH) -seq service_user
+
+migrateup:
+	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose up
+	# postgresql://postgres:postgres@192.168.39.213:30001/microservice?sslmode=disable
+
+migrateup1:
+	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose up 1
+
+migratedown:
+	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose down
+
+migratedown1:
+	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose down 1
+
+migrateforce:
+	migrate  -path $(MIGRATION_PATH) -database "$(DB_URL)" force 1
+
+psql:
+	psql -h $(DB_ADDR) -U $(DB_USER) -d $(DB_NAME) -W
