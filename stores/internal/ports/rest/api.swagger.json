@@ -1,0 +1,284 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Store Service API",
+    "version": "1.0",
+    "contact": {
+      "name": "Store service",
+      "url": "https://github.com/rezaAmiri123/microservice"
+    }
+  },
+  "tags": [
+    {
+      "name": "StoresService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/add_product": {
+      "post": {
+        "summary": "Add new product",
+        "description": "Use this API to add a new product",
+        "operationId": "StoresService_AddProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/storespbAddProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/storespbAddProductRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StoresService"
+        ]
+      }
+    },
+    "/v1/create_store": {
+      "post": {
+        "summary": "Create new store",
+        "description": "Use this API to create a new store",
+        "operationId": "StoresService_CreateStore",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/storespbCreateStoreResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/storespbCreateStoreRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StoresService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "storespbAddProductRequest": {
+      "type": "object",
+      "properties": {
+        "storeId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "sku": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "storespbAddProductResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "storespbCreateStoreRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        }
+      }
+    },
+    "storespbCreateStoreResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "storespbDecreaseProductPriceResponse": {
+      "type": "object"
+    },
+    "storespbDisableParticipationResponse": {
+      "type": "object"
+    },
+    "storespbEnableParticipationResponse": {
+      "type": "object"
+    },
+    "storespbGetCatalogResponse": {
+      "type": "object",
+      "properties": {
+        "products": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/storespbProduct"
+          }
+        }
+      }
+    },
+    "storespbGetParticipatingStoresResponse": {
+      "type": "object",
+      "properties": {
+        "stores": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/storespbStore"
+          }
+        }
+      }
+    },
+    "storespbGetProductResponse": {
+      "type": "object",
+      "properties": {
+        "product": {
+          "$ref": "#/definitions/storespbProduct"
+        }
+      }
+    },
+    "storespbGetStoreResponse": {
+      "type": "object",
+      "properties": {
+        "store": {
+          "$ref": "#/definitions/storespbStore"
+        }
+      }
+    },
+    "storespbGetStoresResponse": {
+      "type": "object",
+      "properties": {
+        "stores": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/storespbStore"
+          }
+        }
+      }
+    },
+    "storespbIncreaseProductPriceResponse": {
+      "type": "object"
+    },
+    "storespbProduct": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "storeId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "sku": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "storespbRebrandProductResponse": {
+      "type": "object"
+    },
+    "storespbRebrandStoreResponse": {
+      "type": "object"
+    },
+    "storespbRemoveProductResponse": {
+      "type": "object"
+    },
+    "storespbStore": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "participating": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}
