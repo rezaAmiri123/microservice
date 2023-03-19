@@ -1,0 +1,213 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "basket Service API",
+    "version": "1.0",
+    "contact": {
+      "name": "Basket service",
+      "url": "https://github.com/rezaAmiri123/microservice"
+    }
+  },
+  "tags": [
+    {
+      "name": "BasketService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/add_item": {
+      "post": {
+        "summary": "Create new item",
+        "description": "Use this API to add a new item",
+        "operationId": "BasketService_AddItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/basketspbAddItemResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/basketspbAddItemRequest"
+            }
+          }
+        ],
+        "tags": [
+          "BasketService"
+        ]
+      }
+    },
+    "/v1/start_basket": {
+      "post": {
+        "summary": "Create new basket",
+        "description": "Use this API to start a new basket",
+        "operationId": "BasketService_StartBasket",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/basketspbStartBasketResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/basketspbStartBasketRequest"
+            }
+          }
+        ],
+        "tags": [
+          "BasketService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "basketspbAddItemRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "productId": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "basketspbAddItemResponse": {
+      "type": "object"
+    },
+    "basketspbBasket": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/basketspbItem"
+          }
+        }
+      }
+    },
+    "basketspbCancelBasketResponse": {
+      "type": "object"
+    },
+    "basketspbCheckoutBasketResponse": {
+      "type": "object"
+    },
+    "basketspbGetBasketResponse": {
+      "type": "object",
+      "properties": {
+        "basket": {
+          "$ref": "#/definitions/basketspbBasket"
+        }
+      }
+    },
+    "basketspbItem": {
+      "type": "object",
+      "properties": {
+        "storeId": {
+          "type": "string"
+        },
+        "productId": {
+          "type": "string"
+        },
+        "storeName": {
+          "type": "string"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "productPrice": {
+          "type": "number",
+          "format": "double"
+        },
+        "quantity": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "basketspbRemoveItemResponse": {
+      "type": "object"
+    },
+    "basketspbStartBasketRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        }
+      }
+    },
+    "basketspbStartBasketResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

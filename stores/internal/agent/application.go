@@ -17,6 +17,7 @@ import (
 	"github.com/rezaAmiri123/microservice/stores/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/stores/internal/app"
 	"github.com/rezaAmiri123/microservice/stores/internal/app/commands"
+	"github.com/rezaAmiri123/microservice/stores/internal/app/queries"
 	"github.com/rezaAmiri123/microservice/stores/internal/constants"
 	"github.com/rezaAmiri123/microservice/stores/internal/domain"
 	"github.com/rezaAmiri123/microservice/stores/internal/ports/handlers"
@@ -127,8 +128,8 @@ func (a *Agent) setupApplication() error {
 		publisher := c.Get(constants.DomainDispatcherKey).(ddd.EventPublisher[ddd.Event])
 		stores := c.Get(constants.StoresRepoKey).(domain.StoreRepository)
 		products := c.Get(constants.ProductsRepoKey).(domain.ProductRepository)
-		//catalog := c.Get(constants.CatalogRepoKey).(domain.CatalogRepository)
-		//malls := c.Get(constants.MallRepoKey).(domain.MallRepository)
+		catalog := c.Get(constants.CatalogRepoKey).(domain.CatalogRepository)
+		malls := c.Get(constants.MallRepoKey).(domain.MallRepository)
 		log := c.Get(constants.LoggerKey).(logger.Logger)
 
 		//fmt.Println("pubsher", publisher)
@@ -137,7 +138,10 @@ func (a *Agent) setupApplication() error {
 				CreateStore: commands.NewCreateStoreHandler(stores, publisher, log),
 				AddProduct:  commands.NewAddProductHandler(products, publisher, log),
 			},
-			Queries: app.Queries{},
+			Queries: app.Queries{
+				GetProduct: queries.NewGetProductHandler(catalog, log),
+				GetStore:   queries.NewGetStoreHandler(malls, log),
+			},
 		}
 		//a.Application = application
 		return application, nil

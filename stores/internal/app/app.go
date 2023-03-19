@@ -1,6 +1,9 @@
 package app
 
-import "github.com/rezaAmiri123/microservice/stores/internal/app/commands"
+import (
+	"github.com/rezaAmiri123/microservice/stores/internal/app/commands"
+	"github.com/rezaAmiri123/microservice/stores/internal/app/queries"
+)
 
 type Application struct {
 	Commands Commands
@@ -8,6 +11,8 @@ type Application struct {
 }
 
 type Queries struct {
+	GetProduct *queries.GetProductHandler
+	GetStore   *queries.GetStoreHandler
 }
 
 type Commands struct {
