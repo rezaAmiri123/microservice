@@ -128,10 +128,13 @@ services:
     image: nats:2-alpine
     ports:
       - '4222:4222'
+      - '8222:8222'
     command:
       - -js
       - -sd
       - /var/lib/nats/data
+      - -m 
+      - '8222'
     volumes:
       - 'jsdata:/var/lib/nats/data'
     networks: [ "microservice" ]

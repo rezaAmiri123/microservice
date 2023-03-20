@@ -79,6 +79,29 @@ func (r BasketRepository) UpdateItems(ctx context.Context, basket *domain.Basket
 
 	return err
 }
+func (r BasketRepository) Update(ctx context.Context, basket *domain.Basket) error {
+	//const query = `UPDATE %s SET items = $2 WHERE id = $1`
+	const query = `UPDATE %s 
+						SET user_id = COALESCE(NULLIF($2, ''), user_id),
+							payment_id = COALESCE(NULLIF($3, ''), payment_id), 
+							status = COALESCE(NULLIF($4, ''), status), 
+							items = COALESCE(NULLIF($5, ''), items)
+						WHERE id = $1`
+
+	items, err := json.Marshal(basket.Items)
+	if err != nil {
+		return err
+	}
+	_, err = r.db.ExecContext(ctx, r.table(query),
+		basket.ID(),
+		basket.UserID,
+		basket.PaymentID,
+		basket.Status.String(),
+		items,
+	)
+
+	return err
+}
 
 func (r BasketRepository) table(query string) string {
 	return fmt.Sprintf(query, r.tableName)

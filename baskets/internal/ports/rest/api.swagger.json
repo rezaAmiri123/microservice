@@ -54,6 +54,40 @@
         ]
       }
     },
+    "/v1/checkout_basket": {
+      "post": {
+        "summary": "checkout a basket",
+        "description": "Use this API to checkout a basket",
+        "operationId": "BasketService_CheckoutBasket",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/basketspbCheckoutBasketResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/basketspbCheckoutBasketRequest"
+            }
+          }
+        ],
+        "tags": [
+          "BasketService"
+        ]
+      }
+    },
     "/v1/start_basket": {
       "post": {
         "summary": "Create new basket",
@@ -125,6 +159,17 @@
     },
     "basketspbCancelBasketResponse": {
       "type": "object"
+    },
+    "basketspbCheckoutBasketRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "paymentId": {
+          "type": "string"
+        }
+      }
     },
     "basketspbCheckoutBasketResponse": {
       "type": "object"

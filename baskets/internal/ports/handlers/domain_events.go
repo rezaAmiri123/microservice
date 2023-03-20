@@ -32,6 +32,8 @@ func (h domainHandlers[T]) HandleEvent(ctx context.Context, event T) error {
 	switch event.EventName() {
 	case domain.BasketStartedEvent:
 		return h.onBasketStarted(ctx, event)
+	case domain.BasketCheckedOutEvent:
+		return h.onBasketCheckout(ctx, event)
 	}
 	return nil
 }
@@ -41,6 +43,30 @@ func (h domainHandlers[T]) onBasketStarted(ctx context.Context, event ddd.Event)
 		ddd.NewEvent(basketspb.BasketStartedEvent, &basketspb.BasketStarted{
 			Id:     basket.ID(),
 			UserId: basket.UserID,
+		}),
+	)
+}
+
+func (h domainHandlers[T]) onBasketCheckout(ctx context.Context, event ddd.Event) error {
+	basket := event.Payload().(*domain.Basket)
+	items := make([]*basketspb.BasketCheckedOut_Item, 0, len(basket.Items))
+	for _, item := range basket.Items {
+		items = append(items, &basketspb.BasketCheckedOut_Item{
+			StoreId:     item.StoreID,
+			ProductId:   item.ProductID,
+			StoreName:   item.StoreName,
+			ProductName: item.ProductName,
+			Price:       item.ProductPrice,
+			Quantity:    int32(item.Quantity),
+		})
+	}
+
+	return h.publisher.Publish(ctx, basketspb.BasketAggregateChannel,
+		ddd.NewEvent(basketspb.BasketCheckedOutEvent, &basketspb.BasketCheckedOut{
+			Id:        basket.ID(),
+			UserId:    basket.UserID,
+			PaymentId: basket.PaymentID,
+			Items:     items,
 		}),
 	)
 }

@@ -11,6 +11,7 @@ type Queries struct {
 }
 
 type Commands struct {
-	StartBasket *commands.StartBasketHandler
-	AddItem     *commands.AddItemHandler
+	StartBasket    *commands.StartBasketHandler
+	AddItem        *commands.AddItemHandler
+	CheckoutBasket *commands.CheckoutBasketHandler
 }

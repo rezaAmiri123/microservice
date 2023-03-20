@@ -89,6 +89,9 @@ func (b *Basket) Checkout(paymentID string) (ddd.Event, error) {
 		PaymentID: paymentID,
 	})
 
+	b.PaymentID = paymentID
+	b.Status = BasketIsCheckedOut
+
 	return ddd.NewEvent(BasketCheckedOutEvent, b), nil
 }
 
@@ -109,7 +112,7 @@ func (b *Basket) AddItem(store *Store, product *Product, quantity int) error {
 		ProductPrice: product.Price,
 		Quantity:     quantity,
 	}
-	
+
 	b.AddEvent(BasketItemAddedEvent, &BasketItemAdded{Item: item})
 
 	if i, exists := b.Items[product.ID]; exists {

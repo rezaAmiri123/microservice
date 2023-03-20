@@ -31,7 +31,16 @@ service BasketService {
     };
   };
   rpc CancelBasket(CancelBasketRequest) returns (CancelBasketResponse) {};
-  rpc CheckoutBasket(CheckoutBasketRequest) returns (CheckoutBasketResponse) {};
+  rpc CheckoutBasket(CheckoutBasketRequest) returns (CheckoutBasketResponse) {
+    option (google.api.http) = {
+      post: "/v1/checkout_basket"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to checkout a basket";
+      summary: "checkout a basket";
+    };
+  };
   rpc AddItem(AddItemRequest) returns (AddItemResponse) {
     option (google.api.http) = {
       post: "/v1/add_item"

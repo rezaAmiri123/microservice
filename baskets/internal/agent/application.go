@@ -54,8 +54,8 @@ func (a *Agent) setupApplication() error {
 		return ddd.NewEventDispatcher[ddd.Event](), nil
 	})
 	a.container.AddScoped(constants.DatabaseTransactionKey, func(c di.Container) (any, error) {
-		return c.Get(constants.DatabaseKey).(*sql.DB).Begin()
-		//return dbConn.Begin()
+		//return c.Get(constants.DatabaseKey).(*sql.DB).Begin()
+		return dbConn.Begin()
 	})
 	a.container.AddScoped(constants.MessagePublisherKey, func(c di.Container) (any, error) {
 		tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
@@ -76,8 +76,8 @@ func (a *Agent) setupApplication() error {
 	})
 
 	a.container.AddScoped(constants.InboxStoreKey, func(c di.Container) (any, error) {
-		tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
-		return postgres.NewInboxStore(constants.InboxTableName, tx), nil
+		//tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
+		return postgres.NewInboxStore(constants.InboxTableName, dbConn), nil
 	})
 
 	//a.container.AddScoped(constants.AggregateStoreKey, func(c di.Container) (any, error) {
@@ -159,8 +159,9 @@ func (a *Agent) setupApplication() error {
 		//fmt.Println("pubsher", publisher)
 		application := &app.Application{
 			Commands: app.Commands{
-				StartBasket: commands.NewStartBasketHandler(baskets, publisher, log),
-				AddItem:     commands.NewAddItemHandler(baskets, stores, products, publisher, log),
+				StartBasket:    commands.NewStartBasketHandler(baskets, publisher, log),
+				AddItem:        commands.NewAddItemHandler(baskets, stores, products, publisher, log),
+				CheckoutBasket: commands.NewCheckoutBasketHandler(baskets, publisher, log),
 			},
 			Queries: app.Queries{},
 		}
