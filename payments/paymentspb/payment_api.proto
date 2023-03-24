@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package paymentspb;
+option go_package = "github.com/rezaAmiri123/microservice/payments/paymentspb";
+
+//import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Payment Service API";
+    version: "1.0";
+    contact: {
+      name: "Payment service";
+      url: "https://github.com/rezaAmiri123/microservice";
+      // email: "example@example.com";
+    };
+  };
+};
+
+service PaymentsService {
+  rpc AuthorizePayment(AuthorizePaymentRequest) returns (AuthorizePaymentResponse) {};
+  rpc ConfirmPayment(ConfirmPaymentRequest) returns (ConfirmPaymentResponse) {};
+  rpc CreateInvoice(CreateInvoiceRequest) returns (CreateInvoiceResponse) {
+    option (google.api.http) = {
+      post: "/v1/create_invoice"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to create a new invoice";
+      summary: "Create new invoice";
+    };
+  };
+  rpc AdjustInvoice(AdjustInvoiceRequest) returns (AdjustInvoiceResponse) {};
+  rpc PayInvoice(PayInvoiceRequest) returns (PayInvoiceResponse) {};
+  rpc CancelInvoice(CancelInvoiceRequest) returns (CancelInvoiceResponse) {};
+}
+
+message AuthorizePaymentRequest {
+  string customer_id = 1;
+  double amount = 2;
+}
+message AuthorizePaymentResponse {
+  string id = 1;
+}
+
+message ConfirmPaymentRequest {
+  string id = 1;
+}
+message ConfirmPaymentResponse {}
+
+message CreateInvoiceRequest {
+  string order_id = 1;
+  string payment_id = 2;
+  double amount = 3;
+}
+message CreateInvoiceResponse {
+  string id = 1;
+}
+
+message AdjustInvoiceRequest {
+  string id = 1;
+  double amount = 2;
+}
+message AdjustInvoiceResponse {}
+
+message PayInvoiceRequest {
+  string id = 1;
+}
+message PayInvoiceResponse {}
+
+message CancelInvoiceRequest {
+  string id = 1;
+}
+message CancelInvoiceResponse {}
