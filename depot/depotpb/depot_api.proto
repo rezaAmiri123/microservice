@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package depotpb;
+option go_package = "github.com/rezaAmiri123/microservice/depot/depotpb";
+
+//import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Depot Service API";
+    version: "1.0";
+    contact: {
+      name: "Store service";
+      url: "https://github.com/rezaAmiri123/microservice";
+      // email: "example@example.com";
+    };
+  };
+};
+
+service DepotService {
+  rpc CreateShoppingList(CreateShoppingListRequest) returns (CreateShoppingListResponse) {
+    option (google.api.http) = {
+      post: "/v1/create_shopping_list"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to create a new shopping list";
+      summary: "Create new shopping list";
+    };
+  }
+  rpc CancelShoppingList(CancelShoppingListRequest) returns (CancelShoppingListResponse) {}
+  rpc AssignShoppingList(AssignShoppingListRequest) returns (AssignShoppingListResponse) {}
+  rpc CompleteShoppingList(CompleteShoppingListRequest) returns (CompleteShoppingListResponse) {}
+}
+
+message OrderItem {
+  string product_id = 1;
+  string store_id = 2;
+  int32 quantity = 3;
+}
+
+message ShoppingList {
+  string id = 1;
+  string order_id = 2;
+  map<string, Stop> stops = 3;
+  string assigned_bot_id = 4;
+  string status = 5;
+}
+
+message Stop {
+  string store_name = 1;
+  string store_location = 2;
+  map<string, Item> items = 3;
+}
+
+message Item {
+  string name = 1;
+  int32 quantity = 2;
+}
+
+message CreateShoppingListRequest {
+  string order_id = 1;
+  repeated OrderItem items = 2;
+}
+
+message CreateShoppingListResponse {
+  string id = 1;
+}
+
+message CancelShoppingListRequest {
+  string id = 1;
+}
+
+message CancelShoppingListResponse {}
+
+message AssignShoppingListRequest {
+  string id = 1;
+  string bot_id = 2;
+}
+
+message AssignShoppingListResponse {}
+
+message CompleteShoppingListRequest {
+  string id = 1;
+}
+
+message CompleteShoppingListResponse {}
