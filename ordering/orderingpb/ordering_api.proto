@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package orderingpb;
+option go_package = "github.com/rezaAmiri123/microservice/ordering/orderingpb";
+
+//import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Ordering Service API";
+    version: "1.0";
+    contact: {
+      name: "Ordering service";
+      url: "https://github.com/rezaAmiri123/microservice";
+      // email: "example@example.com";
+    };
+  };
+};
+
+
+service OrderingService {
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/create_order"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to create a new order";
+      summary: "Create new order";
+    };
+  };
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {};
+  rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse) {};
+  rpc ReadyOrder(ReadyOrderRequest) returns (ReadyOrderResponse) {};
+  rpc CompleteOrder(CompleteOrderRequest) returns (CompleteOrderResponse) {};
+}
+
+message Order {
+  string id = 1;
+  string user_id = 2;
+  string payment_id = 3;
+  repeated Item items = 4;
+  string status = 5;
+}
+
+message Item {
+  string store_id = 1;
+  string product_id = 2;
+  string store_name = 3;
+  string product_name = 4;
+  double price = 5;
+  int32 quantity = 6;
+}
+
+message CreateOrderRequest {
+  repeated Item items = 1;
+  string user_id = 2;
+  string payment_id = 3;
+}
+
+message CreateOrderResponse {
+  string id = 1;
+}
+
+message GetOrderRequest {
+  string id = 1;
+}
+
+message GetOrderResponse {
+  Order order = 1;
+}
+
+message CancelOrderRequest {
+  string id = 1;
+}
+
+message CancelOrderResponse {}
+
+message ReadyOrderRequest {
+  string id = 1;
+}
+
+message ReadyOrderResponse {}
+
+message CompleteOrderRequest {
+  string id = 1;
+  string invoice_id = 2;
+}
+
+message CompleteOrderResponse {}

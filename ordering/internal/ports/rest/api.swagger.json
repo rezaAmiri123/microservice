@@ -1,0 +1,180 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Ordering Service API",
+    "version": "1.0",
+    "contact": {
+      "name": "Ordering service",
+      "url": "https://github.com/rezaAmiri123/microservice"
+    }
+  },
+  "tags": [
+    {
+      "name": "OrderingService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/create_order": {
+      "post": {
+        "summary": "Create new order",
+        "description": "Use this API to create a new order",
+        "operationId": "OrderingService_CreateOrder",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/orderingpbCreateOrderResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/orderingpbCreateOrderRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OrderingService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "orderingpbCancelOrderResponse": {
+      "type": "object"
+    },
+    "orderingpbCompleteOrderResponse": {
+      "type": "object"
+    },
+    "orderingpbCreateOrderRequest": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/orderingpbItem"
+          }
+        },
+        "userId": {
+          "type": "string"
+        },
+        "paymentId": {
+          "type": "string"
+        }
+      }
+    },
+    "orderingpbCreateOrderResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "orderingpbGetOrderResponse": {
+      "type": "object",
+      "properties": {
+        "order": {
+          "$ref": "#/definitions/orderingpbOrder"
+        }
+      }
+    },
+    "orderingpbItem": {
+      "type": "object",
+      "properties": {
+        "storeId": {
+          "type": "string"
+        },
+        "productId": {
+          "type": "string"
+        },
+        "storeName": {
+          "type": "string"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "double"
+        },
+        "quantity": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "orderingpbOrder": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "paymentId": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/orderingpbItem"
+          }
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "orderingpbReadyOrderResponse": {
+      "type": "object"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}
