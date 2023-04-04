@@ -14,6 +14,7 @@ var (
 	ErrEmailCannotBeBlank    = errors.Wrap(errors.ErrBadRequest, "the email cannot be blank")
 	ErrUserAlreadyEnabled    = errors.Wrap(errors.ErrBadRequest, "the user is already enabled")
 	ErrUserAlreadyDisabled   = errors.Wrap(errors.ErrBadRequest, "the user is already disabled")
+	ErrUserNotAuthorized     = errors.Wrap(errors.ErrUnauthorized, "the user is not authorized")
 )
 
 const UserAggregate = "users.UserAggregate"
@@ -97,5 +98,17 @@ func (u *User) hashPassword() error {
 		return err
 	}
 	u.Password = string(hashedPassword)
+	return nil
+}
+
+func (u *User) Authorize( /* TODO authorize what? */) error {
+	if !u.Enabled {
+		return ErrUserNotAuthorized
+	}
+
+	u.AddEvent(UserAuthorizedEvent, &UserAuthorized{
+		User: u,
+	})
+
 	return nil
 }

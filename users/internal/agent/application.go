@@ -16,6 +16,7 @@ import (
 	"github.com/rezaAmiri123/microservice/users/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/users/internal/app"
 	"github.com/rezaAmiri123/microservice/users/internal/app/commands"
+	"github.com/rezaAmiri123/microservice/users/internal/app/queries"
 	"github.com/rezaAmiri123/microservice/users/internal/constants"
 	"github.com/rezaAmiri123/microservice/users/internal/handlers"
 	"github.com/rezaAmiri123/microservice/users/userspb"
@@ -107,7 +108,9 @@ func (a *Agent) setupApplication() error {
 				RegisterUser: commands.NewRegisterUserHandler(repo, a.logger, domainDispatcher),
 				EnableUser:   commands.NewEnableUserHandler(repo, a.logger, domainDispatcher),
 			},
-			Queries: app.Queries{},
+			Queries: app.Queries{
+				AuthorizeUser: queries.NewAuthorizeUserHandler(repo, a.logger, domainDispatcher),
+			},
 		}
 		a.Application = application
 		return application, nil

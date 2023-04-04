@@ -42,7 +42,7 @@ user_proto:
 		--proto_path=userspb userspb/*.proto
 
 migratecreate:
-	migrate create -ext sql -dir $(MIGRATION_PATH) -seq service_user
+	migrate create -ext sql -dir $(MIGRATION_PATH) -seq user
 
 migrateup:
 	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose up

@@ -30,6 +30,27 @@ service UserService{
       summary: "Register new user";
     };
   }
+  rpc AuthorizeUser(AuthorizeUserRequest) returns (AuthorizeUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/authorize_user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to authorize a user";
+      summary: "Authorize user";
+    };
+  };
+  rpc EnableUser(EnableUserRequest) returns (EnableUserResponse) {
+    option (google.api.http) = {
+      patch: "/v1/enable_user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to enable user";
+      summary: "Enable user";
+    };
+
+  };
   rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
     option (google.api.http) = {
       patch: "/v1/update_user"
@@ -119,3 +140,13 @@ message RegisterUserRequest {
 message RegisterUserResponse {
   string id = 1;
 }
+
+message AuthorizeUserRequest {
+  string id = 1;
+}
+message AuthorizeUserResponse {}
+
+message EnableUserRequest {
+  string id = 1;
+}
+message EnableUserResponse {}

@@ -1,0 +1,34 @@
+package grpc
+
+import (
+	"database/sql"
+	"github.com/rezaAmiri123/microservice/pkg/di"
+	"github.com/rezaAmiri123/microservice/users/userspb"
+	"google.golang.org/grpc"
+)
+
+type serverTx struct {
+	c di.Container
+	userspb.UnimplementedUserServiceServer
+}
+
+var _ userspb.UserServiceServer = (*serverTx)(nil)
+
+func RegisterServerTx(container di.Container, registrar grpc.ServiceRegistrar) error {
+	userspb.RegisterUserServiceServer(registrar, serverTx{
+		c: container,
+	})
+	return nil
+}
+
+func (s serverTx) closeTx(tx *sql.Tx, err error) error {
+	if p := recover(); p != nil {
+		_ = tx.Rollback()
+		panic(p)
+	} else if err != nil {
+		_ = tx.Rollback()
+		return err
+	} else {
+		return tx.Commit()
+	}
+}

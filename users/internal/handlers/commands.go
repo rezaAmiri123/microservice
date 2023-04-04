@@ -6,6 +6,7 @@ import (
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/registry"
 	"github.com/rezaAmiri123/microservice/users/internal/app"
+	"github.com/rezaAmiri123/microservice/users/internal/app/queries"
 	"github.com/rezaAmiri123/microservice/users/userspb"
 )
 
@@ -36,7 +37,7 @@ func (h commandHandlers) HandleCommand(ctx context.Context, cmd ddd.Command) (dd
 }
 
 func (h commandHandlers) doAuthorizeUser(ctx context.Context, cmd ddd.Command) (ddd.Reply, error) {
-	//payload := cmd.Payload().(*userspb.AuthorizeUser)
-	//return nil, h.app.AuthorizeCustomer(ctx, application.AuthorizeCustomer{ID: payload.GetId()})
-	return nil, nil
+	payload := cmd.Payload().(*userspb.AuthorizeUser)
+	return nil, h.app.Queries.AuthorizeUser.Handle(ctx, queries.AuthorizeUser{ID: payload.GetId()})
+
 }

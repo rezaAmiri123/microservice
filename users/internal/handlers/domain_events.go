@@ -32,6 +32,8 @@ func (h domainHandlers[T]) HandleEvent(ctx context.Context, event T) error {
 	switch event.EventName() {
 	case domain.UserRegisteredEvent:
 		return h.onUserRegistered(ctx, event)
+	case domain.UserEnabledEvent:
+		return h.onUserEnabled(ctx, event)
 	}
 	return nil
 }
@@ -41,6 +43,14 @@ func (h domainHandlers[T]) onUserRegistered(ctx context.Context, event ddd.Aggre
 		ddd.NewEvent(userspb.UserRegisteredEvent, &userspb.UserRegistered{
 			Id:       payload.User.ID(),
 			Username: payload.User.Username,
+		}),
+	)
+}
+
+func (h domainHandlers[T]) onUserEnabled(ctx context.Context, event ddd.AggregateEvent) error {
+	return h.publisher.Publish(ctx, userspb.UserAggregateChannel,
+		ddd.NewEvent(userspb.UserEnabledEvent, &userspb.UserEnabled{
+			Id: event.AggregateID(),
 		}),
 	)
 }

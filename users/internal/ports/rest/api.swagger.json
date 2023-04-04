@@ -20,6 +20,74 @@
     "application/json"
   ],
   "paths": {
+    "/v1/authorize_user": {
+      "post": {
+        "summary": "Authorize user",
+        "description": "Use this API to authorize a user",
+        "operationId": "UserService_AuthorizeUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/userspbAuthorizeUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userspbAuthorizeUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/v1/enable_user": {
+      "patch": {
+        "summary": "Enable user",
+        "description": "Use this API to enable user",
+        "operationId": "UserService_EnableUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/userspbEnableUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userspbEnableUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/v1/login": {
       "post": {
         "summary": "Login user",
@@ -180,10 +248,33 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }
       }
+    },
+    "userspbAuthorizeUserRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "userspbAuthorizeUserResponse": {
+      "type": "object"
+    },
+    "userspbEnableUserRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "userspbEnableUserResponse": {
+      "type": "object"
     },
     "userspbLoginUserRequest": {
       "type": "object",
