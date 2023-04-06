@@ -11,5 +11,8 @@ type Queries struct {
 }
 
 type Commands struct {
-	CreateOrder *commands.CreateOrderHandler
+	CreateOrder   *commands.CreateOrderHandler
+	ReadyOrder    *commands.ReadyOrderHandler
+	ApproveOrder  *commands.ApproveOrderHandler
+	CompleteOrder *commands.CompleteOrderHandler
 }

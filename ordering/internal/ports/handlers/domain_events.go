@@ -32,8 +32,24 @@ func (h domainHandlers[T]) HandleEvent(ctx context.Context, event T) error {
 	switch event.EventName() {
 	case domain.OrderCreatedEvent:
 		return h.onOrderCreated(ctx, event)
+	case domain.OrderReadiedEvent:
+		return h.onOrderReadied(ctx, event)
+	case domain.OrderCompletedEvent:
+		return h.onOrderCompleted(ctx, event)
 	}
 	return nil
+}
+
+func (h domainHandlers[T]) onOrderReadied(ctx context.Context, event ddd.Event) error {
+	payload := event.Payload().(*domain.Order)
+	return h.publisher.Publish(ctx, orderingpb.OrderAggregateChannel,
+		ddd.NewEvent(orderingpb.OrderReadiedEvent, &orderingpb.OrderReadied{
+			Id:        payload.ID(),
+			UserId:    payload.UserID,
+			PaymentId: payload.PaymentID,
+			Total:     payload.GetTotal(),
+		}),
+	)
 }
 
 func (h domainHandlers[T]) onOrderCreated(ctx context.Context, event ddd.Event) error {
@@ -55,6 +71,17 @@ func (h domainHandlers[T]) onOrderCreated(ctx context.Context, event ddd.Event) 
 			PaymentId:  payload.PaymentID,
 			ShoppingId: payload.ShoppingID,
 			Items:      items,
+		}),
+	)
+}
+
+func (h domainHandlers[T]) onOrderCompleted(ctx context.Context, event ddd.Event) error {
+	payload := event.Payload().(*domain.Order)
+	return h.publisher.Publish(ctx, orderingpb.OrderAggregateChannel,
+		ddd.NewEvent(orderingpb.OrderCompletedEvent, &orderingpb.OrderCompleted{
+			Id:        payload.ID(),
+			UserId:    payload.UserID,
+			InvoiceId: payload.InvoiceID,
 		}),
 	)
 }

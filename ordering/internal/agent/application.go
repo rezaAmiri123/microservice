@@ -122,7 +122,10 @@ func (a *Agent) setupApplication() error {
 		//fmt.Println("pubsher", publisher)
 		application := &app.Application{
 			Commands: app.Commands{
-				CreateOrder: commands.NewCreateOrderHandler(orders, dispatcher, log),
+				CreateOrder:   commands.NewCreateOrderHandler(orders, dispatcher, log),
+				ReadyOrder:    commands.NewReadyOrderHandler(orders, dispatcher, log),
+				ApproveOrder:  commands.NewApproveOrderHandler(orders, dispatcher, log),
+				CompleteOrder: commands.NewCompleteOrderHandler(orders, dispatcher, log),
 			},
 			Queries: app.Queries{},
 		}

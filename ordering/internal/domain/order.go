@@ -84,6 +84,9 @@ func (o *Order) Approve(shoppingID string) (ddd.Event, error) {
 		ShoppingID: shoppingID,
 	})
 
+	o.ShoppingID = shoppingID
+	o.Status = OrderIsApproved
+
 	return ddd.NewEvent(OrderApprovedEvent, o), nil
 }
 
@@ -108,6 +111,8 @@ func (o *Order) Ready() (ddd.Event, error) {
 		Total:     o.GetTotal(),
 	})
 
+	o.Status = OrderIsReady
+
 	return ddd.NewEvent(OrderReadiedEvent, o), nil
 }
 
@@ -120,6 +125,9 @@ func (o *Order) Complete(invoiceID string) (ddd.Event, error) {
 		UserID:    o.UserID,
 		InvoiceID: invoiceID,
 	})
+
+	o.InvoiceID = invoiceID
+	o.Status = OrderIsCompleted
 
 	return ddd.NewEvent(OrderCompletedEvent, o), nil
 }

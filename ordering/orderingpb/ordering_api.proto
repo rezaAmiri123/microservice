@@ -33,8 +33,26 @@ service OrderingService {
   };
   rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {};
   rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse) {};
-  rpc ReadyOrder(ReadyOrderRequest) returns (ReadyOrderResponse) {};
-  rpc CompleteOrder(CompleteOrderRequest) returns (CompleteOrderResponse) {};
+  rpc ReadyOrder(ReadyOrderRequest) returns (ReadyOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/ready_order"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to make ready an order";
+      summary: "Ready order";
+    };
+  };
+  rpc CompleteOrder(CompleteOrderRequest) returns (CompleteOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/complete_order"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to complete an order";
+      summary: "Complete an order";
+    };
+  };
 }
 
 message Order {

@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"github.com/rezaAmiri123/microservice/ordering/internal/app"
+	"github.com/rezaAmiri123/microservice/ordering/internal/app/commands"
 	"github.com/rezaAmiri123/microservice/ordering/orderingpb"
 	"github.com/rezaAmiri123/microservice/pkg/am"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
@@ -28,14 +28,23 @@ func RegisterCommandHandlers(subscriber am.MessageSubscriber, handlers am.Messag
 }
 
 func (h commandHandlers) HandleCommand(ctx context.Context, cmd ddd.Command) (reply ddd.Reply, err error) {
-	//switch cmd.CommandName() {
+	switch cmd.CommandName() {
 	//case orderingpb.RejectOrderCommand:
 	//	return h.doRejectOrder(ctx, cmd)
-	//case orderingpb.ApproveOrderCommand:
-	//	return h.doApproveOrder(ctx, cmd)
-	//}
-	fmt.Println("command handler called")
+	case orderingpb.ApproveOrderCommand:
+		return h.doApproveOrder(ctx, cmd)
+	}
 
 	return nil, nil
+
+}
+
+func (h commandHandlers) doApproveOrder(ctx context.Context, cmd ddd.Command) (reply ddd.Reply, err error) {
+	payload := cmd.Payload().(*orderingpb.ApproveOrder)
+
+	return nil, h.app.Commands.ApproveOrder.Handle(ctx, commands.ApproveOrder{
+		ID:         payload.GetId(),
+		ShoppingID: payload.GetShoppingId(),
+	})
 
 }

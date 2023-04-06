@@ -78,14 +78,20 @@ func (r OrderRepository) Save(ctx context.Context, order *domain.Order) error {
 }
 
 func (r OrderRepository) Update(ctx context.Context, order *domain.Order) error {
-	const query = "UPDATE %s SET items = $2, status = $3 WHERE id = $1"
+	const query = "UPDATE %s SET items = $2, status = $3, shopping_id = $4, invoice_id = $5 WHERE id = $1"
 
 	items, err := json.Marshal(order.Items)
 	if err != nil {
 		return errors.ErrInternalServerError.Err(err)
 	}
 
-	_, err = r.db.ExecContext(ctx, r.table(query), order.ID(), items, order.Status.String())
+	_, err = r.db.ExecContext(ctx, r.table(query),
+		order.ID(),
+		items,
+		order.Status.String(),
+		order.ShoppingID,
+		order.InvoiceID,
+	)
 
 	return errors.ErrInternalServerError.Err(err)
 }
