@@ -98,9 +98,10 @@ func (sl ShoppingList) isAssignable() bool {
 }
 
 func (sl *ShoppingList) Assign(id string) error {
-	if !sl.isAssignable() {
-		return ErrShoppingCannotBeAssigned
-	}
+	// TODO we need to figure out why we do not have a ShoppingListIsAvailable
+	//if !sl.isAssignable() {
+	//	return ErrShoppingCannotBeAssigned
+	//}
 
 	sl.AssignedBotID = id
 	sl.Status = ShoppingListIsAssigned
@@ -117,7 +118,7 @@ func (sl ShoppingList) isCompletable() bool {
 	return sl.Status == ShoppingListIsAssigned
 }
 
-func (sl *ShoppingList) Compete() error {
+func (sl *ShoppingList) Complete() error {
 	if !sl.isCompletable() {
 		return ErrShoppingCannotBeCompleted
 	}
@@ -130,4 +131,3 @@ func (sl *ShoppingList) Compete() error {
 
 	return nil
 }
-

@@ -13,5 +13,8 @@ type Queries struct {
 }
 
 type Commands struct {
-	CreateShoppingList *commands.CreateShoppingListHandler
+	CreateShoppingList   *commands.CreateShoppingListHandler
+	InitiateShopping     *commands.InitiateShoppingHandler
+	AssignShoppingList   *commands.AssignShoppingListHandler
+	CompleteShoppingList *commands.CompleteShoppingListHandler
 }

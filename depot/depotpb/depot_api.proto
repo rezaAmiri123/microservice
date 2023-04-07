@@ -31,8 +31,26 @@ service DepotService {
     };
   }
   rpc CancelShoppingList(CancelShoppingListRequest) returns (CancelShoppingListResponse) {}
-  rpc AssignShoppingList(AssignShoppingListRequest) returns (AssignShoppingListResponse) {}
-  rpc CompleteShoppingList(CompleteShoppingListRequest) returns (CompleteShoppingListResponse) {}
+  rpc AssignShoppingList(AssignShoppingListRequest) returns (AssignShoppingListResponse) {
+    option (google.api.http) = {
+      post: "/v1/assign_shopping_list"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to assign a shopping list";
+      summary: "Assign a shopping list";
+    };
+  }
+  rpc CompleteShoppingList(CompleteShoppingListRequest) returns (CompleteShoppingListResponse) {
+    option (google.api.http) = {
+      post: "/v1/complete_shopping_list"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to complete a shopping list";
+      summary: "complete a shopping list";
+    };
+  }
 }
 
 message OrderItem {

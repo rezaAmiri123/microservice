@@ -20,6 +20,74 @@
     "application/json"
   ],
   "paths": {
+    "/v1/assign_shopping_list": {
+      "post": {
+        "summary": "Assign a shopping list",
+        "description": "Use this API to assign a shopping list",
+        "operationId": "DepotService_AssignShoppingList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/depotpbAssignShoppingListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/depotpbAssignShoppingListRequest"
+            }
+          }
+        ],
+        "tags": [
+          "DepotService"
+        ]
+      }
+    },
+    "/v1/complete_shopping_list": {
+      "post": {
+        "summary": "complete a shopping list",
+        "description": "Use this API to complete a shopping list",
+        "operationId": "DepotService_CompleteShoppingList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/depotpbCompleteShoppingListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/depotpbCompleteShoppingListRequest"
+            }
+          }
+        ],
+        "tags": [
+          "DepotService"
+        ]
+      }
+    },
     "/v1/create_shopping_list": {
       "post": {
         "summary": "Create new shopping list",
@@ -56,11 +124,30 @@
     }
   },
   "definitions": {
+    "depotpbAssignShoppingListRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "botId": {
+          "type": "string"
+        }
+      }
+    },
     "depotpbAssignShoppingListResponse": {
       "type": "object"
     },
     "depotpbCancelShoppingListResponse": {
       "type": "object"
+    },
+    "depotpbCompleteShoppingListRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
     },
     "depotpbCompleteShoppingListResponse": {
       "type": "object"

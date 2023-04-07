@@ -132,7 +132,10 @@ func (a *Agent) setupApplication() error {
 		//fmt.Println("pubsher", publisher)
 		application := &app.Application{
 			Commands: app.Commands{
-				CreateShoppingList: commands.NewCreateShoppingListHandler(shoppingList, stores, products, dispatcher, log),
+				CreateShoppingList:   commands.NewCreateShoppingListHandler(shoppingList, stores, products, dispatcher, log),
+				InitiateShopping:     commands.NewInitiateShoppingHandler(shoppingList, dispatcher, log),
+				AssignShoppingList:   commands.NewAssignShoppingListHandler(shoppingList, dispatcher, log),
+				CompleteShoppingList: commands.NewCompleteShoppingListHandler(shoppingList, dispatcher, log),
 			},
 			Queries: app.Queries{},
 		}
