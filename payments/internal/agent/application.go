@@ -91,23 +91,26 @@ func (a *Agent) setupApplication() error {
 		return pg.NewInvoiceRepository(constants.InvoicesTableName, db), nil
 	})
 
-	//a.container.AddScoped(constants.PaymentsRepoKey, func(c di.Container) (any, error) {
-	//	return pg.NewPaymentRepository(
-	//		constants.PaymentsTableName,
-	//		c.Get(constants.DatabaseTransactionKey).(*sql.Tx),
-	//	), nil
-	//})
+	a.container.AddScoped(constants.PaymentsRepoKey, func(c di.Container) (any, error) {
+		//tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
+		db := c.Get(constants.DatabaseKey).(*sql.DB)
+		return pg.NewPaymentRepository(constants.PaymentsTableName, db), nil
+	})
 
 	// setup application
 	a.container.AddScoped(constants.ApplicationKey, func(c di.Container) (any, error) {
-		//publisher := c.Get(constants.DomainDispatcherKey).(ddd.EventPublisher[ddd.Event])
+		publisher := c.Get(constants.DomainDispatcherKey).(ddd.EventPublisher[ddd.Event])
 		invoices := c.Get(constants.InvoicesRepoKey).(domain.InvoiceRepository)
+		payments := c.Get(constants.PaymentsRepoKey).(domain.PaymentRepository)
 		log := c.Get(constants.LoggerKey).(logger.Logger)
 
 		//fmt.Println("pubsher", publisher)
 		application := &app.Application{
 			Commands: app.Commands{
-				CreateInvoice: commands.NewCreateInvoiceHandler(invoices, log),
+				CreateInvoice:    commands.NewCreateInvoiceHandler(invoices, log),
+				PayInvoice:       commands.NewPayInvoiceHandler(invoices, publisher, log),
+				AuthorizePayment: commands.NewAuthorizePaymentHandler(payments, log),
+				ConfirmPayment:   commands.NewConfirmPaymentHandler(payments, log),
 			},
 			Queries: app.Queries{},
 		}
@@ -130,7 +133,7 @@ func (a *Agent) setupApplication() error {
 	a.container.AddScoped(constants.CommandHandlersKey, func(c di.Container) (any, error) {
 		return handlers.NewCommandHandlers(
 			c.Get(constants.RegistryKey).(registry.Registry),
-			c.Get(constants.ApplicationKey).(app.Application),
+			c.Get(constants.ApplicationKey).(*app.Application),
 			c.Get(constants.ReplyPublisherKey).(am.ReplyPublisher),
 			tm.InboxHandler(c.Get(constants.InboxStoreKey).(tm.InboxStore)),
 		), nil

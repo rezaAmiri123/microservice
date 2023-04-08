@@ -3,6 +3,9 @@ package internal
 import (
 	"context"
 	"github.com/rezaAmiri123/microservice/cosec/internal/domain"
+	"github.com/rezaAmiri123/microservice/depot/depotpb"
+	"github.com/rezaAmiri123/microservice/ordering/orderingpb"
+	"github.com/rezaAmiri123/microservice/payments/paymentspb"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/sec"
 	"github.com/rezaAmiri123/microservice/users/userspb"
@@ -30,10 +33,9 @@ func NewCreateOrderSaga() sec.Saga[*domain.CreateOrderData] {
 
 	// 2. CreateShoppingList, -CancelShoppingList
 	saga.AddStep().
-		Action(saga.createShoppingList)
-	//Action(saga.createShoppingList).
-	//OnActionReply(depotpb.CreatedShoppingListReply, saga.onCreatedShoppingListReply).
-	//Compensation(saga.cancelShoppingList)
+		Action(saga.createShoppingList).
+		OnActionReply(depotpb.CreatedShoppingListReply, saga.onCreatedShoppingListReply).
+		Compensation(saga.cancelShoppingList)
 
 	// 3. ConfirmPayment
 	saga.AddStep().
@@ -51,8 +53,7 @@ func NewCreateOrderSaga() sec.Saga[*domain.CreateOrderData] {
 }
 
 func (s createOrderSaga) rejectOrder(ctx context.Context, data *domain.CreateOrderData) (string, ddd.Command, error) {
-	//return orderingpb.CommandChannel, ddd.NewCommand(orderingpb.RejectOrderCommand, &orderingpb.RejectOrder{Id: data.OrderID}), nil
-	return "", nil, nil
+	return orderingpb.CommandChannel, ddd.NewCommand(orderingpb.RejectOrderCommand, &orderingpb.RejectOrder{Id: data.OrderID}), nil
 }
 
 func (s createOrderSaga) authorizeUser(ctx context.Context, data *domain.CreateOrderData) (string, ddd.Command, error) {
@@ -61,52 +62,48 @@ func (s createOrderSaga) authorizeUser(ctx context.Context, data *domain.CreateO
 }
 
 func (s createOrderSaga) createShoppingList(ctx context.Context, data *domain.CreateOrderData) (string, ddd.Command, error) {
-	//items := make([]*depotpb.CreateShoppingList_Item, len(data.Items))
-	//for i, item := range data.Items {
-	//	items[i] = &depotpb.CreateShoppingList_Item{
-	//		ProductId: item.ProductID,
-	//		StoreId:   item.StoreID,
-	//		Quantity:  int32(item.Quantity),
-	//	}
-	//}
-	//
-	//return am.NewCommand(depotpb.CreateShoppingListCommand, depotpb.CommandChannel, &depotpb.CreateShoppingList{
-	//	OrderId: data.OrderID,
-	//	Items:   items,
-	//})
-	return "", nil, nil
+	items := make([]*depotpb.CreateShoppingList_Item, len(data.Items))
+	for i, item := range data.Items {
+		items[i] = &depotpb.CreateShoppingList_Item{
+			ProductId: item.ProductID,
+			StoreId:   item.StoreID,
+			Quantity:  int32(item.Quantity),
+		}
+	}
+
+	return depotpb.CommandChannel, ddd.NewCommand(depotpb.CreateShoppingListCommand, &depotpb.CreateShoppingList{
+		OrderId: data.OrderID,
+		Items:   items,
+	}), nil
 }
 
 func (s createOrderSaga) onCreatedShoppingListReply(ctx context.Context, data *domain.CreateOrderData, reply ddd.Reply) error {
-	//payload := reply.Payload().(*depotpb.CreatedShoppingList)
-	//
-	//data.ShoppingID = payload.GetId()
+	payload := reply.Payload().(*depotpb.CreatedShoppingList)
+
+	data.ShoppingID = payload.GetId()
 
 	return nil
 }
 
 func (s createOrderSaga) cancelShoppingList(ctx context.Context, data *domain.CreateOrderData) (string, ddd.Command, error) {
 	//return am.NewCommand(depotpb.CancelShoppingListCommand, depotpb.CommandChannel, &depotpb.CancelShoppingList{Id: data.ShoppingID})
-	return "", nil, nil
+	return depotpb.CommandChannel, ddd.NewCommand(depotpb.CancelShoppingListCommand, &depotpb.CancelShoppingList{Id: data.ShoppingID}), nil
 }
 
 func (s createOrderSaga) confirmPayment(ctx context.Context, data *domain.CreateOrderData) (string, ddd.Command, error) {
-	//return am.NewCommand(paymentspb.ConfirmPaymentCommand, paymentspb.CommandChannel, &paymentspb.ConfirmPayment{
-	//	Id:     data.PaymentID,
-	//	Amount: data.Total,
-	//})
-	return "", nil, nil
+	return paymentspb.CommandChannel, ddd.NewCommand(paymentspb.ConfirmPaymentCommand, &paymentspb.ConfirmPayment{
+		Id:     data.PaymentID,
+		Amount: data.Total,
+	}), nil
 }
 
 func (s createOrderSaga) initiateShopping(ctx context.Context, data *domain.CreateOrderData) (string, ddd.Command, error) {
-	//return am.NewCommand(depotpb.InitiateShoppingCommand, depotpb.CommandChannel, &depotpb.InitiateShopping{Id: data.ShoppingID})
-	return "", nil, nil
+	return depotpb.CommandChannel, ddd.NewCommand(depotpb.InitiateShoppingCommand, &depotpb.InitiateShopping{Id: data.ShoppingID}), nil
 }
 
 func (s createOrderSaga) approveOrder(ctx context.Context, data *domain.CreateOrderData) (string, ddd.Command, error) {
-	//return am.NewCommand(orderingpb.ApproveOrderCommand, orderingpb.CommandChannel, &orderingpb.ApproveOrder{
-	//	Id:         data.OrderID,
-	//	ShoppingId: data.ShoppingID,
-	//})
-	return "", nil, nil
+	return orderingpb.CommandChannel, ddd.NewCommand(orderingpb.ApproveOrderCommand, &orderingpb.ApproveOrder{
+		Id:         data.OrderID,
+		ShoppingId: data.ShoppingID,
+	}), nil
 }

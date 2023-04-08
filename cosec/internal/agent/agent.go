@@ -1,10 +1,11 @@
 package agent
 
 import (
-	"github.com/rezaAmiri123/microservice/pkg/logger"
 	"io"
 	"sync"
 	"time"
+
+	"github.com/rezaAmiri123/microservice/pkg/di"
 )
 
 type Config struct {
@@ -39,6 +40,8 @@ type Config struct {
 	// kafka config
 	KafkaBrokers []string `mapstructure:"KAFKA_BROKERS"`
 
+	NatsURL    string `mapstructure:"NATS_URL"`
+	NatsStream string `mapstructure:"NATS_STREAM"`
 	// applogger.Config
 	LogLevel   string `mapstructure:"LOG_LEVEL"`
 	LogDevMode bool   `mapstructure:"LOG_DEV_MOD"`
@@ -60,7 +63,8 @@ type Agent struct {
 
 	//GrpcServerTLSConfig *tls.Config
 
-	logger logger.Logger
+	container di.Container
+	//logger    logger.Logger
 	//metric *metrics.UserServiceMetric
 	//httpServer *http.Server
 	//grpcServer *grpc.Server
@@ -78,11 +82,12 @@ type Agent struct {
 func NewAgent(config Config) (*Agent, error) {
 	a := &Agent{
 		Config:    config,
+		container: di.New(),
 		shutdowns: make(chan struct{}),
 	}
 	setupsFn := []func() error{
 		a.setupLogger,
-		//a.setupMetric,
+		a.setupRegistry,
 
 		//a.setupRepository,
 		//a.setupTracing,
@@ -113,11 +118,13 @@ func (a *Agent) Shutdown() error {
 	shutdown := []func() error{
 
 		//func() error {
-		//	a.grpcServer.GracefulStop()
+		//	grpcServer := a.container.Get(constants.GrpcServerKey).(*grpc.Server)
+		//	grpcServer.GracefulStop()
 		//	return nil
 		//},
 		//func() error {
-		//	return a.httpServer.Shutdown(context.Background())
+		//	httpServer := a.container.Get(constants.HttpServerKey).(*http.Server)
+		//	return httpServer.Shutdown(context.Background())
 		//},
 		//func() error {
 		//	return a.jaegerCloser.Close()

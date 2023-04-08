@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"github.com/rezaAmiri123/microservice/cosec/internal/domain"
+	"github.com/rezaAmiri123/microservice/ordering/orderingpb"
 	"github.com/rezaAmiri123/microservice/pkg/am"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/registry"
@@ -22,41 +23,41 @@ func NewIntegrationEventHandlers(reg registry.Registry, orchestrator sec.Orchest
 }
 
 func RegisterIntegrationEventHandlers(subscriber am.MessageSubscriber, handlers am.MessageHandler) (err error) {
-	_, err = subscriber.Subscribe("orderingpb.OrderAggregateChannel", handlers, am.MessageFilter{
-		"orderingpb.OrderCreatedEvent",
+	_, err = subscriber.Subscribe(orderingpb.OrderAggregateChannel, handlers, am.MessageFilter{
+		orderingpb.OrderCreatedEvent,
 	}, am.GroupName("cosec-ordering"))
 	return
 }
 
 func (h integrationHandlers[T]) HandleEvent(ctx context.Context, event T) error {
 	switch event.EventName() {
-	case "orderingpb.OrderCreatedEvent":
+	case orderingpb.OrderCreatedEvent:
 		return h.onOrderCreated(ctx, event)
 	}
 
 	return nil
 }
 func (h integrationHandlers[T]) onOrderCreated(ctx context.Context, event ddd.Event) error {
-	//payload := event.Payload().(*orderingpb.OrderCreated)
-	//
-	//var total float64
-	//items := make([]domain.Item, len(payload.GetItems()))
-	//for i, item := range payload.GetItems() {
-	//	items[i] = domain.Item{
-	//		ProductID: item.GetProductId(),
-	//		StoreID:   item.GetStoreId(),
-	//		Price:     item.GetPrice(),
-	//		Quantity:  int(item.GetQuantity()),
-	//	}
-	//	total += float64(item.GetQuantity()) * item.GetPrice()
-	//}
+	payload := event.Payload().(*orderingpb.OrderCreated)
+
+	var total float64
+	items := make([]domain.Item, len(payload.GetItems()))
+	for i, item := range payload.GetItems() {
+		items[i] = domain.Item{
+			ProductID: item.GetProductId(),
+			StoreID:   item.GetStoreId(),
+			Price:     item.GetPrice(),
+			Quantity:  int(item.GetQuantity()),
+		}
+		total += float64(item.GetQuantity()) * item.GetPrice()
+	}
 
 	data := &domain.CreateOrderData{
-		//OrderID:    payload.GetId(),
-		//CustomerID: payload.GetCustomerId(),
-		//PaymentID:  payload.GetPaymentId(),
-		//Items:      items,
-		//Total:      total,
+		OrderID:   payload.GetId(),
+		UserID:    payload.GetUserId(),
+		PaymentID: payload.GetPaymentId(),
+		Items:     items,
+		Total:     total,
 	}
 
 	// Start the CreateOrderSaga

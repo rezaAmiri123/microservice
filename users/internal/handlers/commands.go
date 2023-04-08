@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"github.com/rezaAmiri123/microservice/pkg/am"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/registry"
@@ -38,6 +39,7 @@ func (h commandHandlers) HandleCommand(ctx context.Context, cmd ddd.Command) (dd
 
 func (h commandHandlers) doAuthorizeUser(ctx context.Context, cmd ddd.Command) (ddd.Reply, error) {
 	payload := cmd.Payload().(*userspb.AuthorizeUser)
+	fmt.Println("authorize user handler with user id: ", payload.GetId())
 	return nil, h.app.Queries.AuthorizeUser.Handle(ctx, queries.AuthorizeUser{ID: payload.GetId()})
 
 }

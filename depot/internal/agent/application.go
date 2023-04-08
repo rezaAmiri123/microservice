@@ -159,7 +159,7 @@ func (a *Agent) setupApplication() error {
 	a.container.AddScoped(constants.CommandHandlersKey, func(c di.Container) (any, error) {
 		return handlers.NewCommandHandlers(
 			c.Get(constants.RegistryKey).(registry.Registry),
-			c.Get(constants.ApplicationKey).(app.Application),
+			c.Get(constants.ApplicationKey).(*app.Application),
 			c.Get(constants.ReplyPublisherKey).(am.ReplyPublisher),
 			tm.InboxHandler(c.Get(constants.InboxStoreKey).(tm.InboxStore)),
 		), nil

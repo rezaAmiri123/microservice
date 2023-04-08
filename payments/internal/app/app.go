@@ -10,5 +10,8 @@ type Application struct {
 type Queries struct{}
 
 type Commands struct {
-	CreateInvoice *commands.CreateInvoiceHandler
+	CreateInvoice    *commands.CreateInvoiceHandler
+	AuthorizePayment *commands.AuthorizePaymentHandler
+	ConfirmPayment   *commands.ConfirmPaymentHandler
+	PayInvoice       *commands.PayInvoiceHandler
 }

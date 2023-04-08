@@ -20,6 +20,74 @@
     "application/json"
   ],
   "paths": {
+    "/v1/authorize_payment": {
+      "post": {
+        "summary": "Authorize a payment",
+        "description": "Use this API to authorize a payment",
+        "operationId": "PaymentsService_AuthorizePayment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/paymentspbAuthorizePaymentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/paymentspbAuthorizePaymentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PaymentsService"
+        ]
+      }
+    },
+    "/v1/confirm_payment": {
+      "post": {
+        "summary": "Confirm a payment",
+        "description": "Use this API to confirm a payment",
+        "operationId": "PaymentsService_ConfirmPayment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/paymentspbConfirmPaymentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/paymentspbConfirmPaymentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PaymentsService"
+        ]
+      }
+    },
     "/v1/create_invoice": {
       "post": {
         "summary": "Create new invoice",
@@ -53,11 +121,57 @@
           "PaymentsService"
         ]
       }
+    },
+    "/v1/pay_invoice": {
+      "post": {
+        "summary": "Pay an invoice",
+        "description": "Use this API to pay an invoice",
+        "operationId": "PaymentsService_PayInvoice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/paymentspbPayInvoiceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/paymentspbPayInvoiceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PaymentsService"
+        ]
+      }
     }
   },
   "definitions": {
     "paymentspbAdjustInvoiceResponse": {
       "type": "object"
+    },
+    "paymentspbAuthorizePaymentRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "number",
+          "format": "double"
+        }
+      }
     },
     "paymentspbAuthorizePaymentResponse": {
       "type": "object",
@@ -69,6 +183,14 @@
     },
     "paymentspbCancelInvoiceResponse": {
       "type": "object"
+    },
+    "paymentspbConfirmPaymentRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
     },
     "paymentspbConfirmPaymentResponse": {
       "type": "object"
@@ -89,6 +211,14 @@
       }
     },
     "paymentspbCreateInvoiceResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "paymentspbPayInvoiceRequest": {
       "type": "object",
       "properties": {
         "id": {

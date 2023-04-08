@@ -12,10 +12,10 @@ import (
 )
 
 type commandHandlers struct {
-	app app.Application
+	app *app.Application
 }
 
-func NewCommandHandlers(reg registry.Registry, app app.Application, replyPublisher am.ReplyPublisher, mws ...am.MessageHandlerMiddleware) am.MessageHandler {
+func NewCommandHandlers(reg registry.Registry, app *app.Application, replyPublisher am.ReplyPublisher, mws ...am.MessageHandlerMiddleware) am.MessageHandler {
 	return am.NewCommandHandler(reg, replyPublisher, commandHandlers{
 		app: app,
 	}, mws...)

@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "storeId": "e164073a-d387-4cc5-bf94-a5017a850098",
+      "productId": "e0cd8139-c466-41dd-a377-9b73157f6127",
+      "storeName": "string12345",
+      "productName": "test",
+      "price": 4,
+      "quantity": 2
+    }
+  ],
+  "userId": "d595b436-c4b4-4ae0-8bda-b374cab79e99",
+  "paymentId": "string"
+}

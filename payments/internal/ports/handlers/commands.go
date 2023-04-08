@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	"github.com/rezaAmiri123/microservice/payments/internal/app"
+	"github.com/rezaAmiri123/microservice/payments/internal/app/commands"
 	"github.com/rezaAmiri123/microservice/payments/paymentspb"
 	"github.com/rezaAmiri123/microservice/pkg/am"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
@@ -11,10 +11,10 @@ import (
 )
 
 type commandHandlers struct {
-	app app.Application
+	app *app.Application
 }
 
-func NewCommandHandlers(reg registry.Registry, app app.Application, replyPublisher am.ReplyPublisher, mws ...am.MessageHandlerMiddleware) am.MessageHandler {
+func NewCommandHandlers(reg registry.Registry, app *app.Application, replyPublisher am.ReplyPublisher, mws ...am.MessageHandlerMiddleware) am.MessageHandler {
 	return am.NewCommandHandler(reg, replyPublisher, commandHandlers{
 		app: app,
 	})
@@ -38,7 +38,6 @@ func (h commandHandlers) HandleCommand(ctx context.Context, cmd ddd.Command) (re
 }
 func (h commandHandlers) doConfirmPayment(ctx context.Context, cmd ddd.Command) (reply ddd.Reply, err error) {
 	payload := cmd.Payload().(*paymentspb.ConfirmPayment)
-	_ = payload.Id
-	//return nil, h.app.Commands.ConfirmPayment(ctx, application.ConfirmPayment{ID: payload.GetId()})
-	return nil, errors.New("not implemented")
+
+	return nil, h.app.Commands.ConfirmPayment.Handle(ctx, commands.ConfirmPayment{ID: payload.GetId()})
 }

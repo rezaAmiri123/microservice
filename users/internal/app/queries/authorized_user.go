@@ -14,25 +14,22 @@ type (
 	}
 	AuthorizeUserHandler struct {
 		logger    logger.Logger
-		repo      domain.UserRepository
+		users     domain.UserRepository
 		publisher ddd.EventPublisher[ddd.AggregateEvent]
 	}
 )
 
-func NewAuthorizeUserHandler(repo domain.UserRepository, logger logger.Logger, publisher ddd.EventPublisher[ddd.AggregateEvent]) *AuthorizeUserHandler {
-	if repo == nil {
-		panic("userRepo is nil")
-	}
-	return &AuthorizeUserHandler{repo: repo, logger: logger, publisher: publisher}
+func NewAuthorizeUserHandler(users domain.UserRepository, logger logger.Logger, publisher ddd.EventPublisher[ddd.AggregateEvent]) *AuthorizeUserHandler {
+	return &AuthorizeUserHandler{users: users, logger: logger, publisher: publisher}
 }
 
 func (h AuthorizeUserHandler) Handle(ctx context.Context, cmd AuthorizeUser) error {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "AuthorizeUserHandler.Handle")
 	defer span.Finish()
 
-	user, err := h.repo.Find(ctx, cmd.ID)
+	user, err := h.users.Find(ctx, cmd.ID)
 	if err != nil {
-		h.logger.Errorf("cannot find user: %v", err)
+		//h.logger.Errorf("cannot find user: %v", err)
 		return err
 	}
 
