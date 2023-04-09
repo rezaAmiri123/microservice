@@ -15,4 +15,5 @@ type Commands struct {
 	ReadyOrder    *commands.ReadyOrderHandler
 	ApproveOrder  *commands.ApproveOrderHandler
 	CompleteOrder *commands.CompleteOrderHandler
+	CancelOrder   *commands.CancelOrderHandler
 }

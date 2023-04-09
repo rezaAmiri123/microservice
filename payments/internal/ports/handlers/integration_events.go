@@ -25,6 +25,7 @@ func NewIntegrationEventHandlers(reg registry.Registry, app *app.Application, mw
 func RegisterIntegrationEventHandlers(subscriber am.MessageSubscriber, handlers am.MessageHandler) error {
 	_, err := subscriber.Subscribe(orderingpb.OrderAggregateChannel, handlers, am.MessageFilter{
 		orderingpb.OrderReadiedEvent,
+		orderingpb.OrderCanceledEvent,
 	}, am.GroupName("payment-orders"))
 
 	return err
@@ -34,9 +35,18 @@ func (h integrationHandlers[T]) HandleEvent(ctx context.Context, event T) error 
 	switch event.EventName() {
 	case orderingpb.OrderReadiedEvent:
 		return h.onOrderReadied(ctx, event)
+	case orderingpb.OrderCanceledEvent:
+		return h.onOrderCanceled(ctx, event)
 	}
 
 	return nil
+}
+
+func (h integrationHandlers[T]) onOrderCanceled(ctx context.Context, event T) error {
+	payload := event.Payload().(*orderingpb.OrderCanceled)
+	return h.app.Commands.CancelInvoice.Handle(ctx, commands.CancelInvoice{
+		ID: payload.GetId(),
+	})
 }
 
 func (h integrationHandlers[T]) onOrderReadied(ctx context.Context, event T) error {

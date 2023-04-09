@@ -126,6 +126,7 @@ func (a *Agent) setupApplication() error {
 				ReadyOrder:    commands.NewReadyOrderHandler(orders, dispatcher, log),
 				ApproveOrder:  commands.NewApproveOrderHandler(orders, dispatcher, log),
 				CompleteOrder: commands.NewCompleteOrderHandler(orders, dispatcher, log),
+				CancelOrder:   commands.NewCancelOrderHandler(orders, dispatcher, log),
 			},
 			Queries: app.Queries{},
 		}

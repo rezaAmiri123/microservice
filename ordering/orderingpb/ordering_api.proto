@@ -32,7 +32,16 @@ service OrderingService {
     };
   };
   rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {};
-  rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse) {};
+  rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/cancel_order"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to cancel an order";
+      summary: "Cancel an order";
+    };
+  };
   rpc ReadyOrder(ReadyOrderRequest) returns (ReadyOrderResponse) {
     option (google.api.http) = {
       post: "/v1/ready_order"

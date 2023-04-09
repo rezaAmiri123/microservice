@@ -109,6 +109,7 @@ func (a *Agent) setupApplication() error {
 			Commands: app.Commands{
 				CreateInvoice:    commands.NewCreateInvoiceHandler(invoices, log),
 				PayInvoice:       commands.NewPayInvoiceHandler(invoices, publisher, log),
+				CancelInvoice:    commands.NewCancelInvoiceHandler(invoices, log),
 				AuthorizePayment: commands.NewAuthorizePaymentHandler(payments, log),
 				ConfirmPayment:   commands.NewConfirmPaymentHandler(payments, log),
 			},
@@ -122,13 +123,13 @@ func (a *Agent) setupApplication() error {
 		return handlers.NewDomainEventHandlers(c.Get(constants.EventPublisherKey).(am.EventPublisher)), nil
 	})
 
-	//a.container.AddScoped(constants.IntegrationEventHandlersKey, func(c di.Container) (any, error) {
-	//	return handlers.NewIntegrationEventHandlers(
-	//		c.Get(constants.RegistryKey).(registry.Registry),
-	//		c.Get(constants.ApplicationKey).(app.Application),
-	//		tm.InboxHandler(c.Get(constants.InboxStoreKey).(tm.InboxStore)),
-	//	), nil
-	//})
+	a.container.AddScoped(constants.IntegrationEventHandlersKey, func(c di.Container) (any, error) {
+		return handlers.NewIntegrationEventHandlers(
+			c.Get(constants.RegistryKey).(registry.Registry),
+			c.Get(constants.ApplicationKey).(*app.Application),
+			tm.InboxHandler(c.Get(constants.InboxStoreKey).(tm.InboxStore)),
+		), nil
+	})
 
 	a.container.AddScoped(constants.CommandHandlersKey, func(c di.Container) (any, error) {
 		return handlers.NewCommandHandlers(
@@ -144,9 +145,9 @@ func (a *Agent) setupApplication() error {
 		postgres.NewOutboxStore(constants.OutboxTableName, dbConn),
 	)
 	// setup Driver adapters
-	//if err = handlers.RegisterIntegrationEventHandlersTx(a.container); err != nil {
-	//	return err
-	//}
+	if err = handlers.RegisterIntegrationEventHandlersTx(a.container); err != nil {
+		return err
+	}
 	handlers.RegisterDomainEventHandlersTx(a.container)
 	if err = handlers.RegisterCommandHandlersTx(a.container); err != nil {
 		return err

@@ -34,9 +34,21 @@ func (h domainHandlers[T]) HandleEvent(ctx context.Context, event T) error {
 		return h.onBasketStarted(ctx, event)
 	case domain.BasketCheckedOutEvent:
 		return h.onBasketCheckout(ctx, event)
+	case domain.BasketCanceledEvent:
+		return h.onBasketCanceled(ctx, event)
 	}
 	return nil
 }
+
+func (h domainHandlers[T]) onBasketCanceled(ctx context.Context, event ddd.Event) error {
+	payload := event.Payload().(*domain.Basket)
+	return h.publisher.Publish(ctx, basketspb.BasketAggregateChannel,
+		ddd.NewEvent(basketspb.BasketCanceledEvent, &basketspb.BasketCanceled{
+			Id: payload.ID(),
+		}),
+	)
+}
+
 func (h domainHandlers[T]) onBasketStarted(ctx context.Context, event ddd.Event) error {
 	basket := event.Payload().(*domain.Basket)
 	return h.publisher.Publish(ctx, basketspb.BasketAggregateChannel,

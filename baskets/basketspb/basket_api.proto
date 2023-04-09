@@ -30,7 +30,16 @@ service BasketService {
       summary: "Create new basket";
     };
   };
-  rpc CancelBasket(CancelBasketRequest) returns (CancelBasketResponse) {};
+  rpc CancelBasket(CancelBasketRequest) returns (CancelBasketResponse) {
+    option (google.api.http) = {
+      post: "/v1/cancel_basket"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to cancel a basket";
+      summary: "Cancel a basket";
+    };
+  };
   rpc CheckoutBasket(CheckoutBasketRequest) returns (CheckoutBasketResponse) {
     option (google.api.http) = {
       post: "/v1/checkout_basket"

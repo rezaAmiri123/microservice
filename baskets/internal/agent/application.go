@@ -162,6 +162,7 @@ func (a *Agent) setupApplication() error {
 				StartBasket:    commands.NewStartBasketHandler(baskets, publisher, log),
 				AddItem:        commands.NewAddItemHandler(baskets, stores, products, publisher, log),
 				CheckoutBasket: commands.NewCheckoutBasketHandler(baskets, publisher, log),
+				CancelBasket:   commands.NewCancelBasketHandler(baskets, publisher, log),
 			},
 			Queries: app.Queries{},
 		}

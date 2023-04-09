@@ -54,6 +54,40 @@
         ]
       }
     },
+    "/v1/cancel_basket": {
+      "post": {
+        "summary": "Cancel a basket",
+        "description": "Use this API to cancel a basket",
+        "operationId": "BasketService_CancelBasket",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/basketspbCancelBasketResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/basketspbCancelBasketRequest"
+            }
+          }
+        ],
+        "tags": [
+          "BasketService"
+        ]
+      }
+    },
     "/v1/checkout_basket": {
       "post": {
         "summary": "checkout a basket",
@@ -154,6 +188,14 @@
             "type": "object",
             "$ref": "#/definitions/basketspbItem"
           }
+        }
+      }
+    },
+    "basketspbCancelBasketRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
         }
       }
     },

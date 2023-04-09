@@ -29,8 +29,8 @@ func RegisterCommandHandlers(subscriber am.MessageSubscriber, handlers am.Messag
 
 func (h commandHandlers) HandleCommand(ctx context.Context, cmd ddd.Command) (reply ddd.Reply, err error) {
 	switch cmd.CommandName() {
-	//case orderingpb.RejectOrderCommand:
-	//	return h.doRejectOrder(ctx, cmd)
+	case orderingpb.RejectOrderCommand:
+		return h.doRejectOrder(ctx, cmd)
 	case orderingpb.ApproveOrderCommand:
 		return h.doApproveOrder(ctx, cmd)
 	}
@@ -46,5 +46,12 @@ func (h commandHandlers) doApproveOrder(ctx context.Context, cmd ddd.Command) (r
 		ID:         payload.GetId(),
 		ShoppingID: payload.GetShoppingId(),
 	})
+}
 
+func (h commandHandlers) doRejectOrder(ctx context.Context, cmd ddd.Command) (reply ddd.Reply, err error) {
+	payload := cmd.Payload().(*orderingpb.RejectOrder)
+
+	return nil, h.app.Commands.CancelOrder.Handle(ctx, commands.CancelOrder{
+		ID: payload.GetId(),
+	})
 }

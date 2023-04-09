@@ -69,6 +69,9 @@ func (b *Basket) Cancel() (ddd.Event, error) {
 
 	b.AddEvent(BasketCanceledEvent, &BasketCanceled{})
 
+	b.Items = make(map[string]Item)
+	b.Status = BasketIsCanceled
+
 	return ddd.NewEvent(BasketCanceledEvent, b), nil
 }
 

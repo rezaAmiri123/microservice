@@ -14,4 +14,5 @@ type Commands struct {
 	AuthorizePayment *commands.AuthorizePaymentHandler
 	ConfirmPayment   *commands.ConfirmPaymentHandler
 	PayInvoice       *commands.PayInvoiceHandler
+	CancelInvoice    *commands.CancelInvoiceHandler
 }

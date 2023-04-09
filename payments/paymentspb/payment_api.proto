@@ -61,7 +61,16 @@ service PaymentsService {
       summary: "Pay an invoice";
     };
   };
-  rpc CancelInvoice(CancelInvoiceRequest) returns (CancelInvoiceResponse) {};
+  rpc CancelInvoice(CancelInvoiceRequest) returns (CancelInvoiceResponse) {
+    option (google.api.http) = {
+      post: "/v1/cancel_invoice"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to cancel an invoice";
+      summary: "Cancel an invoice";
+    };
+  };
 }
 
 message AuthorizePaymentRequest {

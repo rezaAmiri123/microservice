@@ -36,6 +36,8 @@ func (h domainHandlers[T]) HandleEvent(ctx context.Context, event T) error {
 		return h.onOrderReadied(ctx, event)
 	case domain.OrderCompletedEvent:
 		return h.onOrderCompleted(ctx, event)
+	case domain.OrderCanceledEvent:
+		return h.onOrderCancel(ctx, event)
 	}
 	return nil
 }
@@ -82,6 +84,17 @@ func (h domainHandlers[T]) onOrderCompleted(ctx context.Context, event ddd.Event
 			Id:        payload.ID(),
 			UserId:    payload.UserID,
 			InvoiceId: payload.InvoiceID,
+		}),
+	)
+}
+
+func (h domainHandlers[T]) onOrderCancel(ctx context.Context, event ddd.Event) error {
+	payload := event.Payload().(*domain.Order)
+	return h.publisher.Publish(ctx, orderingpb.OrderAggregateChannel,
+		ddd.NewEvent(orderingpb.OrderCanceledEvent, &orderingpb.OrderCanceled{
+			Id:        payload.ID(),
+			UserId:    payload.UserID,
+			PaymentId: payload.PaymentID,
 		}),
 	)
 }

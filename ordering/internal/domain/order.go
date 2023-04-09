@@ -99,6 +99,9 @@ func (o *Order) Cancel() (ddd.Event, error) {
 		UserID:    o.UserID,
 		PaymentID: o.PaymentID,
 	})
+
+	o.Status = OrderIsCancelled
+	
 	return ddd.NewEvent(OrderCanceledEvent, o), nil
 }
 

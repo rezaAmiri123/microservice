@@ -54,6 +54,40 @@
         ]
       }
     },
+    "/v1/cancel_invoice": {
+      "post": {
+        "summary": "Cancel an invoice",
+        "description": "Use this API to cancel an invoice",
+        "operationId": "PaymentsService_CancelInvoice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/paymentspbCancelInvoiceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/paymentspbCancelInvoiceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PaymentsService"
+        ]
+      }
+    },
     "/v1/confirm_payment": {
       "post": {
         "summary": "Confirm a payment",
@@ -174,6 +208,14 @@
       }
     },
     "paymentspbAuthorizePaymentResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "paymentspbCancelInvoiceRequest": {
       "type": "object",
       "properties": {
         "id": {

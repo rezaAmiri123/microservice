@@ -20,6 +20,40 @@
     "application/json"
   ],
   "paths": {
+    "/v1/cancel_order": {
+      "post": {
+        "summary": "Cancel an order",
+        "description": "Use this API to cancel an order",
+        "operationId": "OrderingService_CancelOrder",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/orderingpbCancelOrderResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/orderingpbCancelOrderRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OrderingService"
+        ]
+      }
+    },
     "/v1/complete_order": {
       "post": {
         "summary": "Complete an order",
@@ -124,6 +158,14 @@
     }
   },
   "definitions": {
+    "orderingpbCancelOrderRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
     "orderingpbCancelOrderResponse": {
       "type": "object"
     },

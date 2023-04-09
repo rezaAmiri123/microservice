@@ -14,4 +14,5 @@ type Commands struct {
 	StartBasket    *commands.StartBasketHandler
 	AddItem        *commands.AddItemHandler
 	CheckoutBasket *commands.CheckoutBasketHandler
+	CancelBasket   *commands.CancelBasketHandler
 }
