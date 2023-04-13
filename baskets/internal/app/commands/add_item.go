@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/baskets/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -42,8 +41,8 @@ func NewAddItemHandler(
 }
 
 func (h AddItemHandler) Handle(ctx context.Context, cmd AddItem) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "AddItemHandler.Handle")
-	defer span.Finish()
+	//span, ctx := opentracing.StartSpanFromContext(ctx, "AddItemHandler.Handle")
+	//defer span.Finish()
 
 	basket, err := h.baskets.Load(ctx, cmd.BasketID)
 	if err != nil {

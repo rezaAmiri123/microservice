@@ -2,10 +2,11 @@ install-tools:
 	echo installing tools
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	go install github.com/vektra/mockery/v2@latest
 	echo done
 
 
-mock_gen:
+generate:
 	go generate ./...
 
 proto:

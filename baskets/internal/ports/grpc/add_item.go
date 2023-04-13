@@ -3,7 +3,6 @@ package grpc
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/baskets/basketspb"
 	"github.com/rezaAmiri123/microservice/baskets/internal/app/commands"
 	"google.golang.org/grpc/codes"
@@ -21,8 +20,8 @@ func (s serverTx) AddItem(ctx context.Context, request *basketspb.AddItemRequest
 }
 
 func (s server) AddItem(ctx context.Context, request *basketspb.AddItemRequest) (*basketspb.AddItemResponse, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "server.AddItem")
-	defer span.Finish()
+	//span, ctx := opentracing.StartSpanFromContext(ctx, "server.AddItem")
+	//defer span.Finish()
 
 	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
 	id := uuid.New().String()

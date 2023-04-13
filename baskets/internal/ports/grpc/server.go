@@ -42,13 +42,23 @@ func (s serverTx) getNextServer() server {
 	}
 	return server{cfg: cfg}
 }
-func NewServer(app *app.Application, logger logger.Logger) *server {
+
+func RegisterServer(application *app.Application, registrar grpc.ServiceRegistrar, logger logger.Logger) error {
 	cfg := &Config{
-		App:    app,
+		App:    application,
 		Logger: logger,
 	}
-	return &server{cfg: cfg}
+	basketspb.RegisterBasketServiceServer(registrar, server{cfg: cfg})
+	return nil
 }
+
+//func NewServer(app *app.Application, logger logger.Logger) *server {
+//	cfg := &Config{
+//		App:    app,
+//		Logger: logger,
+//	}
+//	return &server{cfg: cfg}
+//}
 
 func (s serverTx) closeTx(tx *sql.Tx, err error) error {
 	if p := recover(); p != nil {

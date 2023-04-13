@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/baskets/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -32,8 +31,8 @@ func NewStartBasketHandler(baskets domain.BasketRepository, publisher ddd.EventP
 }
 
 func (h StartBasketHandler) Handle(ctx context.Context, cmd StartBasket) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "StartBasketHandler.Handle")
-	defer span.Finish()
+	//span, ctx := opentracing.StartSpanFromContext(ctx, "StartBasketHandler.Handle")
+	//defer span.Finish()
 
 	basket, err := h.baskets.Load(ctx, cmd.ID)
 	if err != nil {
