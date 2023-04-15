@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/rezaAmiri123/microservice/baskets/internal/constants"
 	"github.com/rezaAmiri123/microservice/pkg/di"
+	"go.opentelemetry.io/otel/sdk/trace"
 	"google.golang.org/grpc"
 	"net/http"
 
@@ -68,6 +69,9 @@ type Config struct {
 	TracerEnable      bool   `mapstructure:"TRACER_ENABLE"`
 	TracerLogSpans    bool   `mapstructure:"TRACER_LOG_SPANS"`
 
+	// trace config
+	ExporterEndpoint string `mapstructure:"OTEL_EXPORTER_OTLP_ENDPOINT"  default:"http://collector:4317"`
+	ServiceName      string `mapstructure:"OTEL_SERVICE_NAME"  default:"mallbots"`
 	// metrics.Config
 	MetricServiceName     string `mapstructure:"METRIC_SERVICE_NAME"`
 	MetricServiceHostPort string `mapstructure:"METRIC_SERVICE_HOST_PORT"`
@@ -93,7 +97,11 @@ type Agent struct {
 	shutdownLock sync.Mutex
 	closers      []io.Closer
 }
+type CloserFunc func() error
 
+func (f CloserFunc) Close() error {
+	return f()
+}
 func NewAgent(config Config) (*Agent, error) {
 	a := &Agent{
 		Config:    config,
@@ -105,7 +113,7 @@ func NewAgent(config Config) (*Agent, error) {
 		a.setupRegistry,
 
 		//a.setupRepository,
-		//a.setupTracing,
+		a.setupTracer,
 		a.setupApplication,
 		//a.setupAuthClient,
 		a.setupGrpcServer,
@@ -140,6 +148,10 @@ func (a *Agent) Shutdown() error {
 		func() error {
 			httpServer := a.container.Get(constants.HttpServerKey).(*http.Server)
 			return httpServer.Shutdown(context.Background())
+		},
+		func() error {
+			tp := a.container.Get(constants.TracerKey).(*trace.TracerProvider)
+			return tp.Shutdown(context.Background())
 		},
 		//func() error {
 		//	return a.jaegerCloser.Close()

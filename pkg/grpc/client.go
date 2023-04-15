@@ -7,6 +7,7 @@ import (
 
 	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
@@ -67,6 +68,7 @@ func NewContextGrpcClient(
 		grpc_retry.UnaryClientInterceptor(retryOpts...),
 		im.ClientRequestLoggerInterceptor(),
 		im.ClientRequestPayloadInterceptor(),
+		otelgrpc.UnaryClientInterceptor(),
 	))
 	if clientTLSConfig != nil {
 		clientCreds := credentials.NewTLS(clientTLSConfig)
@@ -77,4 +79,3 @@ func NewContextGrpcClient(
 
 	return grpc.DialContext(ctx, addr, opts...)
 }
-

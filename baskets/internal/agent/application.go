@@ -13,6 +13,7 @@ import (
 	"github.com/rezaAmiri123/microservice/baskets/internal/domain"
 	"github.com/rezaAmiri123/microservice/baskets/internal/ports/handlers"
 	"github.com/rezaAmiri123/microservice/pkg/am"
+	"github.com/rezaAmiri123/microservice/pkg/amotel"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/di"
@@ -62,11 +63,15 @@ func (a *Agent) setupApplication() error {
 		outboxStore := postgres.NewOutboxStore(constants.OutboxTableName, tx)
 		return am.NewMessagePublisher(
 			stream,
+			amotel.OtelMessageContextInjector(),
 			tm.OutboxPublisher(outboxStore),
 		), nil
 	})
 	a.container.AddScoped(constants.MessageSubscriberKey, func(c di.Container) (any, error) {
-		return am.NewMessageSubscriber(stream), nil
+		return am.NewMessageSubscriber(
+			stream,
+			amotel.OtelMessageContextExtractor(),
+		), nil
 	})
 	a.container.AddScoped(constants.EventPublisherKey, func(c di.Container) (any, error) {
 		return am.NewEventPublisher(

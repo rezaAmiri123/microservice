@@ -30,6 +30,7 @@ const (
 	HttpServerKey               = "httpServer"
 	GrpcServerKey               = "grpcServer"
 	DatabaseKey                 = "database"
+	TracerKey                   = "tracer"
 
 	BasketsRepoKey  = "basketsRepo"
 	StoresRepoKey   = "storesRepo"
