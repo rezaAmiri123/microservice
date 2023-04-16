@@ -13,9 +13,9 @@ import (
 	"github.com/rezaAmiri123/microservice/baskets/internal/ports/handlers"
 	"github.com/rezaAmiri123/microservice/pkg/am"
 	"github.com/rezaAmiri123/microservice/pkg/amotel"
+	"github.com/rezaAmiri123/microservice/pkg/amprom"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
-	_ "github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/jetstream"
@@ -59,12 +59,15 @@ func (a *Agent) setupApplication() error {
 		//return c.Get(constants.DatabaseKey).(*sql.DB).Begin()
 		return dbConn.Begin()
 	})
+
+	sentCounter := amprom.SentMessagesCounter(constants.ServiceName)
 	a.container.AddScoped(constants.MessagePublisherKey, func(c di.Container) (any, error) {
 		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
 		outboxStore := postgres.NewOutboxStore(constants.OutboxTableName, db)
 		return am.NewMessagePublisher(
 			stream,
 			amotel.OtelMessageContextInjector(),
+			sentCounter,
 			tm.OutboxPublisher(outboxStore),
 		), nil
 	})
@@ -72,6 +75,7 @@ func (a *Agent) setupApplication() error {
 		return am.NewMessageSubscriber(
 			stream,
 			amotel.OtelMessageContextExtractor(),
+			amprom.ReceivedMessagesCounter(constants.ServiceName),
 		), nil
 	})
 	a.container.AddScoped(constants.EventPublisherKey, func(c di.Container) (any, error) {
@@ -163,7 +167,9 @@ func (a *Agent) setupApplication() error {
 		log := c.Get(constants.LoggerKey).(logger.Logger)
 
 		//fmt.Println("pubsher", publisher)
-		application := app.New(baskets, stores, products, publisher, log)
+		application := app.NewInstrumentedApp(
+			app.New(baskets, stores, products, publisher, log),
+		)
 		//application := &app.Application{
 		//	Commands: app.Commands{
 		//		StartBasket:    commands.NewStartBasketHandler(baskets, publisher, log),

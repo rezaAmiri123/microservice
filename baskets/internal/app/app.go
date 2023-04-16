@@ -58,8 +58,8 @@ func New(
 	products domain.ProductRepository,
 	publisher ddd.EventPublisher[ddd.Event],
 	logger logger.Logger,
-) *Application {
-	return &Application{
+) Application {
+	return Application{
 		appCommands: appCommands{
 			StartBasketHandler:    commands.NewStartBasketHandler(baskets, publisher, logger),
 			CheckoutBasketHandler: commands.NewCheckoutBasketHandler(baskets, publisher, logger),
