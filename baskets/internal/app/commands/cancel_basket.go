@@ -25,15 +25,15 @@ func NewCancelBasketHandler(
 	baskets domain.BasketRepository,
 	publisher ddd.EventPublisher[ddd.Event],
 	logger logger.Logger,
-) *CancelBasketHandler {
-	return &CancelBasketHandler{
+) CancelBasketHandler {
+	return CancelBasketHandler{
 		baskets:   baskets,
 		publisher: publisher,
 		logger:    logger,
 	}
 }
 
-func (h CancelBasketHandler) Handle(ctx context.Context, cmd CancelBasket) error {
+func (h CancelBasketHandler) CancelBasket(ctx context.Context, cmd CancelBasket) error {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "CancelBasketHandler.Handle")
 	defer span.Finish()
 	basket, err := h.baskets.Load(ctx, cmd.ID)

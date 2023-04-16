@@ -30,8 +30,8 @@ func NewAddItemHandler(
 	products domain.ProductRepository,
 	publisher ddd.EventPublisher[ddd.Event],
 	logger logger.Logger,
-) *AddItemHandler {
-	return &AddItemHandler{
+) AddItemHandler {
+	return AddItemHandler{
 		baskets:   baskets,
 		stores:    stores,
 		products:  products,
@@ -40,7 +40,7 @@ func NewAddItemHandler(
 	}
 }
 
-func (h AddItemHandler) Handle(ctx context.Context, cmd AddItem) error {
+func (h AddItemHandler) AddItem(ctx context.Context, cmd AddItem) error {
 	//span, ctx := opentracing.StartSpanFromContext(ctx, "AddItemHandler.Handle")
 	//defer span.Finish()
 

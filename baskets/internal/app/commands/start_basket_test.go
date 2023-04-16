@@ -116,7 +116,7 @@ func TestStartBasketHandler_Handle(t *testing.T) {
 				tc.on(m)
 			}
 
-			if err := a.Handle(tc.args.ctx, tc.args.start); (err != nil) != tc.wantErr {
+			if err := a.StartBasket(tc.args.ctx, tc.args.start); (err != nil) != tc.wantErr {
 				t.Errorf("StartBasket error = %v, wantErr %v", err, tc.wantErr)
 			}
 		})

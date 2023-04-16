@@ -25,7 +25,7 @@ func (s server) CheckoutBasket(ctx context.Context, request *basketspb.CheckoutB
 
 	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
 
-	err := s.cfg.App.Commands.CheckoutBasket.Handle(ctx, commands.CheckoutBasket{
+	err := s.cfg.App.CheckoutBasket(ctx, commands.CheckoutBasket{
 		ID:        request.GetId(),
 		PaymentID: request.GetPaymentId(),
 	})

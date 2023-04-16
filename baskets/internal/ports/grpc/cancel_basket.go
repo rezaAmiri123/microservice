@@ -25,7 +25,7 @@ func (s server) CancelBasket(ctx context.Context, request *basketspb.CancelBaske
 
 	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
 
-	err := s.cfg.App.Commands.CancelBasket.Handle(ctx, commands.CancelBasket{
+	err := s.cfg.App.CancelBasket(ctx, commands.CancelBasket{
 		ID: request.GetId(),
 	})
 

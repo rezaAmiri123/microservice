@@ -5,7 +5,6 @@ package grpc
 import (
 	"github.com/rezaAmiri123/microservice/baskets/basketspb"
 	"github.com/rezaAmiri123/microservice/baskets/internal/app"
-	"github.com/rezaAmiri123/microservice/baskets/internal/app/commands"
 	"github.com/rezaAmiri123/microservice/baskets/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -64,12 +63,13 @@ func (s *serverSuite) SetupTest() {
 	}
 
 	// create app
-	application := &app.Application{
-		Commands: app.Commands{
-			StartBasket: commands.NewStartBasketHandler(s.mocks.baskets, s.mocks.publisher, s.mocks.logger),
-			AddItem:     commands.NewAddItemHandler(s.mocks.baskets, s.mocks.stores, s.mocks.products, s.mocks.publisher, s.mocks.logger),
-		},
-	}
+	application := app.New(s.mocks.baskets, s.mocks.stores, s.mocks.products, s.mocks.publisher, s.mocks.logger)
+	//application := &app.Application{
+	//	Commands: app.Commands{
+	//		StartBasket: commands.NewStartBasketHandler(s.mocks.baskets, s.mocks.publisher, s.mocks.logger),
+	//		AddItem:     commands.NewAddItemHandler(s.mocks.baskets, s.mocks.stores, s.mocks.products, s.mocks.publisher, s.mocks.logger),
+	//	},
+	//}
 	// register app with server
 	if err = RegisterServer(application, s.server, s.mocks.logger); err != nil {
 		s.T().Fatal(err)

@@ -8,13 +8,14 @@ import (
 	"github.com/rezaAmiri123/microservice/baskets/internal/adapters/grpc"
 	"github.com/rezaAmiri123/microservice/baskets/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/baskets/internal/app"
-	"github.com/rezaAmiri123/microservice/baskets/internal/app/commands"
 	"github.com/rezaAmiri123/microservice/baskets/internal/constants"
 	"github.com/rezaAmiri123/microservice/baskets/internal/domain"
 	"github.com/rezaAmiri123/microservice/baskets/internal/ports/handlers"
 	"github.com/rezaAmiri123/microservice/pkg/am"
 	"github.com/rezaAmiri123/microservice/pkg/amotel"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
+	"github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
+	_ "github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/jetstream"
@@ -59,8 +60,8 @@ func (a *Agent) setupApplication() error {
 		return dbConn.Begin()
 	})
 	a.container.AddScoped(constants.MessagePublisherKey, func(c di.Container) (any, error) {
-		tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
-		outboxStore := postgres.NewOutboxStore(constants.OutboxTableName, tx)
+		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
+		outboxStore := postgres.NewOutboxStore(constants.OutboxTableName, db)
 		return am.NewMessagePublisher(
 			stream,
 			amotel.OtelMessageContextInjector(),
@@ -81,8 +82,8 @@ func (a *Agent) setupApplication() error {
 	})
 
 	a.container.AddScoped(constants.InboxStoreKey, func(c di.Container) (any, error) {
-		//tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
-		return postgres.NewInboxStore(constants.InboxTableName, dbConn), nil
+		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
+		return postgres.NewInboxStore(constants.InboxTableName, db), nil
 	})
 
 	//a.container.AddScoped(constants.AggregateStoreKey, func(c di.Container) (any, error) {
@@ -111,14 +112,14 @@ func (a *Agent) setupApplication() error {
 		//), nil
 		return pg.NewBasketRepository(
 			constants.BasketTableName,
-			c.Get(constants.DatabaseKey).(*sql.DB),
+			postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB)),
 		), nil
 	})
 	a.container.AddScoped(constants.StoresRepoKey, func(c di.Container) (any, error) {
 		addr := fmt.Sprintf("%s:%d", a.Config.GRPCStoreClientAddr, a.Config.GRPCStoreClientPort)
 		return pg.NewStoreCacheRepository(
 			constants.StoresCacheTableName,
-			c.Get(constants.DatabaseKey).(*sql.DB),
+			postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB)),
 			grpc.NewStoreRepository(addr, c.Get(constants.LoggerKey).(logger.Logger)),
 		), nil
 	})
@@ -127,7 +128,7 @@ func (a *Agent) setupApplication() error {
 		addr := fmt.Sprintf("%s:%d", a.Config.GRPCStoreClientAddr, a.Config.GRPCStoreClientPort)
 		return pg.NewProductCacheRepository(
 			constants.ProductsCacheTableName,
-			c.Get(constants.DatabaseKey).(*sql.DB),
+			postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB)),
 			grpc.NewProductRepository(addr, c.Get(constants.LoggerKey).(logger.Logger)),
 		), nil
 	})
@@ -162,15 +163,16 @@ func (a *Agent) setupApplication() error {
 		log := c.Get(constants.LoggerKey).(logger.Logger)
 
 		//fmt.Println("pubsher", publisher)
-		application := &app.Application{
-			Commands: app.Commands{
-				StartBasket:    commands.NewStartBasketHandler(baskets, publisher, log),
-				AddItem:        commands.NewAddItemHandler(baskets, stores, products, publisher, log),
-				CheckoutBasket: commands.NewCheckoutBasketHandler(baskets, publisher, log),
-				CancelBasket:   commands.NewCancelBasketHandler(baskets, publisher, log),
-			},
-			Queries: app.Queries{},
-		}
+		application := app.New(baskets, stores, products, publisher, log)
+		//application := &app.Application{
+		//	Commands: app.Commands{
+		//		StartBasket:    commands.NewStartBasketHandler(baskets, publisher, log),
+		//		AddItem:        commands.NewAddItemHandler(baskets, stores, products, publisher, log),
+		//		CheckoutBasket: commands.NewCheckoutBasketHandler(baskets, publisher, log),
+		//		CancelBasket:   commands.NewCancelBasketHandler(baskets, publisher, log),
+		//	},
+		//	Queries: app.Queries{},
+		//}
 		//a.Application = application
 		return application, nil
 	})

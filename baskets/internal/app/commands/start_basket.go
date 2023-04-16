@@ -22,15 +22,15 @@ type (
 	}
 )
 
-func NewStartBasketHandler(baskets domain.BasketRepository, publisher ddd.EventPublisher[ddd.Event], logger logger.Logger) *StartBasketHandler {
-	return &StartBasketHandler{
+func NewStartBasketHandler(baskets domain.BasketRepository, publisher ddd.EventPublisher[ddd.Event], logger logger.Logger) StartBasketHandler {
+	return StartBasketHandler{
 		baskets:   baskets,
 		publisher: publisher,
 		logger:    logger,
 	}
 }
 
-func (h StartBasketHandler) Handle(ctx context.Context, cmd StartBasket) error {
+func (h StartBasketHandler) StartBasket(ctx context.Context, cmd StartBasket) error {
 	//span, ctx := opentracing.StartSpanFromContext(ctx, "StartBasketHandler.Handle")
 	//defer span.Finish()
 

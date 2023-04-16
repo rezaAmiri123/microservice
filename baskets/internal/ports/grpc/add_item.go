@@ -25,7 +25,7 @@ func (s server) AddItem(ctx context.Context, request *basketspb.AddItemRequest) 
 
 	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
 	id := uuid.New().String()
-	err := s.cfg.App.Commands.AddItem.Handle(ctx, commands.AddItem{
+	err := s.cfg.App.AddItem(ctx, commands.AddItem{
 		ID:        id,
 		BasketID:  request.GetId(),
 		ProductID: request.GetProductId(),

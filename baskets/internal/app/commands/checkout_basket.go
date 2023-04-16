@@ -26,15 +26,15 @@ func NewCheckoutBasketHandler(
 	baskets domain.BasketRepository,
 	publisher ddd.EventPublisher[ddd.Event],
 	logger logger.Logger,
-) *CheckoutBasketHandler {
-	return &CheckoutBasketHandler{
+) CheckoutBasketHandler {
+	return CheckoutBasketHandler{
 		baskets:   baskets,
 		publisher: publisher,
 		logger:    logger,
 	}
 }
 
-func (h CheckoutBasketHandler) Handle(ctx context.Context, cmd CheckoutBasket) error {
+func (h CheckoutBasketHandler) CheckoutBasket(ctx context.Context, cmd CheckoutBasket) error {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "CheckoutBasketHandler.Handle")
 	defer span.Finish()
 	basket, err := h.baskets.Load(ctx, cmd.ID)

@@ -160,7 +160,7 @@ func TestAddItemHandler_Handle(t *testing.T) {
 				tc.on(m)
 			}
 
-			if err := a.Handle(tc.args.ctx, tc.args.add); (err != nil) != tc.wantErr {
+			if err := a.AddItem(tc.args.ctx, tc.args.add); (err != nil) != tc.wantErr {
 				t.Errorf("AddItem() error = %v, wantErr %v", err, tc.wantErr)
 			}
 		})
