@@ -81,6 +81,16 @@ service UserService{
       summary: "Login verify user";
     };
   }
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/get"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get user payload";
+      summary: "Get user";
+    };
+  };
 }
 
 message User {
@@ -150,3 +160,10 @@ message EnableUserRequest {
   string id = 1;
 }
 message EnableUserResponse {}
+
+message GetUserRequest {
+  string id = 1;
+}
+message GetUserResponse {
+  User user = 1;
+}

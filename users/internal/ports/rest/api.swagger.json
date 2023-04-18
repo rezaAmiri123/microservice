@@ -88,6 +88,40 @@
         ]
       }
     },
+    "/v1/get": {
+      "post": {
+        "summary": "Get user",
+        "description": "Use this API to get user payload",
+        "operationId": "UserService_GetUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/userspbGetUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userspbGetUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/v1/login": {
       "post": {
         "summary": "Login user",
@@ -275,6 +309,22 @@
     },
     "userspbEnableUserResponse": {
       "type": "object"
+    },
+    "userspbGetUserRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "userspbGetUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/userspbUser"
+        }
+      }
     },
     "userspbLoginUserRequest": {
       "type": "object",

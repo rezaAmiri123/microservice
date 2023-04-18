@@ -1,0 +1,31 @@
+ARG service
+FROM golang:1.20-alpine AS builder
+ARG service
+
+WORKDIR /mallbots
+
+# Retrieve application dependencies.
+# This allows the container build to reuse cached dependencies.
+# Expecting to copy go.mod and if present go.sum.
+COPY . .
+# RUN go mod download
+
+# Copy local code to the container image.
+# COPY .. ./
+# Build the binary.
+# RUN cd ${service} 
+RUN cd ${service};go build -ldflags="-s -w" -o main \
+    ./cmd/service;mv main ../service
+# RUN mv service ..
+
+FROM alpine:3 AS runtime
+ARG service
+
+COPY --from=builder /mallbots/docker/wait-for .
+RUN chmod +x /wait-for
+
+# # Copy the binary to the production image from the builder stage.
+COPY --from=builder /mallbots/service /mallbots/service
+COPY --from=builder /mallbots/${service}/app.env /app.env
+RUN ls /mallbots/
+CMD ["/mallbots/service"]
