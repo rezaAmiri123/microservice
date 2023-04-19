@@ -40,7 +40,7 @@ func (s *server) RegisterUser(ctx context.Context, req *userspb.RegisterUserRequ
 		Email:    req.GetEmail(),
 	})
 	if err != nil {
-		s.cfg.Logger.Errorf("failed to register user: %s", err)
+		//s.cfg.Logger.Errorf("failed to register user: %s", err)
 		//s.cfg.Metric.ErrorGrpcRequests.Inc()
 		return nil, status.Errorf(codes.Internal, "failed to create user: %s", err)
 	}

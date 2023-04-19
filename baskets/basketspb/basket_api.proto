@@ -10,7 +10,7 @@ import "protoc-gen-openapiv2/options/annotations.proto";
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info: {
     title: "basket Service API";
-    version: "1.0";
+    version: "1.1";
     contact: {
       name: "Basket service";
       url: "https://github.com/rezaAmiri123/microservice";
@@ -22,7 +22,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service BasketService {
   rpc StartBasket(StartBasketRequest) returns (StartBasketResponse) {
     option (google.api.http) = {
-      post: "/v1/start_basket"
+      post: "/v1/api/baskets/start_basket"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -32,7 +32,7 @@ service BasketService {
   };
   rpc CancelBasket(CancelBasketRequest) returns (CancelBasketResponse) {
     option (google.api.http) = {
-      post: "/v1/cancel_basket"
+      post: "/v1/api/baskets/cancel_basket"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -42,7 +42,7 @@ service BasketService {
   };
   rpc CheckoutBasket(CheckoutBasketRequest) returns (CheckoutBasketResponse) {
     option (google.api.http) = {
-      post: "/v1/checkout_basket"
+      post: "/v1/api/baskets/checkout_basket"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -52,7 +52,7 @@ service BasketService {
   };
   rpc AddItem(AddItemRequest) returns (AddItemResponse) {
     option (google.api.http) = {
-      post: "/v1/add_item"
+      post: "/v1/api/baskets/add_item"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

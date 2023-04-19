@@ -35,18 +35,18 @@ func (h RegisterUserHandler) Handle(ctx context.Context, reg RegisterUser) error
 
 	u, err := domain.RegisterUser(reg.ID, reg.Username, reg.Password, reg.Email)
 	if err != nil {
-		h.logger.Errorf("cannot register user: %v", err)
+		//h.logger.Errorf("cannot register user: %v", err)
 		return err
 	}
 
 	if err = h.repo.Save(ctx, u); err != nil {
-		h.logger.Errorf("cannot register user: %v", err)
+		//h.logger.Errorf("cannot register user: %v", err)
 		return err
 	}
 
 	// publish domain events
 	if err = h.publisher.Publish(ctx, u.Events()...); err != nil {
-		h.logger.Errorf("cannot publish user event: %v", err)
+		//h.logger.Errorf("cannot publish user event: %v", err)
 		return err
 	}
 

@@ -181,7 +181,7 @@ func RegisterBasketServiceHandlerServer(ctx context.Context, mux *runtime.ServeM
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/basketspb.BasketService/StartBasket", runtime.WithHTTPPathPattern("/v1/start_basket"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/basketspb.BasketService/StartBasket", runtime.WithHTTPPathPattern("/v1/api/baskets/start_basket"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -206,7 +206,7 @@ func RegisterBasketServiceHandlerServer(ctx context.Context, mux *runtime.ServeM
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/basketspb.BasketService/CancelBasket", runtime.WithHTTPPathPattern("/v1/cancel_basket"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/basketspb.BasketService/CancelBasket", runtime.WithHTTPPathPattern("/v1/api/baskets/cancel_basket"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -231,7 +231,7 @@ func RegisterBasketServiceHandlerServer(ctx context.Context, mux *runtime.ServeM
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/basketspb.BasketService/CheckoutBasket", runtime.WithHTTPPathPattern("/v1/checkout_basket"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/basketspb.BasketService/CheckoutBasket", runtime.WithHTTPPathPattern("/v1/api/baskets/checkout_basket"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -256,7 +256,7 @@ func RegisterBasketServiceHandlerServer(ctx context.Context, mux *runtime.ServeM
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/basketspb.BasketService/AddItem", runtime.WithHTTPPathPattern("/v1/add_item"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/basketspb.BasketService/AddItem", runtime.WithHTTPPathPattern("/v1/api/baskets/add_item"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -320,7 +320,7 @@ func RegisterBasketServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/basketspb.BasketService/StartBasket", runtime.WithHTTPPathPattern("/v1/start_basket"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/basketspb.BasketService/StartBasket", runtime.WithHTTPPathPattern("/v1/api/baskets/start_basket"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -342,7 +342,7 @@ func RegisterBasketServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/basketspb.BasketService/CancelBasket", runtime.WithHTTPPathPattern("/v1/cancel_basket"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/basketspb.BasketService/CancelBasket", runtime.WithHTTPPathPattern("/v1/api/baskets/cancel_basket"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -364,7 +364,7 @@ func RegisterBasketServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/basketspb.BasketService/CheckoutBasket", runtime.WithHTTPPathPattern("/v1/checkout_basket"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/basketspb.BasketService/CheckoutBasket", runtime.WithHTTPPathPattern("/v1/api/baskets/checkout_basket"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -386,7 +386,7 @@ func RegisterBasketServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/basketspb.BasketService/AddItem", runtime.WithHTTPPathPattern("/v1/add_item"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/basketspb.BasketService/AddItem", runtime.WithHTTPPathPattern("/v1/api/baskets/add_item"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -406,13 +406,13 @@ func RegisterBasketServiceHandlerClient(ctx context.Context, mux *runtime.ServeM
 }
 
 var (
-	pattern_BasketService_StartBasket_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "start_basket"}, ""))
+	pattern_BasketService_StartBasket_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "api", "baskets", "start_basket"}, ""))
 
-	pattern_BasketService_CancelBasket_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "cancel_basket"}, ""))
+	pattern_BasketService_CancelBasket_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "api", "baskets", "cancel_basket"}, ""))
 
-	pattern_BasketService_CheckoutBasket_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "checkout_basket"}, ""))
+	pattern_BasketService_CheckoutBasket_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "api", "baskets", "checkout_basket"}, ""))
 
-	pattern_BasketService_AddItem_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "add_item"}, ""))
+	pattern_BasketService_AddItem_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "api", "baskets", "add_item"}, ""))
 )
 
 var (

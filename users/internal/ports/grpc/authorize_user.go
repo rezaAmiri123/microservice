@@ -35,7 +35,7 @@ func (s *server) AuthorizeUser(ctx context.Context, req *userspb.AuthorizeUserRe
 		ID: req.GetId(),
 	})
 	if err != nil {
-		s.cfg.Logger.Errorf("failed to authorize user: %s", err)
+		//s.cfg.Logger.Errorf("failed to authorize user: %s", err)
 		//s.cfg.Metric.ErrorGrpcRequests.Inc()
 		return nil, status.Errorf(codes.Internal, "failed to authorize user: %s", err)
 	}

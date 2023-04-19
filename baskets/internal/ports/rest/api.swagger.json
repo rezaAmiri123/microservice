@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "basket Service API",
-    "version": "1.0",
+    "version": "1.1",
     "contact": {
       "name": "Basket service",
       "url": "https://github.com/rezaAmiri123/microservice"
@@ -20,7 +20,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/add_item": {
+    "/v1/api/baskets/add_item": {
       "post": {
         "summary": "Create new item",
         "description": "Use this API to add a new item",
@@ -54,7 +54,7 @@
         ]
       }
     },
-    "/v1/cancel_basket": {
+    "/v1/api/baskets/cancel_basket": {
       "post": {
         "summary": "Cancel a basket",
         "description": "Use this API to cancel a basket",
@@ -88,7 +88,7 @@
         ]
       }
     },
-    "/v1/checkout_basket": {
+    "/v1/api/baskets/checkout_basket": {
       "post": {
         "summary": "checkout a basket",
         "description": "Use this API to checkout a basket",
@@ -122,7 +122,7 @@
         ]
       }
     },
-    "/v1/start_basket": {
+    "/v1/api/baskets/start_basket": {
       "post": {
         "summary": "Create new basket",
         "description": "Use this API to start a new basket",

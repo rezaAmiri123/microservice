@@ -3,6 +3,8 @@ package agent
 import (
 	"context"
 	"fmt"
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -14,7 +16,6 @@ import (
 	"github.com/rezaAmiri123/microservice/stores/storespb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"net/http"
 )
 
 func (a *Agent) setupHttpServer() error {
@@ -44,7 +45,7 @@ func (a *Agent) setupSwagger(mux *chi.Mux) {
 	mux.Use(middleware.Heartbeat("/liveness"))
 	mux.Method("GET", "/metrics", promhttp.Handler())
 	mux.Mount("/", http.FileServer(http.FS(web.WebUI)))
-	const specRoot = "/stores-swagger/"
+	const specRoot = "/stores-spec/"
 	mux.Mount(specRoot, http.StripPrefix(specRoot, http.FileServer(http.FS(rest.SwaggerUI))))
 }
 func (a *Agent) setupGrpcEndpoint(mux *chi.Mux) error {

@@ -17,6 +17,7 @@ exporters:
     endpoint: "collector:9464"
 
 
+# endpoint: 'prometheus:9090'
 processors:
   batch:
   spanmetrics:

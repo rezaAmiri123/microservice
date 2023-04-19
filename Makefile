@@ -23,9 +23,24 @@ docker_down:
 	@echo Stoping docker compose
 	docker-compose -f docker-compose.yaml down --remove-orphans
 
-build-users:
-	docker image rm mallbots-users
+rebuild-users:
+	docker image rm -f mallbots-users
 	docker build -t mallbots-users --file docker/Dockerfile.microservices --build-arg=service=users .
+
+build-users:
+	docker build -t mallbots-users --file docker/Dockerfile.microservices --build-arg=service=users .
+
+rebuild-baskets:
+	docker image rm -f mallbots-baskets
+	docker build -t mallbots-baskets --file docker/Dockerfile.microservices --build-arg=service=baskets .
+build-baskets:
+	docker build -t mallbots-baskets --file docker/Dockerfile.microservices --build-arg=service=baskets .
+
+rebuild-stores:
+	docker image rm -f mallbots-stores
+	docker build -t mallbots-stores --file docker/Dockerfile.microservices --build-arg=service=stores .
+build-stores:
+	docker build -t mallbots-stores --file docker/Dockerfile.microservices --build-arg=service=stores .
 
 # helm repo add bitnami https://charts.bitnami.com/bitnami
 #=====================================================

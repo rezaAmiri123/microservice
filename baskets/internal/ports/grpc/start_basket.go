@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+
 	"github.com/google/uuid"
 	"github.com/rezaAmiri123/microservice/baskets/basketspb"
 	"github.com/rezaAmiri123/microservice/baskets/internal/app/commands"
@@ -38,7 +39,7 @@ func (s server) StartBasket(ctx context.Context, request *basketspb.StartBasketR
 	})
 
 	if err != nil {
-		s.cfg.Logger.Errorf("failed to start basket: %s", err)
+		// s.cfg.Logger.Errorf("failed to start basket: %s", err)
 		//s.cfg.Metric.ErrorGrpcRequests.Inc()
 		span.RecordError(err, trace.WithAttributes(errorsotel.ErrAttrs(err)...))
 		span.SetStatus(codes.Error, err.Error())
