@@ -147,7 +147,7 @@ func RegisterDepotServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/depotpb.DepotService/CreateShoppingList", runtime.WithHTTPPathPattern("/v1/create_shopping_list"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/depotpb.DepotService/CreateShoppingList", runtime.WithHTTPPathPattern("/v1/api/depot/create_shopping_list"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -172,7 +172,7 @@ func RegisterDepotServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/depotpb.DepotService/AssignShoppingList", runtime.WithHTTPPathPattern("/v1/assign_shopping_list"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/depotpb.DepotService/AssignShoppingList", runtime.WithHTTPPathPattern("/v1/api/depot/assign_shopping_list"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -197,7 +197,7 @@ func RegisterDepotServiceHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/depotpb.DepotService/CompleteShoppingList", runtime.WithHTTPPathPattern("/v1/complete_shopping_list"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/depotpb.DepotService/CompleteShoppingList", runtime.WithHTTPPathPattern("/v1/api/depot/complete_shopping_list"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -261,7 +261,7 @@ func RegisterDepotServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/depotpb.DepotService/CreateShoppingList", runtime.WithHTTPPathPattern("/v1/create_shopping_list"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/depotpb.DepotService/CreateShoppingList", runtime.WithHTTPPathPattern("/v1/api/depot/create_shopping_list"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -283,7 +283,7 @@ func RegisterDepotServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/depotpb.DepotService/AssignShoppingList", runtime.WithHTTPPathPattern("/v1/assign_shopping_list"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/depotpb.DepotService/AssignShoppingList", runtime.WithHTTPPathPattern("/v1/api/depot/assign_shopping_list"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -305,7 +305,7 @@ func RegisterDepotServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/depotpb.DepotService/CompleteShoppingList", runtime.WithHTTPPathPattern("/v1/complete_shopping_list"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/depotpb.DepotService/CompleteShoppingList", runtime.WithHTTPPathPattern("/v1/api/depot/complete_shopping_list"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -325,11 +325,11 @@ func RegisterDepotServiceHandlerClient(ctx context.Context, mux *runtime.ServeMu
 }
 
 var (
-	pattern_DepotService_CreateShoppingList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "create_shopping_list"}, ""))
+	pattern_DepotService_CreateShoppingList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "api", "depot", "create_shopping_list"}, ""))
 
-	pattern_DepotService_AssignShoppingList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "assign_shopping_list"}, ""))
+	pattern_DepotService_AssignShoppingList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "api", "depot", "assign_shopping_list"}, ""))
 
-	pattern_DepotService_CompleteShoppingList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "complete_shopping_list"}, ""))
+	pattern_DepotService_CompleteShoppingList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "api", "depot", "complete_shopping_list"}, ""))
 )
 
 var (

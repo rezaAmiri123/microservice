@@ -22,7 +22,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service PaymentsService {
   rpc AuthorizePayment(AuthorizePaymentRequest) returns (AuthorizePaymentResponse) {
     option (google.api.http) = {
-      post: "/v1/authorize_payment"
+      post: "/v1/api/payments/authorize_payment"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -32,7 +32,7 @@ service PaymentsService {
   };
   rpc ConfirmPayment(ConfirmPaymentRequest) returns (ConfirmPaymentResponse) {
     option (google.api.http) = {
-      post: "/v1/confirm_payment"
+      post: "/v1/api/payments/confirm_payment"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -42,7 +42,7 @@ service PaymentsService {
   };
   rpc CreateInvoice(CreateInvoiceRequest) returns (CreateInvoiceResponse) {
     option (google.api.http) = {
-      post: "/v1/create_invoice"
+      post: "/v1/api/payments/create_invoice"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -53,7 +53,7 @@ service PaymentsService {
   rpc AdjustInvoice(AdjustInvoiceRequest) returns (AdjustInvoiceResponse) {};
   rpc PayInvoice(PayInvoiceRequest) returns (PayInvoiceResponse) {
     option (google.api.http) = {
-      post: "/v1/pay_invoice"
+      post: "/v1/api/payments/pay_invoice"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -63,7 +63,7 @@ service PaymentsService {
   };
   rpc CancelInvoice(CancelInvoiceRequest) returns (CancelInvoiceResponse) {
     option (google.api.http) = {
-      post: "/v1/cancel_invoice"
+      post: "/v1/api/payments/cancel_invoice"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

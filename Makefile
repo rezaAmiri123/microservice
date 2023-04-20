@@ -42,6 +42,36 @@ rebuild-stores:
 build-stores:
 	docker build -t mallbots-stores --file docker/Dockerfile.microservices --build-arg=service=stores .
 
+rebuild-search:
+	docker image rm -f mallbots-search
+	docker build -t mallbots-search --file docker/Dockerfile.microservices --build-arg=service=search .
+build-search:
+	docker build -t mallbots-search --file docker/Dockerfile.microservices --build-arg=service=search .
+
+rebuild-payments:
+	docker image rm -f mallbots-payments
+	docker build -t mallbots-payments --file docker/Dockerfile.microservices --build-arg=service=payments .
+build-payments:
+	docker build -t mallbots-payments --file docker/Dockerfile.microservices --build-arg=service=payments .
+
+rebuild-ordering:
+	docker image rm -f mallbots-ordering
+	docker build -t mallbots-ordering --file docker/Dockerfile.microservices --build-arg=service=ordering .
+build-ordering:
+	docker build -t mallbots-ordering --file docker/Dockerfile.microservices --build-arg=service=ordering .
+
+rebuild-depot:
+	docker image rm -f mallbots-depot
+	docker build -t mallbots-depot --file docker/Dockerfile.microservices --build-arg=service=depot .
+build-depot:
+	docker build -t mallbots-depot --file docker/Dockerfile.microservices --build-arg=service=depot .
+
+rebuild-cosec:
+	docker image rm -f mallbots-cosec
+	docker build -t mallbots-cosec --file docker/Dockerfile.microservices --build-arg=service=cosec .
+build-cosec:
+	docker build -t mallbots-cosec --file docker/Dockerfile.microservices --build-arg=service=cosec .
+
 # helm repo add bitnami https://charts.bitnami.com/bitnami
 #=====================================================
 # kuberneties

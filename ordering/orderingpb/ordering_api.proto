@@ -23,7 +23,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service OrderingService {
   rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {
     option (google.api.http) = {
-      post: "/v1/create_order"
+      post: "/v1/api/ordering/create_order"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -34,7 +34,7 @@ service OrderingService {
   rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {};
   rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse) {
     option (google.api.http) = {
-      post: "/v1/cancel_order"
+      post: "/v1/api/ordering/cancel_order"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -44,7 +44,7 @@ service OrderingService {
   };
   rpc ReadyOrder(ReadyOrderRequest) returns (ReadyOrderResponse) {
     option (google.api.http) = {
-      post: "/v1/ready_order"
+      post: "/v1/api/ordering/ready_order"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -54,7 +54,7 @@ service OrderingService {
   };
   rpc CompleteOrder(CompleteOrderRequest) returns (CompleteOrderResponse) {
     option (google.api.http) = {
-      post: "/v1/complete_order"
+      post: "/v1/api/ordering/complete_order"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

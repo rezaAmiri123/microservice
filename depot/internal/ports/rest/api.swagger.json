@@ -20,7 +20,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/assign_shopping_list": {
+    "/v1/api/depot/assign_shopping_list": {
       "post": {
         "summary": "Assign a shopping list",
         "description": "Use this API to assign a shopping list",
@@ -54,7 +54,7 @@
         ]
       }
     },
-    "/v1/complete_shopping_list": {
+    "/v1/api/depot/complete_shopping_list": {
       "post": {
         "summary": "complete a shopping list",
         "description": "Use this API to complete a shopping list",
@@ -88,7 +88,7 @@
         ]
       }
     },
-    "/v1/create_shopping_list": {
+    "/v1/api/depot/create_shopping_list": {
       "post": {
         "summary": "Create new shopping list",
         "description": "Use this API to create a new shopping list",

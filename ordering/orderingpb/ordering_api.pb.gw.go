@@ -181,7 +181,7 @@ func RegisterOrderingServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/orderingpb.OrderingService/CreateOrder", runtime.WithHTTPPathPattern("/v1/create_order"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/orderingpb.OrderingService/CreateOrder", runtime.WithHTTPPathPattern("/v1/api/ordering/create_order"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -206,7 +206,7 @@ func RegisterOrderingServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/orderingpb.OrderingService/CancelOrder", runtime.WithHTTPPathPattern("/v1/cancel_order"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/orderingpb.OrderingService/CancelOrder", runtime.WithHTTPPathPattern("/v1/api/ordering/cancel_order"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -231,7 +231,7 @@ func RegisterOrderingServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/orderingpb.OrderingService/ReadyOrder", runtime.WithHTTPPathPattern("/v1/ready_order"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/orderingpb.OrderingService/ReadyOrder", runtime.WithHTTPPathPattern("/v1/api/ordering/ready_order"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -256,7 +256,7 @@ func RegisterOrderingServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/orderingpb.OrderingService/CompleteOrder", runtime.WithHTTPPathPattern("/v1/complete_order"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/orderingpb.OrderingService/CompleteOrder", runtime.WithHTTPPathPattern("/v1/api/ordering/complete_order"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -320,7 +320,7 @@ func RegisterOrderingServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/orderingpb.OrderingService/CreateOrder", runtime.WithHTTPPathPattern("/v1/create_order"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/orderingpb.OrderingService/CreateOrder", runtime.WithHTTPPathPattern("/v1/api/ordering/create_order"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -342,7 +342,7 @@ func RegisterOrderingServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/orderingpb.OrderingService/CancelOrder", runtime.WithHTTPPathPattern("/v1/cancel_order"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/orderingpb.OrderingService/CancelOrder", runtime.WithHTTPPathPattern("/v1/api/ordering/cancel_order"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -364,7 +364,7 @@ func RegisterOrderingServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/orderingpb.OrderingService/ReadyOrder", runtime.WithHTTPPathPattern("/v1/ready_order"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/orderingpb.OrderingService/ReadyOrder", runtime.WithHTTPPathPattern("/v1/api/ordering/ready_order"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -386,7 +386,7 @@ func RegisterOrderingServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/orderingpb.OrderingService/CompleteOrder", runtime.WithHTTPPathPattern("/v1/complete_order"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/orderingpb.OrderingService/CompleteOrder", runtime.WithHTTPPathPattern("/v1/api/ordering/complete_order"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -406,13 +406,13 @@ func RegisterOrderingServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 }
 
 var (
-	pattern_OrderingService_CreateOrder_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "create_order"}, ""))
+	pattern_OrderingService_CreateOrder_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "api", "ordering", "create_order"}, ""))
 
-	pattern_OrderingService_CancelOrder_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "cancel_order"}, ""))
+	pattern_OrderingService_CancelOrder_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "api", "ordering", "cancel_order"}, ""))
 
-	pattern_OrderingService_ReadyOrder_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "ready_order"}, ""))
+	pattern_OrderingService_ReadyOrder_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "api", "ordering", "ready_order"}, ""))
 
-	pattern_OrderingService_CompleteOrder_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "complete_order"}, ""))
+	pattern_OrderingService_CompleteOrder_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "api", "ordering", "complete_order"}, ""))
 )
 
 var (

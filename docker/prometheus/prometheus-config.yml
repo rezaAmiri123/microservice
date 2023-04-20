@@ -17,6 +17,31 @@ scrape_configs:
     static_configs:
       - targets:
         - 'stores:8080'
+  - job_name: search
+    scrape_interval: 10s
+    static_configs:
+      - targets:
+        - 'search:8080'
+  - job_name: payments
+    scrape_interval: 10s
+    static_configs:
+      - targets:
+        - 'payments:8080'
+  - job_name: ordering
+    scrape_interval: 10s
+    static_configs:
+      - targets:
+        - 'ordering:8080'
+  - job_name: depot
+    scrape_interval: 10s
+    static_configs:
+      - targets:
+        - 'depot:8080'
+  - job_name: cosec
+    scrape_interval: 10s
+    static_configs:
+      - targets:
+        - 'cosec:8080'
   - job_name: otel
     static_configs:
       - targets:

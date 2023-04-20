@@ -2,9 +2,11 @@ package agent
 
 import (
 	"context"
+
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/search/internal/constants"
 	"go.opentelemetry.io/otel/sdk/trace"
+
 	//"github.com/rezaAmiri123/microservice/users/internal/app"
 	"io"
 	"sync"
@@ -28,7 +30,7 @@ type Config struct {
 	GRPCServerTLSServerAddress  string `mapstructure:"GRPC_SERVER_TLS_SERVER_ADDRESS"`
 
 	//grpc clients
-	GRPCUserClientEndpoint string `mapstructure:"GRPC_Client_ENDPOINT"`
+	GRPCUserClientEndpoint string `mapstructure:"GRPC_USER_Client_ENDPOINT"`
 
 	//GRPCStoreClientTLSEnabled       bool   `mapstructure:"GRPC_STORE_CLIENT_TLS_ENABLED"`
 	//GRPCStoreClientTLSCertFile      string `mapstructure:"GRPC_STORE_CLIENT_TLS_CERT_FILE"`

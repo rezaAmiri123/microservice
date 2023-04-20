@@ -22,7 +22,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service DepotService {
   rpc CreateShoppingList(CreateShoppingListRequest) returns (CreateShoppingListResponse) {
     option (google.api.http) = {
-      post: "/v1/create_shopping_list"
+      post: "/v1/api/depot/create_shopping_list"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -33,7 +33,7 @@ service DepotService {
   rpc CancelShoppingList(CancelShoppingListRequest) returns (CancelShoppingListResponse) {}
   rpc AssignShoppingList(AssignShoppingListRequest) returns (AssignShoppingListResponse) {
     option (google.api.http) = {
-      post: "/v1/assign_shopping_list"
+      post: "/v1/api/depot/assign_shopping_list"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -43,7 +43,7 @@ service DepotService {
   }
   rpc CompleteShoppingList(CompleteShoppingListRequest) returns (CompleteShoppingListResponse) {
     option (google.api.http) = {
-      post: "/v1/complete_shopping_list"
+      post: "/v1/api/depot/complete_shopping_list"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

@@ -47,7 +47,7 @@ func (a *Agent) setupSwagger(mux *chi.Mux) {
 	mux.Use(middleware.Heartbeat("/liveness"))
 	mux.Method("GET", "/metrics", promhttp.Handler())
 	mux.Mount("/", http.FileServer(http.FS(web.WebUI)))
-	const specRoot = "/ordering-swagger/"
+	const specRoot = "/ordering-spec/"
 	mux.Mount(specRoot, http.StripPrefix(specRoot, http.FileServer(http.FS(rest.SwaggerUI))))
 }
 func (a *Agent) setupGrpcEndpoint(mux *chi.Mux) error {

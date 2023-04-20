@@ -20,7 +20,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/cancel_order": {
+    "/v1/api/ordering/cancel_order": {
       "post": {
         "summary": "Cancel an order",
         "description": "Use this API to cancel an order",
@@ -54,7 +54,7 @@
         ]
       }
     },
-    "/v1/complete_order": {
+    "/v1/api/ordering/complete_order": {
       "post": {
         "summary": "Complete an order",
         "description": "Use this API to complete an order",
@@ -88,7 +88,7 @@
         ]
       }
     },
-    "/v1/create_order": {
+    "/v1/api/ordering/create_order": {
       "post": {
         "summary": "Create new order",
         "description": "Use this API to create a new order",
@@ -122,7 +122,7 @@
         ]
       }
     },
-    "/v1/ready_order": {
+    "/v1/api/ordering/ready_order": {
       "post": {
         "summary": "Ready order",
         "description": "Use this API to make ready an order",

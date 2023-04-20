@@ -20,7 +20,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/authorize_payment": {
+    "/v1/api/payments/authorize_payment": {
       "post": {
         "summary": "Authorize a payment",
         "description": "Use this API to authorize a payment",
@@ -54,7 +54,7 @@
         ]
       }
     },
-    "/v1/cancel_invoice": {
+    "/v1/api/payments/cancel_invoice": {
       "post": {
         "summary": "Cancel an invoice",
         "description": "Use this API to cancel an invoice",
@@ -88,7 +88,7 @@
         ]
       }
     },
-    "/v1/confirm_payment": {
+    "/v1/api/payments/confirm_payment": {
       "post": {
         "summary": "Confirm a payment",
         "description": "Use this API to confirm a payment",
@@ -122,7 +122,7 @@
         ]
       }
     },
-    "/v1/create_invoice": {
+    "/v1/api/payments/create_invoice": {
       "post": {
         "summary": "Create new invoice",
         "description": "Use this API to create a new invoice",
@@ -156,7 +156,7 @@
         ]
       }
     },
-    "/v1/pay_invoice": {
+    "/v1/api/payments/pay_invoice": {
       "post": {
         "summary": "Pay an invoice",
         "description": "Use this API to pay an invoice",
