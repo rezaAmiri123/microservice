@@ -11,10 +11,10 @@ import (
 )
 
 type commandHandlers struct {
-	app *app.Application
+	app app.App
 }
 
-func NewCommandHandlers(reg registry.Registry, app *app.Application, replyPublisher am.ReplyPublisher, mws ...am.MessageHandlerMiddleware) am.MessageHandler {
+func NewCommandHandlers(reg registry.Registry, app app.App, replyPublisher am.ReplyPublisher, mws ...am.MessageHandlerMiddleware) am.MessageHandler {
 	return am.NewCommandHandler(reg, replyPublisher, commandHandlers{app: app}, mws...)
 }
 
@@ -42,7 +42,7 @@ func (h commandHandlers) HandleCommand(ctx context.Context, cmd ddd.Command) (re
 func (h commandHandlers) doApproveOrder(ctx context.Context, cmd ddd.Command) (reply ddd.Reply, err error) {
 	payload := cmd.Payload().(*orderingpb.ApproveOrder)
 
-	return nil, h.app.Commands.ApproveOrder.Handle(ctx, commands.ApproveOrder{
+	return nil, h.app.ApproveOrder(ctx, commands.ApproveOrder{
 		ID:         payload.GetId(),
 		ShoppingID: payload.GetShoppingId(),
 	})
@@ -51,7 +51,7 @@ func (h commandHandlers) doApproveOrder(ctx context.Context, cmd ddd.Command) (r
 func (h commandHandlers) doRejectOrder(ctx context.Context, cmd ddd.Command) (reply ddd.Reply, err error) {
 	payload := cmd.Payload().(*orderingpb.RejectOrder)
 
-	return nil, h.app.Commands.CancelOrder.Handle(ctx, commands.CancelOrder{
+	return nil, h.app.CancelOrder(ctx, commands.CancelOrder{
 		ID: payload.GetId(),
 	})
 }

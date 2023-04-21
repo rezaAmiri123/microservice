@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"github.com/rezaAmiri123/microservice/ordering/internal/domain"
 	"github.com/rezaAmiri123/microservice/ordering/orderingpb"
 	"github.com/rezaAmiri123/microservice/pkg/am"
@@ -44,6 +45,7 @@ func (h domainHandlers[T]) HandleEvent(ctx context.Context, event T) error {
 
 func (h domainHandlers[T]) onOrderReadied(ctx context.Context, event ddd.Event) error {
 	payload := event.Payload().(*domain.Order)
+	fmt.Println("user id: ", payload.UserID)
 	return h.publisher.Publish(ctx, orderingpb.OrderAggregateChannel,
 		ddd.NewEvent(orderingpb.OrderReadiedEvent, &orderingpb.OrderReadied{
 			Id:        payload.ID(),

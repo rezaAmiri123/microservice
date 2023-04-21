@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/ordering/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -25,17 +24,17 @@ func NewCancelOrderHandler(
 	orders domain.OrderRepository,
 	publisher ddd.EventPublisher[ddd.Event],
 	logger logger.Logger,
-) *CancelOrderHandler {
-	return &CancelOrderHandler{
+) CancelOrderHandler {
+	return CancelOrderHandler{
 		orders:    orders,
 		publisher: publisher,
 		logger:    logger,
 	}
 }
 
-func (h CancelOrderHandler) Handle(ctx context.Context, cmd CancelOrder) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "CancelOrderHandler.Handle")
-	defer span.Finish()
+func (h CancelOrderHandler) CancelOrder(ctx context.Context, cmd CancelOrder) error {
+	//span, ctx := opentracing.StartSpanFromContext(ctx, "CancelOrderHandler.Handle")
+	//defer span.Finish()
 
 	order, err := h.orders.Find(ctx, cmd.ID)
 	if err != nil {

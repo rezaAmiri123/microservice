@@ -2,8 +2,6 @@ package commands
 
 import (
 	"context"
-	"fmt"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/ordering/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -26,18 +24,17 @@ func NewReadyOrderHandler(
 	orders domain.OrderRepository,
 	publisher ddd.EventPublisher[ddd.Event],
 	logger logger.Logger,
-) *ReadyOrderHandler {
-	fmt.Println(publisher)
-	return &ReadyOrderHandler{
+) ReadyOrderHandler {
+	return ReadyOrderHandler{
 		orders:    orders,
 		publisher: publisher,
 		logger:    logger,
 	}
 }
 
-func (h ReadyOrderHandler) Handle(ctx context.Context, cmd ReadyOrder) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "ReadyOrderHandler.Handle")
-	defer span.Finish()
+func (h ReadyOrderHandler) ReadyOrder(ctx context.Context, cmd ReadyOrder) error {
+	//span, ctx := opentracing.StartSpanFromContext(ctx, "ReadyOrderHandler.Handle")
+	//defer span.Finish()
 
 	order, err := h.orders.Find(ctx, cmd.ID)
 	if err != nil {

@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/ordering/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -26,17 +25,17 @@ func NewCompleteOrderHandler(
 	orders domain.OrderRepository,
 	publisher ddd.EventPublisher[ddd.Event],
 	logger logger.Logger,
-) *CompleteOrderHandler {
-	return &CompleteOrderHandler{
+) CompleteOrderHandler {
+	return CompleteOrderHandler{
 		orders:    orders,
 		publisher: publisher,
 		logger:    logger,
 	}
 }
 
-func (h CompleteOrderHandler) Handle(ctx context.Context, cmd CompleteOrder) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "CompleteOrderHandler.Handle")
-	defer span.Finish()
+func (h CompleteOrderHandler) CompleteOrder(ctx context.Context, cmd CompleteOrder) error {
+	//span, ctx := opentracing.StartSpanFromContext(ctx, "CompleteOrderHandler.Handle")
+	//defer span.Finish()
 
 	order, err := h.orders.Find(ctx, cmd.ID)
 	if err != nil {

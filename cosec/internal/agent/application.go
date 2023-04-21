@@ -10,7 +10,10 @@ import (
 	"github.com/rezaAmiri123/microservice/cosec/internal/domain"
 	"github.com/rezaAmiri123/microservice/cosec/internal/handlers"
 	"github.com/rezaAmiri123/microservice/pkg/am"
+	"github.com/rezaAmiri123/microservice/pkg/amotel"
+	"github.com/rezaAmiri123/microservice/pkg/amprom"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
+	"github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/jetstream"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -38,14 +41,14 @@ func (a *Agent) setupApplication() (err error) {
 	a.container.AddScoped(constants.DatabaseTransactionKey, func(c di.Container) (any, error) {
 		return dbConn.Begin()
 	})
-	//sentCounter := amprom.SentMessagesCounter(constants.ServiceName)
+	sentCounter := amprom.SentMessagesCounter(constants.ServiceName)
 	a.container.AddScoped(constants.MessagePublisherKey, func(c di.Container) (any, error) {
 		tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
 		outboxStore := postgres.NewOutboxStore(constants.OutboxTableName, tx)
 		publisher := am.NewMessagePublisher(
 			stream,
-			//amotel.OtelMessageContextInjector(),
-			//sentCounter,
+			amotel.OtelMessageContextInjector(),
+			sentCounter,
 			tm.OutboxPublisher(outboxStore),
 		)
 		return publisher, nil
@@ -53,8 +56,8 @@ func (a *Agent) setupApplication() (err error) {
 	a.container.AddSingleton(constants.MessageSubscriberKey, func(c di.Container) (any, error) {
 		return am.NewMessageSubscriber(
 			stream,
-			//amotel.OtelMessageContextExtractor(),
-			//amprom.ReceivedMessagesCounter(constants.ServiceName),
+			amotel.OtelMessageContextExtractor(),
+			amprom.ReceivedMessagesCounter(constants.ServiceName),
 		), nil
 	})
 	a.container.AddScoped(constants.CommandPublisherKey, func(c di.Container) (any, error) {
@@ -64,7 +67,7 @@ func (a *Agent) setupApplication() (err error) {
 		), nil
 	})
 	a.container.AddScoped(constants.InboxStoreKey, func(c di.Container) (any, error) {
-		tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
+		tx := postgresotel.Trace(c.Get(constants.DatabaseTransactionKey).(*sql.Tx))
 		return postgres.NewInboxStore(constants.InboxTableName, tx), nil
 	})
 	a.container.AddScoped(constants.SagaStoreKey, func(c di.Container) (any, error) {
@@ -73,7 +76,7 @@ func (a *Agent) setupApplication() (err error) {
 			reg,
 			postgres.NewSagaStore(
 				constants.SagasTableName,
-				c.Get(constants.DatabaseTransactionKey).(*sql.Tx),
+				postgresotel.Trace(c.Get(constants.DatabaseTransactionKey).(*sql.Tx)),
 				reg,
 			),
 		), nil

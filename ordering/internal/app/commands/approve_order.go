@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/ordering/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -26,17 +25,17 @@ func NewApproveOrderHandler(
 	orders domain.OrderRepository,
 	publisher ddd.EventPublisher[ddd.Event],
 	logger logger.Logger,
-) *ApproveOrderHandler {
-	return &ApproveOrderHandler{
+) ApproveOrderHandler {
+	return ApproveOrderHandler{
 		orders:    orders,
 		publisher: publisher,
 		logger:    logger,
 	}
 }
 
-func (h ApproveOrderHandler) Handle(ctx context.Context, cmd ApproveOrder) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "ApproveOrderHandler.Handle")
-	defer span.Finish()
+func (h ApproveOrderHandler) ApproveOrder(ctx context.Context, cmd ApproveOrder) error {
+	//span, ctx := opentracing.StartSpanFromContext(ctx, "ApproveOrderHandler.Handle")
+	//defer span.Finish()
 
 	order, err := h.orders.Find(ctx, cmd.ID)
 	if err != nil {

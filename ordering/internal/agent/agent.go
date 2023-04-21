@@ -9,6 +9,7 @@ import (
 
 	"github.com/rezaAmiri123/microservice/ordering/internal/constants"
 	"github.com/rezaAmiri123/microservice/pkg/di"
+	"go.opentelemetry.io/otel/sdk/trace"
 	"google.golang.org/grpc"
 )
 
@@ -96,7 +97,7 @@ func NewAgent(config Config) (*Agent, error) {
 	setupsFn := []func() error{
 		a.setupLogger,
 		a.setupRegistry,
-
+		a.setupTracer,
 		//a.setupRepository,
 		//a.setupTracing,
 		a.setupApplication,
@@ -133,6 +134,10 @@ func (a *Agent) Shutdown() error {
 		func() error {
 			httpServer := a.container.Get(constants.HttpServerKey).(*http.Server)
 			return httpServer.Shutdown(context.Background())
+		},
+		func() error {
+			tp := a.container.Get(constants.TracerKey).(*trace.TracerProvider)
+			return tp.Shutdown(context.Background())
 		},
 		//func() error {
 		//	return a.jaegerCloser.Close()

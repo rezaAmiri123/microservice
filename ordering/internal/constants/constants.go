@@ -30,6 +30,7 @@ const (
 	HttpServerKey               = "httpServer"
 	GrpcServerKey               = "grpcServer"
 	DatabaseKey                 = "database"
+	TracerKey                   = "tracer"
 
 	OrdersRepoKey = "ordersRepo"
 )
@@ -43,4 +44,11 @@ const (
 	EventsTableName    = "events"
 	SnapshotsTableName = "snapshots"
 	SagasTableName     = "sagas"
+)
+
+// Metric Names
+const (
+	OrdersCreatedCount   = "orders_created_count"
+	OrdersCompletedCount = "orders_completed_count"
+	OrdersApprovedCount  = "orders_approved_count"
 )

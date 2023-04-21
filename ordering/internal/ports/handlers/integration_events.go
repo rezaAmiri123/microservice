@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"github.com/rezaAmiri123/microservice/baskets/basketspb"
 	"github.com/rezaAmiri123/microservice/depot/depotpb"
 	"github.com/rezaAmiri123/microservice/ordering/internal/app"
@@ -13,12 +14,12 @@ import (
 )
 
 type integrationHandlers[T ddd.Event] struct {
-	app *app.Application
+	app app.App
 }
 
 var _ ddd.EventHandler[ddd.Event] = (*integrationHandlers[ddd.Event])(nil)
 
-func NewIntegrationEventHandlers(reg registry.Registry, app *app.Application, mws ...am.MessageHandlerMiddleware) am.MessageHandler {
+func NewIntegrationEventHandlers(reg registry.Registry, app app.App, mws ...am.MessageHandlerMiddleware) am.MessageHandler {
 	return am.NewEventHandler(reg, integrationHandlers[ddd.Event]{app: app}, mws...)
 }
 
@@ -47,7 +48,7 @@ func (h integrationHandlers[T]) HandleEvent(ctx context.Context, event T) (err e
 }
 func (h integrationHandlers[T]) onShoppingListCompleted(ctx context.Context, event ddd.Event) (err error) {
 	payload := event.Payload().(*depotpb.ShoppingListCompleted)
-	return h.app.Commands.ReadyOrder.Handle(ctx, commands.ReadyOrder{
+	return h.app.ReadyOrder(ctx, commands.ReadyOrder{
 		ID: payload.GetId(),
 	})
 }
@@ -66,8 +67,8 @@ func (h integrationHandlers[T]) onBasketCheckedOut(ctx context.Context, event dd
 			Quantity:    int(item.GetQuantity()),
 		}
 	}
-
-	return h.app.Commands.CreateOrder.Handle(ctx, commands.CreateOrder{
+	fmt.Println("user id: ", payload.GetUserId())
+	return h.app.CreateOrder(ctx, commands.CreateOrder{
 		ID:        payload.GetId(),
 		UserID:    payload.GetUserId(),
 		PaymentID: payload.GetPaymentId(),

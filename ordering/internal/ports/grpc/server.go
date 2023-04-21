@@ -12,7 +12,7 @@ import (
 
 type (
 	Config struct {
-		App    *app.Application
+		App    app.App
 		Logger logger.Logger
 	}
 	server struct {
@@ -36,12 +36,12 @@ func RegisterServerTx(container di.Container, registrar grpc.ServiceRegistrar) e
 }
 func (s serverTx) getNextServer() server {
 	cfg := &Config{
-		App:    s.c.Get(constants.ApplicationKey).(*app.Application),
+		App:    s.c.Get(constants.ApplicationKey).(app.App),
 		Logger: s.c.Get(constants.LoggerKey).(logger.Logger),
 	}
 	return server{cfg: cfg}
 }
-func NewServer(app *app.Application, logger logger.Logger) *server {
+func NewServer(app app.App, logger logger.Logger) *server {
 	cfg := &Config{
 		App:    app,
 		Logger: logger,

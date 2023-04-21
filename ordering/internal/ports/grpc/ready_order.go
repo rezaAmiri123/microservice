@@ -25,7 +25,7 @@ func (s server) ReadyOrder(ctx context.Context, request *orderingpb.ReadyOrderRe
 
 	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
 
-	err := s.cfg.App.Commands.ReadyOrder.Handle(ctx, commands.ReadyOrder{
+	err := s.cfg.App.ReadyOrder(ctx, commands.ReadyOrder{
 		ID: request.GetId(),
 	})
 

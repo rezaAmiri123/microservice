@@ -50,7 +50,10 @@ func (b *Basket) Start(UserID string) (ddd.Event, error) {
 	b.AddEvent(BasketStartedEvent, &BasketStarted{
 		UserID: UserID,
 	})
+
+	b.UserID = UserID
 	b.Status = BasketIsOpen
+
 	return ddd.NewEvent(BasketStartedEvent, b), nil
 }
 

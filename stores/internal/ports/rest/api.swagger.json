@@ -20,7 +20,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/add_product": {
+    "/v1/api/stores/add_product": {
       "post": {
         "summary": "Add new product",
         "description": "Use this API to add a new product",
@@ -54,7 +54,7 @@
         ]
       }
     },
-    "/v1/create_store": {
+    "/v1/api/stores/create_store": {
       "post": {
         "summary": "Create new store",
         "description": "Use this API to create a new store",

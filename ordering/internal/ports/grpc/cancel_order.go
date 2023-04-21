@@ -25,7 +25,7 @@ func (s server) CancelOrder(ctx context.Context, request *orderingpb.CancelOrder
 
 	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
 
-	err := s.cfg.App.Commands.CancelOrder.Handle(ctx, commands.CancelOrder{
+	err := s.cfg.App.CancelOrder(ctx, commands.CancelOrder{
 		ID: request.GetId(),
 	})
 

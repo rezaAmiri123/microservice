@@ -189,8 +189,8 @@ services:
       GRPC_STORE_CLIENT_ADDR: stores
       GRPC_STORE_CLIENT_PORT: 9000
       NATS_URL: nats:4222
-      OTEL_SERVICE_NAME: ordering
       NATS_STREAM: mallbots
+      OTEL_SERVICE_NAME: ordering
       OTEL_EXPORTER_OTLP_ENDPOINT: http://collector:4317
       POSTGRES_DRIVER: pgx
       POSTGRES_HOST: microservice_postgesql
@@ -283,6 +283,10 @@ services:
     volumes:
       - './docker/nginx.conf:/etc/nginx/nginx.conf'
     # profiles: [ microservices ]
+    depends_on:
+      - ordering
+      - stores
+      - baskets
     networks: [ "microservice" ]
 
   postgesql:

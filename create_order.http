@@ -1,0 +1,90 @@
+### Create Store
+curl -X 'POST' \
+  'http://localhost:8080/v1/api/stores/create_store' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "Store ABC",
+  "location": "The mall"
+}
+'
+{
+  "id": "79da5827-39b5-439f-9c94-d0cc4c336a62"
+}
+### Create Product
+curl -X 'POST' \
+  'http://localhost:8080/v1/api/stores/add_product' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "storeId": "79da5827-39b5-439f-9c94-d0cc4c336a62",
+  "name": "Product ABC",
+  "description": "Product description",
+  "sku": "productABC",
+  "price": 9.99
+}
+'
+{
+  "id": "7476d928-8949-4c0b-9340-3fcfba387a41"
+}
+
+### Register User
+curl -X 'POST' \
+  'http://localhost:8080/v1/register_user' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "username": "user_abc",
+  "password": "user_abc",
+  "email": "user_abc",
+  "bio": "user_abc",
+  "image": "user_abc"
+}'
+{
+  "id": "89d6a78b-9414-40b3-bc75-a7d2b6a9e45f"
+}
+
+### Start Basket
+curl -X 'POST' \
+  'http://localhost:8080/v1/api/baskets/start_basket' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "userId": "89d6a78b-9414-40b3-bc75-a7d2b6a9e45f"
+}'
+{
+    "id":"b0e7f23c-eed9-4da9-9cb3-70ea804af726"
+}
+### Add Items
+curl -X 'POST' \
+  'http://localhost:8080/v1/api/baskets/add_item' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "id": "b0e7f23c-eed9-4da9-9cb3-70ea804af726",
+  "productId": "7476d928-8949-4c0b-9340-3fcfba387a41",
+  "quantity": 5
+}
+'
+### Create Payment
+curl -X 'POST' \
+  'http://localhost:8080/v1/api/payments/authorize_payment' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "userId": "89d6a78b-9414-40b3-bc75-a7d2b6a9e45f",
+  "amount": 200
+}'
+{
+  "id":"88b7dff7-f5d1-4681-a9ab-34a58f596d1c"
+}# payment id
+
+### Checkout Basket
+curl -X 'POST' \
+  'http://localhost:8080/v1/api/baskets/checkout_basket' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "id": "b0e7f23c-eed9-4da9-9cb3-70ea804af726",
+  "paymentId": "88b7dff7-f5d1-4681-a9ab-34a58f596d1c"
+}'

@@ -23,7 +23,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service StoresService {
   rpc CreateStore(CreateStoreRequest) returns (CreateStoreResponse) {
     option (google.api.http) = {
-      post: "/v1/create_store"
+      post: "/v1/api/stores/create_store"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -40,7 +40,7 @@ service StoresService {
 
   rpc AddProduct(AddProductRequest) returns (AddProductResponse) {
     option (google.api.http) = {
-      post: "/v1/add_product"
+      post: "/v1/api/stores/add_product"
       body: "*"
     };
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {

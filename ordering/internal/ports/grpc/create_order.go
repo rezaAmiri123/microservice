@@ -33,7 +33,7 @@ func (s server) CreateOrder(ctx context.Context, request *orderingpb.CreateOrder
 		items[i] = s.itemToDomain(item)
 	}
 
-	err := s.cfg.App.Commands.CreateOrder.Handle(ctx, commands.CreateOrder{
+	err := s.cfg.App.CreateOrder(ctx, commands.CreateOrder{
 		ID:        id,
 		UserID:    request.GetUserId(),
 		PaymentID: request.GetPaymentId(),

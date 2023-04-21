@@ -25,7 +25,7 @@ func (s server) CompleteOrder(ctx context.Context, request *orderingpb.CompleteO
 
 	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
 
-	err := s.cfg.App.Commands.CompleteOrder.Handle(ctx, commands.CompleteOrder{
+	err := s.cfg.App.CompleteOrder(ctx, commands.CompleteOrder{
 		ID:        request.GetId(),
 		InvoiceID: request.GetInvoiceId(),
 	})
