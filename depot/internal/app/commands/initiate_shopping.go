@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/depot/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -25,17 +24,17 @@ func NewInitiateShoppingHandler(
 	shoppingLists domain.ShoppingListRepository,
 	publisher ddd.EventPublisher[ddd.AggregateEvent],
 	logger logger.Logger,
-) *InitiateShoppingHandler {
-	return &InitiateShoppingHandler{
+) InitiateShoppingHandler {
+	return InitiateShoppingHandler{
 		shoppingLists: shoppingLists,
 		publisher:     publisher,
 		logger:        logger,
 	}
 }
 
-func (h InitiateShoppingHandler) Handle(ctx context.Context, cmd InitiateShopping) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "InitiateShoppingHandler.Handle")
-	defer span.Finish()
+func (h InitiateShoppingHandler) InitiateShopping(ctx context.Context, cmd InitiateShopping) error {
+	//span, ctx := opentracing.StartSpanFromContext(ctx, "InitiateShoppingHandler.Handle")
+	//defer span.Finish()
 
 	list, err := h.shoppingLists.Find(ctx, cmd.ID)
 	if err != nil {

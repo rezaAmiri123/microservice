@@ -2,10 +2,13 @@ package grpc
 
 import (
 	"context"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/baskets/basketspb"
 	"github.com/rezaAmiri123/microservice/baskets/internal/app/commands"
-	"google.golang.org/grpc/codes"
+	"github.com/rezaAmiri123/microservice/pkg/errorsotel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
+	grpcCodes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
@@ -20,19 +23,20 @@ func (s serverTx) CancelBasket(ctx context.Context, request *basketspb.CancelBas
 }
 
 func (s server) CancelBasket(ctx context.Context, request *basketspb.CancelBasketRequest) (*basketspb.CancelBasketResponse, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "server.CancelBasket")
-	defer span.Finish()
+	span := trace.SpanFromContext(ctx)
 
-	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
+	span.SetAttributes(
+		attribute.String("BasketID", request.GetId()),
+	)
 
 	err := s.cfg.App.CancelBasket(ctx, commands.CancelBasket{
 		ID: request.GetId(),
 	})
 
 	if err != nil {
-		s.cfg.Logger.Errorf("failed to cancel basket: %s", err)
-		//s.cfg.Metric.ErrorGrpcRequests.Inc()
-		return nil, status.Errorf(codes.Internal, "failed to cancel basket: %s", err)
+		span.RecordError(err, trace.WithAttributes(errorsotel.ErrAttrs(err)...))
+		span.SetStatus(codes.Error, err.Error())
+		return nil, status.Errorf(grpcCodes.Internal, "failed to cancel basket: %s", err)
 	}
 
 	resp := &basketspb.CancelBasketResponse{}

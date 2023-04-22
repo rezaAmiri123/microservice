@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/payments/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
 )
@@ -25,17 +24,17 @@ func NewAuthorizePaymentHandler(
 	payments domain.PaymentRepository,
 	//publisher ddd.EventPublisher[ddd.Event],
 	logger logger.Logger,
-) *AuthorizePaymentHandler {
-	return &AuthorizePaymentHandler{
+) AuthorizePaymentHandler {
+	return AuthorizePaymentHandler{
 		payments: payments,
 		//publisher: publisher,
 		logger: logger,
 	}
 }
 
-func (h AuthorizePaymentHandler) Handle(ctx context.Context, cmd AuthorizePayment) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "AuthorizePaymentHandler.Handle")
-	defer span.Finish()
+func (h AuthorizePaymentHandler) AuthorizePayment(ctx context.Context, cmd AuthorizePayment) error {
+	//span, ctx := opentracing.StartSpanFromContext(ctx, "AuthorizePaymentHandler.Handle")
+	//defer span.Finish()
 
 	return h.payments.Save(ctx, &domain.Payment{
 		ID:     cmd.ID,

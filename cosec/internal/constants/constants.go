@@ -27,6 +27,7 @@ const (
 	CommandHandlersKey          = "commandHandlers"
 	ReplyHandlersKey            = "replyHandlers"
 	LoggerKey                   = "logger"
+	TracerKey                   = "tracer"
 
 	SagaKey         = "saga"
 	OrchestratorKey = "orchestrator"

@@ -9,6 +9,8 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
+	grpcCodes "google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s serverTx) StartBasket(ctx context.Context, request *basketspb.StartBasketRequest) (resp *basketspb.StartBasketResponse, err error) {
@@ -39,10 +41,9 @@ func (s server) StartBasket(ctx context.Context, request *basketspb.StartBasketR
 
 	if err != nil {
 		// s.cfg.Logger.Errorf("failed to start basket: %s", err)
-		//s.cfg.Metric.ErrorGrpcRequests.Inc()
 		span.RecordError(err, trace.WithAttributes(errorsotel.ErrAttrs(err)...))
 		span.SetStatus(codes.Error, err.Error())
-		//return nil, status.Errorf(codes.Internal, "failed to start basket: %s", err)
+		return nil, status.Errorf(grpcCodes.Internal, "failed to start basket: %s", err)
 	}
 
 	resp := &basketspb.StartBasketResponse{Id: id}

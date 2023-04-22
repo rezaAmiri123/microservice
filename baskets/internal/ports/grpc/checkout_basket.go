@@ -2,10 +2,13 @@ package grpc
 
 import (
 	"context"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/baskets/basketspb"
 	"github.com/rezaAmiri123/microservice/baskets/internal/app/commands"
-	"google.golang.org/grpc/codes"
+	"github.com/rezaAmiri123/microservice/pkg/errorsotel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
+	grpcCodes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
@@ -20,10 +23,12 @@ func (s serverTx) CheckoutBasket(ctx context.Context, request *basketspb.Checkou
 }
 
 func (s server) CheckoutBasket(ctx context.Context, request *basketspb.CheckoutBasketRequest) (*basketspb.CheckoutBasketResponse, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "server.CheckoutBasket")
-	defer span.Finish()
+	span := trace.SpanFromContext(ctx)
 
-	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
+	span.SetAttributes(
+		attribute.String("BasketID", request.GetId()),
+		attribute.String("PaymentID", request.GetPaymentId()),
+	)
 
 	err := s.cfg.App.CheckoutBasket(ctx, commands.CheckoutBasket{
 		ID:        request.GetId(),
@@ -31,9 +36,10 @@ func (s server) CheckoutBasket(ctx context.Context, request *basketspb.CheckoutB
 	})
 
 	if err != nil {
-		s.cfg.Logger.Errorf("failed to start basket: %s", err)
-		//s.cfg.Metric.ErrorGrpcRequests.Inc()
-		return nil, status.Errorf(codes.Internal, "failed to start basket: %s", err)
+		//s.cfg.Logger.Errorf("failed to start basket: %s", err)
+		span.RecordError(err, trace.WithAttributes(errorsotel.ErrAttrs(err)...))
+		span.SetStatus(codes.Error, err.Error())
+		return nil, status.Errorf(grpcCodes.Internal, "failed to start basket: %s", err)
 	}
 
 	resp := &basketspb.CheckoutBasketResponse{}

@@ -3,10 +3,13 @@ package grpc
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/payments/internal/app/commands"
 	"github.com/rezaAmiri123/microservice/payments/paymentspb"
-	"google.golang.org/grpc/codes"
+	"github.com/rezaAmiri123/microservice/pkg/errorsotel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
+	grpcCodes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
@@ -21,20 +24,25 @@ func (s serverTx) AuthorizePayment(ctx context.Context, request *paymentspb.Auth
 }
 
 func (s server) AuthorizePayment(ctx context.Context, request *paymentspb.AuthorizePaymentRequest) (*paymentspb.AuthorizePaymentResponse, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "server.AuthorizePayment")
-	defer span.Finish()
+	span := trace.SpanFromContext(ctx)
 
-	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
 	id := uuid.New().String()
-	err := s.cfg.App.Commands.AuthorizePayment.Handle(ctx, commands.AuthorizePayment{
+
+	span.SetAttributes(
+		attribute.String("PaymentID", id),
+		attribute.String("UserID", request.GetUserId()),
+	)
+
+	err := s.cfg.App.AuthorizePayment(ctx, commands.AuthorizePayment{
 		ID:     id,
 		UserID: request.GetUserId(),
 		Amount: request.GetAmount(),
 	})
 	if err != nil {
 		s.cfg.Logger.Errorf("failed to authorize a payment: %s", err)
-		//s.cfg.Metric.ErrorGrpcRequests.Inc()
-		return nil, status.Errorf(codes.Internal, "failed to authorize a payment: %s", err)
+		span.RecordError(err, trace.WithAttributes(errorsotel.ErrAttrs(err)...))
+		span.SetStatus(codes.Error, err.Error())
+		return nil, status.Errorf(grpcCodes.Internal, "failed to authorize a payment: %s", err)
 	}
 	resp := &paymentspb.AuthorizePaymentResponse{Id: id}
 

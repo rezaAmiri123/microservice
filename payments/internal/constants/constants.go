@@ -30,6 +30,7 @@ const (
 	HttpServerKey               = "httpServer"
 	GrpcServerKey               = "grpcServer"
 	DatabaseKey                 = "database"
+	TracerKey                   = "tracer"
 
 	InvoicesRepoKey = "invoicesRepo"
 	PaymentsRepoKey = "paymentsRepo"
@@ -45,4 +46,9 @@ const (
 
 	InvoicesTableName = "invoices"
 	PaymentsTableName = "payments"
+)
+
+// Metric Names
+const (
+	InvoicesPaidCount = "invoices_paid_count"
 )

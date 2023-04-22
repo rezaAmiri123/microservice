@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/payments/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -25,17 +24,17 @@ func NewPayInvoiceHandler(
 	invoices domain.InvoiceRepository,
 	publisher ddd.EventPublisher[ddd.Event],
 	logger logger.Logger,
-) *PayInvoiceHandler {
-	return &PayInvoiceHandler{
+) PayInvoiceHandler {
+	return PayInvoiceHandler{
 		invoices:  invoices,
 		publisher: publisher,
 		logger:    logger,
 	}
 }
 
-func (h PayInvoiceHandler) Handle(ctx context.Context, cmd PayInvoice) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "PayInvoiceHandler.Handle")
-	defer span.Finish()
+func (h PayInvoiceHandler) PayInvoice(ctx context.Context, cmd PayInvoice) error {
+	//span, ctx := opentracing.StartSpanFromContext(ctx, "PayInvoiceHandler.Handle")
+	//defer span.Finish()
 
 	invoice, err := h.invoices.Find(ctx, cmd.ID)
 	if err != nil {

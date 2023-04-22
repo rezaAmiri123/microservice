@@ -30,6 +30,7 @@ const (
 	HttpServerKey               = "httpServer"
 	GrpcServerKey               = "grpcServer"
 	DatabaseKey                 = "database"
+	TracerKey                   = "tracer"
 
 	ShoppingListsRepoKey = "shoppingListRepo"
 	StoresCacheRepoKey   = "storesCacheRepo"
@@ -47,4 +48,11 @@ const (
 	ShoppingListsTableName = "shopping_lists"
 	StoresCacheTableName   = "stores_cache"
 	ProductsCacheTableName = "products_cache"
+)
+
+// Metric Names
+const (
+	ShoppingListCreatedCount   = "shopping_list_created_count"
+	ShoppingListAssignedCount  = "shopping_list_assigned_count"
+	ShoppingListCompletedCount = "shopping_list_completed_count"
 )

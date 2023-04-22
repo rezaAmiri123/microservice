@@ -2,10 +2,13 @@ package grpc
 
 import (
 	"context"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/ordering/internal/app/commands"
 	"github.com/rezaAmiri123/microservice/ordering/orderingpb"
-	"google.golang.org/grpc/codes"
+	"github.com/rezaAmiri123/microservice/pkg/errorsotel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
+	grpcCode "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
@@ -20,10 +23,11 @@ func (s serverTx) ReadyOrder(ctx context.Context, request *orderingpb.ReadyOrder
 }
 
 func (s server) ReadyOrder(ctx context.Context, request *orderingpb.ReadyOrderRequest) (*orderingpb.ReadyOrderResponse, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "server.ReadyOrder")
-	defer span.Finish()
+	span := trace.SpanFromContext(ctx)
 
-	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
+	span.SetAttributes(
+		attribute.String("OrderID", request.GetId()),
+	)
 
 	err := s.cfg.App.ReadyOrder(ctx, commands.ReadyOrder{
 		ID: request.GetId(),
@@ -31,8 +35,9 @@ func (s server) ReadyOrder(ctx context.Context, request *orderingpb.ReadyOrderRe
 
 	if err != nil {
 		s.cfg.Logger.Errorf("failed to create order: %s", err)
-		//s.cfg.Metric.ErrorGrpcRequests.Inc()
-		return nil, status.Errorf(codes.Internal, "failed to ready order: %s", err)
+		span.RecordError(err, trace.WithAttributes(errorsotel.ErrAttrs(err)...))
+		span.SetStatus(codes.Error, err.Error())
+		return nil, status.Errorf(grpcCode.Internal, "failed to ready order: %s", err)
 	}
 
 	resp := &orderingpb.ReadyOrderResponse{}

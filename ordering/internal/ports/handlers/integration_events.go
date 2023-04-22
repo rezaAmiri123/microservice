@@ -10,7 +10,11 @@ import (
 	"github.com/rezaAmiri123/microservice/ordering/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/am"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
+	"github.com/rezaAmiri123/microservice/pkg/errorsotel"
 	"github.com/rezaAmiri123/microservice/pkg/registry"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
+	"time"
 )
 
 type integrationHandlers[T ddd.Event] struct {
@@ -38,6 +42,23 @@ func RegisterIntegrationEventHandlers(subscriber am.MessageSubscriber, handlers 
 }
 
 func (h integrationHandlers[T]) HandleEvent(ctx context.Context, event T) (err error) {
+	span := trace.SpanFromContext(ctx)
+	defer func(started time.Time) {
+		if err != nil {
+			span.AddEvent(
+				"Encountered an error handling integration event",
+				trace.WithAttributes(errorsotel.ErrAttrs(err)...),
+			)
+		}
+		span.AddEvent("Handled integration event", trace.WithAttributes(
+			attribute.Int64("TookMS", time.Since(started).Milliseconds()),
+		))
+	}(time.Now())
+
+	span.AddEvent("Handling integration event", trace.WithAttributes(
+		attribute.String("Event", event.EventName()),
+	))
+
 	switch event.EventName() {
 	case basketspb.BasketCheckedOutEvent:
 		return h.onBasketCheckedOut(ctx, event)

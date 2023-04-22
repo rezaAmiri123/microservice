@@ -4,11 +4,10 @@ import (
 	"context"
 	"github.com/rezaAmiri123/microservice/payments/internal/constants"
 	"github.com/rezaAmiri123/microservice/pkg/di"
+	"go.opentelemetry.io/otel/sdk/trace"
 	"google.golang.org/grpc"
-	"net/http"
-
-	//"github.com/rezaAmiri123/microservice/users/internal/app"
 	"io"
+	"net/http"
 	"sync"
 	"time"
 )
@@ -74,7 +73,7 @@ type Agent struct {
 	//httpServer *http.Server
 	//grpcServer *grpc.Server
 	//repository  user.Repository
-	//Application *app.Application
+	//Application app.App
 	//Maker       token.Maker
 	// AuthClient  auth.AuthClient
 
@@ -93,7 +92,7 @@ func NewAgent(config Config) (*Agent, error) {
 	setupsFn := []func() error{
 		a.setupLogger,
 		a.setupRegistry,
-
+		a.setupTracer,
 		//a.setupRepository,
 		//a.setupTracing,
 		a.setupApplication,
@@ -134,6 +133,10 @@ func (a *Agent) Shutdown() error {
 		//func() error {
 		//	return a.jaegerCloser.Close()
 		//},
+		func() error {
+			tp := a.container.Get(constants.TracerKey).(*trace.TracerProvider)
+			return tp.Shutdown(context.Background())
+		},
 	}
 	for _, fn := range shutdown {
 		if err := fn(); err != nil {

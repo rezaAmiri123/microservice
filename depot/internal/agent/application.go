@@ -4,16 +4,19 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
 	"github.com/nats-io/nats.go"
 	"github.com/rezaAmiri123/microservice/depot/internal/adapters/grpc"
 	"github.com/rezaAmiri123/microservice/depot/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/depot/internal/app"
-	"github.com/rezaAmiri123/microservice/depot/internal/app/commands"
 	"github.com/rezaAmiri123/microservice/depot/internal/constants"
 	"github.com/rezaAmiri123/microservice/depot/internal/domain"
 	"github.com/rezaAmiri123/microservice/depot/internal/ports/handlers"
 	"github.com/rezaAmiri123/microservice/pkg/am"
+	"github.com/rezaAmiri123/microservice/pkg/amotel"
+	"github.com/rezaAmiri123/microservice/pkg/amprom"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
+	"github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/jetstream"
@@ -54,17 +57,26 @@ func (a *Agent) setupApplication() error {
 	a.container.AddScoped(constants.DatabaseTransactionKey, func(c di.Container) (any, error) {
 		return dbConn.Begin()
 	})
+
+	sentCounter := amprom.SentMessagesCounter(constants.ServiceName)
 	a.container.AddScoped(constants.MessagePublisherKey, func(c di.Container) (any, error) {
 		//tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
-		db := c.Get(constants.DatabaseKey).(*sql.DB)
+		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
 		outboxStore := postgres.NewOutboxStore(constants.OutboxTableName, db)
 		return am.NewMessagePublisher(
 			stream,
+			amotel.OtelMessageContextInjector(),
+			sentCounter,
 			tm.OutboxPublisher(outboxStore),
 		), nil
 	})
+
 	a.container.AddScoped(constants.MessageSubscriberKey, func(c di.Container) (any, error) {
-		return am.NewMessageSubscriber(stream), nil
+		return am.NewMessageSubscriber(
+			stream,
+			amotel.OtelMessageContextExtractor(),
+			amprom.ReceivedMessagesCounter(constants.ServiceName),
+		), nil
 	})
 	a.container.AddScoped(constants.EventPublisherKey, func(c di.Container) (any, error) {
 		return am.NewEventPublisher(
@@ -89,19 +101,19 @@ func (a *Agent) setupApplication() error {
 
 	a.container.AddScoped(constants.InboxStoreKey, func(c di.Container) (any, error) {
 		//tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
-		db := c.Get(constants.DatabaseKey).(*sql.DB)
+		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
 		return postgres.NewInboxStore(constants.InboxTableName, db), nil
 	})
 
 	a.container.AddScoped(constants.ShoppingListsRepoKey, func(c di.Container) (any, error) {
 		//tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
-		db := c.Get(constants.DatabaseKey).(*sql.DB)
+		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
 		return pg.NewShoppingListRepository(constants.ShoppingListsTableName, db), nil
 	})
 
 	a.container.AddScoped(constants.StoresCacheRepoKey, func(c di.Container) (any, error) {
 		//tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
-		db := c.Get(constants.DatabaseKey).(*sql.DB)
+		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
 		addr := fmt.Sprintf("%s:%d", a.Config.GRPCStoreClientAddr, a.Config.GRPCStoreClientPort)
 		return pg.NewStoreCacheRepository(
 			constants.StoresCacheTableName,
@@ -112,7 +124,7 @@ func (a *Agent) setupApplication() error {
 
 	a.container.AddScoped(constants.ProductsCacheRepoKey, func(c di.Container) (any, error) {
 		//tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
-		db := c.Get(constants.DatabaseKey).(*sql.DB)
+		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
 		addr := fmt.Sprintf("%s:%d", a.Config.GRPCStoreClientAddr, a.Config.GRPCStoreClientPort)
 		return pg.NewProductCacheRepository(
 			constants.ProductsCacheTableName,
@@ -130,15 +142,9 @@ func (a *Agent) setupApplication() error {
 		log := c.Get(constants.LoggerKey).(logger.Logger)
 
 		//fmt.Println("pubsher", publisher)
-		application := &app.Application{
-			Commands: app.Commands{
-				CreateShoppingList:   commands.NewCreateShoppingListHandler(shoppingList, stores, products, dispatcher, log),
-				InitiateShopping:     commands.NewInitiateShoppingHandler(shoppingList, dispatcher, log),
-				AssignShoppingList:   commands.NewAssignShoppingListHandler(shoppingList, dispatcher, log),
-				CompleteShoppingList: commands.NewCompleteShoppingListHandler(shoppingList, dispatcher, log),
-			},
-			Queries: app.Queries{},
-		}
+		application := app.NewInstrumentedApp(
+			app.New(shoppingList, stores, products, dispatcher, log),
+		)
 		//a.Application = application
 		return application, nil
 	})
@@ -159,7 +165,7 @@ func (a *Agent) setupApplication() error {
 	a.container.AddScoped(constants.CommandHandlersKey, func(c di.Container) (any, error) {
 		return handlers.NewCommandHandlers(
 			c.Get(constants.RegistryKey).(registry.Registry),
-			c.Get(constants.ApplicationKey).(*app.Application),
+			c.Get(constants.ApplicationKey).(app.App),
 			c.Get(constants.ReplyPublisherKey).(am.ReplyPublisher),
 			tm.InboxHandler(c.Get(constants.InboxStoreKey).(tm.InboxStore)),
 		), nil

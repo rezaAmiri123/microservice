@@ -3,10 +3,13 @@ package grpc
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/payments/internal/app/commands"
 	"github.com/rezaAmiri123/microservice/payments/paymentspb"
-	"google.golang.org/grpc/codes"
+	"github.com/rezaAmiri123/microservice/pkg/errorsotel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
+	grpcCodes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
@@ -21,12 +24,16 @@ func (s serverTx) CreateInvoice(ctx context.Context, request *paymentspb.CreateI
 }
 
 func (s server) CreateInvoice(ctx context.Context, request *paymentspb.CreateInvoiceRequest) (*paymentspb.CreateInvoiceResponse, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "server.CreateInvoice")
-	defer span.Finish()
+	span := trace.SpanFromContext(ctx)
 
-	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
 	id := uuid.New().String()
-	err := s.cfg.App.Commands.CreateInvoice.Handle(ctx, commands.CreateInvoice{
+
+	span.SetAttributes(
+		attribute.String("InvoiceID", id),
+		attribute.String("OrderID", request.GetOrderId()),
+	)
+
+	err := s.cfg.App.CreateInvoice(ctx, commands.CreateInvoice{
 		ID:        id,
 		OrderID:   request.GetOrderId(),
 		PaymentID: request.GetPaymentId(),
@@ -34,8 +41,9 @@ func (s server) CreateInvoice(ctx context.Context, request *paymentspb.CreateInv
 	})
 	if err != nil {
 		s.cfg.Logger.Errorf("failed to create invoice: %s", err)
-		//s.cfg.Metric.ErrorGrpcRequests.Inc()
-		return nil, status.Errorf(codes.Internal, "failed to create invoice: %s", err)
+		span.RecordError(err, trace.WithAttributes(errorsotel.ErrAttrs(err)...))
+		span.SetStatus(codes.Error, err.Error())
+		return nil, status.Errorf(grpcCodes.Internal, "failed to create invoice: %s", err)
 	}
 	resp := &paymentspb.CreateInvoiceResponse{Id: id}
 

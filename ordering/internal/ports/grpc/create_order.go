@@ -3,11 +3,14 @@ package grpc
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/ordering/internal/app/commands"
 	"github.com/rezaAmiri123/microservice/ordering/internal/domain"
 	"github.com/rezaAmiri123/microservice/ordering/orderingpb"
-	"google.golang.org/grpc/codes"
+	"github.com/rezaAmiri123/microservice/pkg/errorsotel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
+	grpcCode "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
@@ -22,11 +25,15 @@ func (s serverTx) CreateOrder(ctx context.Context, request *orderingpb.CreateOrd
 }
 
 func (s server) CreateOrder(ctx context.Context, request *orderingpb.CreateOrderRequest) (*orderingpb.CreateOrderResponse, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "server.CreateOrder")
-	defer span.Finish()
+	span := trace.SpanFromContext(ctx)
 
-	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
 	id := uuid.New().String()
+
+	span.SetAttributes(
+		attribute.String("OrderID", id),
+		attribute.String("UserID", request.GetUserId()),
+		attribute.String("PaymentID", request.GetPaymentId()),
+	)
 
 	items := make([]domain.Item, len(request.GetItems()))
 	for i, item := range request.GetItems() {
@@ -42,8 +49,9 @@ func (s server) CreateOrder(ctx context.Context, request *orderingpb.CreateOrder
 
 	if err != nil {
 		s.cfg.Logger.Errorf("failed to create order: %s", err)
-		//s.cfg.Metric.ErrorGrpcRequests.Inc()
-		return nil, status.Errorf(codes.Internal, "failed to create create order: %s", err)
+		span.RecordError(err, trace.WithAttributes(errorsotel.ErrAttrs(err)...))
+		span.SetStatus(codes.Error, err.Error())
+		return nil, status.Errorf(grpcCode.Internal, "failed to create create order: %s", err)
 	}
 
 	resp := &orderingpb.CreateOrderResponse{Id: id}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
 	"github.com/nats-io/nats.go"
 	"github.com/rezaAmiri123/microservice/ordering/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/ordering/internal/app"
@@ -15,7 +16,6 @@ import (
 	"github.com/rezaAmiri123/microservice/pkg/amprom"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
-	_ "github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/jetstream"

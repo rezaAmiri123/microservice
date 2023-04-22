@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/depot/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -37,8 +36,8 @@ func NewCreateShoppingListHandler(
 	products domain.ProductRepository,
 	publisher ddd.EventPublisher[ddd.AggregateEvent],
 	logger logger.Logger,
-) *CreateShoppingListHandler {
-	return &CreateShoppingListHandler{
+) CreateShoppingListHandler {
+	return CreateShoppingListHandler{
 		shoppingLists: shoppingLists,
 		stores:        stores,
 		products:      products,
@@ -47,9 +46,9 @@ func NewCreateShoppingListHandler(
 	}
 }
 
-func (h CreateShoppingListHandler) Handle(ctx context.Context, cmd CreateShoppingList) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "CreateShoppingListHandler.Handle")
-	defer span.Finish()
+func (h CreateShoppingListHandler) CreateShoppingList(ctx context.Context, cmd CreateShoppingList) (err error) {
+	//span, ctx := opentracing.StartSpanFromContext(ctx, "CreateShoppingListHandler.Handle")
+	//defer span.Finish()
 
 	list := domain.CreateShoppingList(cmd.ID, cmd.OrderID)
 	for _, item := range cmd.Items {
@@ -73,7 +72,7 @@ func (h CreateShoppingListHandler) Handle(ctx context.Context, cmd CreateShoppin
 	}
 
 	// publish domain events
-	if err := h.publisher.Publish(ctx, list.Events()...); err != nil {
+	if err = h.publisher.Publish(ctx, list.Events()...); err != nil {
 		return err
 	}
 

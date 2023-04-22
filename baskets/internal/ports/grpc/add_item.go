@@ -5,7 +5,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/rezaAmiri123/microservice/baskets/basketspb"
 	"github.com/rezaAmiri123/microservice/baskets/internal/app/commands"
-	"google.golang.org/grpc/codes"
+	"github.com/rezaAmiri123/microservice/pkg/errorsotel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
+	grpcCodes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
@@ -20,10 +24,13 @@ func (s serverTx) AddItem(ctx context.Context, request *basketspb.AddItemRequest
 }
 
 func (s server) AddItem(ctx context.Context, request *basketspb.AddItemRequest) (*basketspb.AddItemResponse, error) {
-	//span, ctx := opentracing.StartSpanFromContext(ctx, "server.AddItem")
-	//defer span.Finish()
+	span := trace.SpanFromContext(ctx)
 
-	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
+	span.SetAttributes(
+		attribute.String("BasketID", request.GetId()),
+		attribute.String("ProductID", request.GetProductId()),
+	)
+
 	id := uuid.New().String()
 	err := s.cfg.App.AddItem(ctx, commands.AddItem{
 		ID:        id,
@@ -33,9 +40,10 @@ func (s server) AddItem(ctx context.Context, request *basketspb.AddItemRequest) 
 	})
 
 	if err != nil {
-		s.cfg.Logger.Errorf("failed to add item: %s", err)
-		//s.cfg.Metric.ErrorGrpcRequests.Inc()
-		return nil, status.Errorf(codes.Internal, "failed to add item: %s", err)
+		//s.cfg.Logger.Errorf("failed to add item: %s", err)
+		span.RecordError(err, trace.WithAttributes(errorsotel.ErrAttrs(err)...))
+		span.SetStatus(codes.Error, err.Error())
+		return nil, status.Errorf(grpcCodes.Internal, "failed to add item: %s", err)
 	}
 
 	resp := &basketspb.AddItemResponse{}

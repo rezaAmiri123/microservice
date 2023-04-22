@@ -1,6 +1,9 @@
 package agent
 
 import (
+	"context"
+	"github.com/rezaAmiri123/microservice/cosec/internal/constants"
+	"go.opentelemetry.io/otel/sdk/trace"
 	"io"
 	"sync"
 	"time"
@@ -88,7 +91,7 @@ func NewAgent(config Config) (*Agent, error) {
 	setupsFn := []func() error{
 		a.setupLogger,
 		a.setupRegistry,
-
+		a.setupTracer,
 		//a.setupRepository,
 		//a.setupTracing,
 		a.setupApplication,
@@ -129,6 +132,10 @@ func (a *Agent) Shutdown() error {
 		//func() error {
 		//	return a.jaegerCloser.Close()
 		//},
+		func() error {
+			tp := a.container.Get(constants.TracerKey).(*trace.TracerProvider)
+			return tp.Shutdown(context.Background())
+		},
 	}
 	for _, fn := range shutdown {
 		if err := fn(); err != nil {

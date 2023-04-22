@@ -7,12 +7,14 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/rezaAmiri123/microservice/payments/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/payments/internal/app"
-	"github.com/rezaAmiri123/microservice/payments/internal/app/commands"
 	"github.com/rezaAmiri123/microservice/payments/internal/constants"
 	"github.com/rezaAmiri123/microservice/payments/internal/domain"
 	"github.com/rezaAmiri123/microservice/payments/internal/ports/handlers"
 	"github.com/rezaAmiri123/microservice/pkg/am"
+	"github.com/rezaAmiri123/microservice/pkg/amotel"
+	"github.com/rezaAmiri123/microservice/pkg/amprom"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
+	"github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/jetstream"
@@ -53,17 +55,25 @@ func (a *Agent) setupApplication() error {
 	a.container.AddScoped(constants.DatabaseTransactionKey, func(c di.Container) (any, error) {
 		return dbConn.Begin()
 	})
+
+	sentCounter := amprom.SentMessagesCounter(constants.ServiceName)
 	a.container.AddScoped(constants.MessagePublisherKey, func(c di.Container) (any, error) {
 		//tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
-		db := c.Get(constants.DatabaseKey).(*sql.DB)
+		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
 		outboxStore := postgres.NewOutboxStore(constants.OutboxTableName, db)
 		return am.NewMessagePublisher(
 			stream,
+			amotel.OtelMessageContextInjector(),
+			sentCounter,
 			tm.OutboxPublisher(outboxStore),
 		), nil
 	})
 	a.container.AddScoped(constants.MessageSubscriberKey, func(c di.Container) (any, error) {
-		return am.NewMessageSubscriber(stream), nil
+		return am.NewMessageSubscriber(
+			stream,
+			amotel.OtelMessageContextExtractor(),
+			amprom.ReceivedMessagesCounter(constants.ServiceName),
+		), nil
 	})
 	a.container.AddScoped(constants.EventPublisherKey, func(c di.Container) (any, error) {
 		return am.NewEventPublisher(
@@ -81,19 +91,19 @@ func (a *Agent) setupApplication() error {
 
 	a.container.AddScoped(constants.InboxStoreKey, func(c di.Container) (any, error) {
 		//tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
-		db := c.Get(constants.DatabaseKey).(*sql.DB)
+		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
 		return postgres.NewInboxStore(constants.InboxTableName, db), nil
 	})
 
 	a.container.AddScoped(constants.InvoicesRepoKey, func(c di.Container) (any, error) {
 		//tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
-		db := c.Get(constants.DatabaseKey).(*sql.DB)
+		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
 		return pg.NewInvoiceRepository(constants.InvoicesTableName, db), nil
 	})
 
 	a.container.AddScoped(constants.PaymentsRepoKey, func(c di.Container) (any, error) {
 		//tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
-		db := c.Get(constants.DatabaseKey).(*sql.DB)
+		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
 		return pg.NewPaymentRepository(constants.PaymentsTableName, db), nil
 	})
 
@@ -105,16 +115,9 @@ func (a *Agent) setupApplication() error {
 		log := c.Get(constants.LoggerKey).(logger.Logger)
 
 		//fmt.Println("pubsher", publisher)
-		application := &app.Application{
-			Commands: app.Commands{
-				CreateInvoice:    commands.NewCreateInvoiceHandler(invoices, log),
-				PayInvoice:       commands.NewPayInvoiceHandler(invoices, publisher, log),
-				CancelInvoice:    commands.NewCancelInvoiceHandler(invoices, log),
-				AuthorizePayment: commands.NewAuthorizePaymentHandler(payments, log),
-				ConfirmPayment:   commands.NewConfirmPaymentHandler(payments, log),
-			},
-			Queries: app.Queries{},
-		}
+		application := app.NewInstrumentedApp(
+			app.New(invoices, payments, publisher, log),
+		)
 		//a.Application = application
 		return application, nil
 	})
@@ -126,7 +129,7 @@ func (a *Agent) setupApplication() error {
 	a.container.AddScoped(constants.IntegrationEventHandlersKey, func(c di.Container) (any, error) {
 		return handlers.NewIntegrationEventHandlers(
 			c.Get(constants.RegistryKey).(registry.Registry),
-			c.Get(constants.ApplicationKey).(*app.Application),
+			c.Get(constants.ApplicationKey).(app.App),
 			tm.InboxHandler(c.Get(constants.InboxStoreKey).(tm.InboxStore)),
 		), nil
 	})
@@ -134,7 +137,7 @@ func (a *Agent) setupApplication() error {
 	a.container.AddScoped(constants.CommandHandlersKey, func(c di.Container) (any, error) {
 		return handlers.NewCommandHandlers(
 			c.Get(constants.RegistryKey).(registry.Registry),
-			c.Get(constants.ApplicationKey).(*app.Application),
+			c.Get(constants.ApplicationKey).(app.App),
 			c.Get(constants.ReplyPublisherKey).(am.ReplyPublisher),
 			tm.InboxHandler(c.Get(constants.InboxStoreKey).(tm.InboxStore)),
 		), nil
