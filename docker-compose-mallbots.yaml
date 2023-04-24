@@ -54,12 +54,13 @@ services:
       NATS_URL: nats:4222
       OTEL_SERVICE_NAME: baskets
       OTEL_EXPORTER_OTLP_ENDPOINT: http://collector:4317
+      PG_CONN: host=postgres dbname=baskets user=baskets_user password=baskets_pass search_path=baskets,public
       POSTGRES_DRIVER: pgx
-      POSTGRES_HOST: microservice_postgesql
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: postgres
-      POSTGRES_DB_NAME: baskets
-      POSTGRES_PASSWORD: postgres
+      # POSTGRES_HOST: microservice_postgesql
+      # POSTGRES_PORT: 5432
+      # POSTGRES_USER: postgres
+      # POSTGRES_DB_NAME: baskets
+      # POSTGRES_PASSWORD: postgres
 
     depends_on:
       - nats
@@ -297,11 +298,12 @@ services:
       - "5432:5432"
     restart: always
     environment:
-      - POSTGRES_USER=postgres
+      # - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=microservice
+      # - POSTGRES_DB=microservice
     volumes:
-      - pgdata3:/var/lib/postgresql/data
+      - pgdata5:/var/lib/postgresql/data
+      - ./docker/database:/docker-entrypoint-initdb.d
     networks: [ "microservice" ]
     # profiles: [ microservices ]
 
@@ -397,7 +399,7 @@ services:
     # profiles: [ microservices ]
 
 volumes:
-  pgdata3:
+  pgdata5:
   jsdata:
 
 networks:

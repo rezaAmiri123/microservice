@@ -1,6 +1,6 @@
 DB_NAME=baskets
-DB_USER=postgres
-DB_PASSWORD=postgres
+DB_USER=baskets_user
+DB_PASSWORD=baskets_pass
 DB_ADDR=microservice_postgesql
 DB_URL=postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_ADDR):5432/$(DB_NAME)?sslmode=disable
 MIGRATION_PATH=internal/adapters/migrations
@@ -52,6 +52,7 @@ psql:
 
 generate_test:
 	mockery --quiet --dir ./internal -r --all --inpackage --case underscore
+	mockery --quiet --dir ./basketspb -r --all --inpackage --case underscore
 
 test_coverage:
 	go test --cover ./...

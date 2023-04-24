@@ -17,12 +17,13 @@ const (
 )
 
 type Config struct {
-	PGDriver   string `mapstructure:"POSTGRES_DRIVER"`
-	PGHost     string `mapstructure:"POSTGRES_HOST"`
-	PGPort     string `mapstructure:"POSTGRES_PORT"`
-	PGUser     string `mapstructure:"POSTGRES_USER"`
-	PGDBName   string `mapstructure:"POSTGRES_DB_NAME"`
-	PGPassword string `mapstructure:"POSTGRES_PASSWORD"`
+	PGDriver     string `mapstructure:"POSTGRES_DRIVER"`
+	PGHost       string `mapstructure:"POSTGRES_HOST"`
+	PGPort       string `mapstructure:"POSTGRES_PORT"`
+	PGUser       string `mapstructure:"POSTGRES_USER"`
+	PGDBName     string `mapstructure:"POSTGRES_DB_NAME"`
+	PGPassword   string `mapstructure:"POSTGRES_PASSWORD"`
+	PGSearchPath string `mapstructure:"POSTGRES_SEARCH_PATH"`
 }
 
 // Return new Postgresql db instance
@@ -54,12 +55,13 @@ func NewPsqlDB(c Config) (*sqlx.DB, error) {
 func NewDB(c Config) (*sql.DB, error) {
 	// host=postgres dbname=stores user=stores_user password=stores_pass search_path=stores,public
 	//dataSourceName := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s search_path=stores,public",
-	dataSourceName := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s search_path=stores,public",
+	dataSourceName := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s search_path=%s",
 		c.PGHost,
 		c.PGPort,
 		c.PGDBName,
 		c.PGUser,
 		c.PGPassword,
+		c.PGSearchPath,
 	)
 
 	db, err := sql.Open(c.PGDriver, dataSourceName)

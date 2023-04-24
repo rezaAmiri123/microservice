@@ -50,6 +50,19 @@ const (
 	ProductsCacheTableName = "products_cache"
 )
 
+// Repository Table Names
+//const (
+//	OutboxTableName    = ServiceName + ".outbox"
+//	InboxTableName     = ServiceName + ".inbox"
+//	EventsTableName    = ServiceName + ".events"
+//	SnapshotsTableName = ServiceName + ".snapshots"
+//	SagasTableName     = ServiceName + ".sagas"
+//
+//	StoresCacheTableName   = ServiceName + ".stores_cache"
+//	ProductsCacheTableName = ServiceName + ".products_cache"
+//	BasketTableName        = ServiceName + ".baskets"
+//)
+
 // Metric Names
 const (
 	BasketsStartedCount    = "baskets_started_count"

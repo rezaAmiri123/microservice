@@ -46,12 +46,14 @@ type Config struct {
 
 	//DBConfig     adapters.GORMConfig
 	// postgres.Config
-	PGDriver   string `mapstructure:"POSTGRES_DRIVER"`
-	PGHost     string `mapstructure:"POSTGRES_HOST"`
-	PGPort     string `mapstructure:"POSTGRES_PORT"`
-	PGUser     string `mapstructure:"POSTGRES_USER"`
-	PGDBName   string `mapstructure:"POSTGRES_DB_NAME"`
-	PGPassword string `mapstructure:"POSTGRES_PASSWORD"`
+	PGDriver     string `mapstructure:"POSTGRES_DRIVER"`
+	PGHost       string `mapstructure:"POSTGRES_HOST"`
+	PGPort       string `mapstructure:"POSTGRES_PORT"`
+	PGUser       string `mapstructure:"POSTGRES_USER"`
+	PGDBName     string `mapstructure:"POSTGRES_DB_NAME"`
+	PGPassword   string `mapstructure:"POSTGRES_PASSWORD"`
+	PGSearchPath string `mapstructure:"POSTGRES_SEARCH_PATH"`
+	//DBConn       string `mapstructure:"DB_CONN"`
 
 	// kafka config
 	KafkaBrokers []string `mapstructure:"KAFKA_BROKERS"`
@@ -97,11 +99,13 @@ type Agent struct {
 	shutdownLock sync.Mutex
 	closers      []io.Closer
 }
-type CloserFunc func() error
 
-func (f CloserFunc) Close() error {
-	return f()
-}
+//type CloserFunc func() error
+//
+//func (f CloserFunc) Close() error {
+//	return f()
+//}
+
 func NewAgent(config Config) (*Agent, error) {
 	a := &Agent{
 		Config:    config,

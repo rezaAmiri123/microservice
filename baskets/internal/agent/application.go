@@ -28,13 +28,16 @@ import (
 
 func (a *Agent) setupApplication() error {
 	dbConn, err := postgres.NewDB(postgres.Config{
-		PGDriver:   a.PGDriver,
-		PGHost:     a.PGHost,
-		PGPort:     a.PGPort,
-		PGUser:     a.PGUser,
-		PGDBName:   a.PGDBName,
-		PGPassword: a.PGPassword,
+		PGDriver:     a.PGDriver,
+		PGHost:       a.PGHost,
+		PGPort:       a.PGPort,
+		PGUser:       a.PGUser,
+		PGDBName:     a.PGDBName,
+		PGPassword:   a.PGPassword,
+		PGSearchPath: a.PGSearchPath,
 	})
+	//dbConn, err = sql.Open(a.PGDriver, a.DBConn)
+	//fmt.Println(a.DBConn)
 	if err != nil {
 		return fmt.Errorf("cannot load db: %w", err)
 	}

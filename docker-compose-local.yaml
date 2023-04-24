@@ -8,12 +8,12 @@ services:
       - "5432:5432"
     restart: always
     environment:
-      - POSTGRES_USER=postgres
+      # - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=microservice
+      # - POSTGRES_DB=microservice
     volumes:
-      - pgdata3:/var/lib/postgresql/data
-      - './docker/database:/docker-entrypoint-initdb.d'
+      - pgdata5:/var/lib/postgresql/data
+      - ./docker/database:/docker-entrypoint-initdb.d
     networks: [ "microservice" ]
 
   collector:
@@ -162,7 +162,7 @@ volumes:
   data_container:
   kafka_volumes:
   zoo_volumes:
-  pgdata3:
+  pgdata5:
   jsdata:
 
 networks:
