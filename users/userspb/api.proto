@@ -51,6 +51,17 @@ service UserService{
     };
 
   };
+  rpc DisableUser(DisableUserRequest) returns (DisableUserResponse) {
+    option (google.api.http) = {
+      patch: "/v1/disable_user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to disable user";
+      summary: "Disable user";
+    };
+
+  };
   rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
     option (google.api.http) = {
       patch: "/v1/update_user"
@@ -101,6 +112,7 @@ message User {
   string image = 5;
   google.protobuf.Timestamp created_at = 6;
   google.protobuf.Timestamp updated_at = 7;
+  bool enabled = 8;
 }
 
 message UpdateUserRequest {
@@ -160,6 +172,11 @@ message EnableUserRequest {
   string id = 1;
 }
 message EnableUserResponse {}
+
+message DisableUserRequest {
+  string id = 1;
+}
+message DisableUserResponse {}
 
 message GetUserRequest {
   string id = 1;

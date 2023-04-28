@@ -2,6 +2,8 @@ package agent
 
 import (
 	"context"
+	"google.golang.org/grpc"
+	"net/http"
 
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/search/internal/constants"
@@ -30,7 +32,10 @@ type Config struct {
 	GRPCServerTLSServerAddress  string `mapstructure:"GRPC_SERVER_TLS_SERVER_ADDRESS"`
 
 	//grpc clients
-	GRPCUserClientEndpoint string `mapstructure:"GRPC_USER_Client_ENDPOINT"`
+	GRPCUserClientAddr  string `mapstructure:"GRPC_USER_CLIENT_ADDR"`
+	GRPCUserClientPort  int    `mapstructure:"GRPC_USER_CLIENT_PORT"`
+	GRPCStoreClientAddr string `mapstructure:"GRPC_STORE_CLIENT_ADDR"`
+	GRPCStoreClientPort int    `mapstructure:"GRPC_STORE_CLIENT_PORT"`
 
 	//GRPCStoreClientTLSEnabled       bool   `mapstructure:"GRPC_STORE_CLIENT_TLS_ENABLED"`
 	//GRPCStoreClientTLSCertFile      string `mapstructure:"GRPC_STORE_CLIENT_TLS_CERT_FILE"`
@@ -44,12 +49,13 @@ type Config struct {
 
 	//DBConfig     adapters.GORMConfig
 	// postgres.Config
-	PGDriver   string `mapstructure:"POSTGRES_DRIVER"`
-	PGHost     string `mapstructure:"POSTGRES_HOST"`
-	PGPort     string `mapstructure:"POSTGRES_PORT"`
-	PGUser     string `mapstructure:"POSTGRES_USER"`
-	PGDBName   string `mapstructure:"POSTGRES_DB_NAME"`
-	PGPassword string `mapstructure:"POSTGRES_PASSWORD"`
+	PGDriver     string `mapstructure:"POSTGRES_DRIVER"`
+	PGHost       string `mapstructure:"POSTGRES_HOST"`
+	PGPort       string `mapstructure:"POSTGRES_PORT"`
+	PGUser       string `mapstructure:"POSTGRES_USER"`
+	PGDBName     string `mapstructure:"POSTGRES_DB_NAME"`
+	PGPassword   string `mapstructure:"POSTGRES_PASSWORD"`
+	PGSearchPath string `mapstructure:"POSTGRES_SEARCH_PATH"`
 
 	// kafka config
 	KafkaBrokers []string `mapstructure:"KAFKA_BROKERS"`
@@ -95,11 +101,7 @@ type Agent struct {
 	shutdownLock sync.Mutex
 	closers      []io.Closer
 }
-type CloserFunc func() error
 
-func (f CloserFunc) Close() error {
-	return f()
-}
 func NewAgent(config Config) (*Agent, error) {
 	a := &Agent{
 		Config:    config,
@@ -113,8 +115,9 @@ func NewAgent(config Config) (*Agent, error) {
 		//a.setupRepository,
 		a.setupTracer,
 		a.setupApplication,
+		a.setupHttpServer,
 		//a.setupAuthClient,
-		//a.setupGrpcServer,
+		a.setupGrpcServer,
 		//a.setupHttpServer,
 		//a.setupGRPCServer,
 		//a.setupTracer,
@@ -138,15 +141,15 @@ func (a *Agent) Shutdown() error {
 	close(a.shutdowns)
 	shutdown := []func() error{
 
-		//func() error {
-		//	grpcServer := a.container.Get(constants.GrpcServerKey).(*grpc.Server)
-		//	grpcServer.GracefulStop()
-		//	return nil
-		//},
-		//func() error {
-		//	httpServer := a.container.Get(constants.HttpServerKey).(*http.Server)
-		//	return httpServer.Shutdown(context.Background())
-		//},
+		func() error {
+			grpcServer := a.container.Get(constants.GrpcServerKey).(*grpc.Server)
+			grpcServer.GracefulStop()
+			return nil
+		},
+		func() error {
+			httpServer := a.container.Get(constants.HttpServerKey).(*http.Server)
+			return httpServer.Shutdown(context.Background())
+		},
 		func() error {
 			tp := a.container.Get(constants.TracerKey).(*trace.TracerProvider)
 			return tp.Shutdown(context.Background())

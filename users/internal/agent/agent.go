@@ -4,7 +4,8 @@ import (
 	"context"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
-	"github.com/rezaAmiri123/microservice/users/internal/app"
+	"github.com/rezaAmiri123/microservice/users/internal/constants"
+	"go.opentelemetry.io/otel/sdk/trace"
 	"io"
 	"net/http"
 	"sync"
@@ -35,12 +36,13 @@ type Config struct {
 
 	//DBConfig     adapters.GORMConfig
 	// postgres.Config
-	PGDriver   string `mapstructure:"POSTGRES_DRIVER"`
-	PGHost     string `mapstructure:"POSTGRES_HOST"`
-	PGPort     string `mapstructure:"POSTGRES_PORT"`
-	PGUser     string `mapstructure:"POSTGRES_USER"`
-	PGDBName   string `mapstructure:"POSTGRES_DB_NAME"`
-	PGPassword string `mapstructure:"POSTGRES_PASSWORD"`
+	PGDriver     string `mapstructure:"POSTGRES_DRIVER"`
+	PGHost       string `mapstructure:"POSTGRES_HOST"`
+	PGPort       string `mapstructure:"POSTGRES_PORT"`
+	PGUser       string `mapstructure:"POSTGRES_USER"`
+	PGDBName     string `mapstructure:"POSTGRES_DB_NAME"`
+	PGPassword   string `mapstructure:"POSTGRES_PASSWORD"`
+	PGSearchPath string `mapstructure:"POSTGRES_SEARCH_PATH"`
 
 	// kafka config
 	KafkaBrokers []string `mapstructure:"KAFKA_BROKERS"`
@@ -74,7 +76,7 @@ type Agent struct {
 	httpServer *http.Server
 	grpcServer *grpc.Server
 	//repository  user.Repository
-	Application *app.Application
+	///Application app.App
 	//Maker       token.Maker
 	// AuthClient  auth.AuthClient
 
@@ -96,6 +98,8 @@ func NewAgent(config Config) (*Agent, error) {
 
 		//a.setupRepository,
 		//a.setupTracing,
+		a.setupTracer,
+		a.setupRegistry,
 		a.setupApplication,
 		//a.setupAuthClient,
 		a.setupGrpcServer,
@@ -129,6 +133,11 @@ func (a *Agent) Shutdown() error {
 		func() error {
 			return a.httpServer.Shutdown(context.Background())
 		},
+		func() error {
+			tp := a.container.Get(constants.TracerKey).(*trace.TracerProvider)
+			return tp.Shutdown(context.Background())
+		},
+
 		//func() error {
 		//	return a.jaegerCloser.Close()
 		//},

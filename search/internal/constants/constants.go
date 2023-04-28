@@ -29,6 +29,8 @@ const (
 	LoggerKey                   = "logger"
 	TracerKey                   = "tracer"
 	DatabaseKey                 = "database"
+	HttpServerKey               = "httpServer"
+	GrpcServerKey               = "rpcServer"
 
 	OrdersRepoKey   = "ordersRepo"
 	UsersRepoKey    = "usersRepo"

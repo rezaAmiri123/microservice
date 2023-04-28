@@ -28,8 +28,8 @@ const (
 	CommandHandlersKey          = "commandHandlers"
 	ReplyHandlersKey            = "replyHandlers"
 	LoggerKey                   = "logger"
-
-	UsersRepoKey = "usersRepo"
+	TracerKey                   = "tracer"
+	UsersRepoKey                = "usersRepo"
 )
 
 // Repository Table Names
@@ -45,7 +45,7 @@ const (
 	SnapshotsTableName = "snapshots"
 	SagasTableName     = "sagas"
 
-	UsersTableName = ServiceName + ".users"
+	UsersTableName = "users"
 )
 
 // Metric Names

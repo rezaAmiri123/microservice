@@ -1,7 +1,7 @@
 NAME=search
 DB_NAME=$(NAME)
-DB_USER=postgres
-DB_PASSWORD=postgres
+DB_USER=search_user
+DB_PASSWORD=search_pass
 DB_ADDR=microservice_postgesql
 DB_URL=postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_ADDR):5432/$(DB_NAME)?sslmode=disable
 MIGRATION_PATH=internal/adapters/migrations
@@ -20,11 +20,11 @@ install-tools:
 
 proto:
 	protoc \
-		--go_out=depotpb --go_opt=paths=source_relative \
-		--go-grpc_out=depotpb --go-grpc_opt=paths=source_relative \
-		--grpc-gateway_out=depotpb --grpc-gateway_opt=paths=source_relative \
+		--go_out=searchpb --go_opt=paths=source_relative \
+		--go-grpc_out=searchpb --go-grpc_opt=paths=source_relative \
+		--grpc-gateway_out=searchpb --grpc-gateway_opt=paths=source_relative \
         --openapiv2_out=internal/ports/rest/ --openapiv2_opt=allow_merge=true,merge_file_name=api \
-		--proto_path=depotpb depotpb/*.proto
+		--proto_path=searchpb searchpb/*.proto
 
 createdb:
 	docker exec -it $(DB_ADDR) createdb --username=$(DB_USER) --owner=$(DB_USER) $(DB_NAME)

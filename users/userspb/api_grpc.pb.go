@@ -22,6 +22,7 @@ const (
 	UserService_RegisterUser_FullMethodName  = "/userspb.UserService/RegisterUser"
 	UserService_AuthorizeUser_FullMethodName = "/userspb.UserService/AuthorizeUser"
 	UserService_EnableUser_FullMethodName    = "/userspb.UserService/EnableUser"
+	UserService_DisableUser_FullMethodName   = "/userspb.UserService/DisableUser"
 	UserService_UpdateUser_FullMethodName    = "/userspb.UserService/UpdateUser"
 	UserService_Login_FullMethodName         = "/userspb.UserService/Login"
 	UserService_LoginVerify_FullMethodName   = "/userspb.UserService/LoginVerify"
@@ -35,6 +36,7 @@ type UserServiceClient interface {
 	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
 	AuthorizeUser(ctx context.Context, in *AuthorizeUserRequest, opts ...grpc.CallOption) (*AuthorizeUserResponse, error)
 	EnableUser(ctx context.Context, in *EnableUserRequest, opts ...grpc.CallOption) (*EnableUserResponse, error)
+	DisableUser(ctx context.Context, in *DisableUserRequest, opts ...grpc.CallOption) (*DisableUserResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	Login(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
 	LoginVerify(ctx context.Context, in *LoginVerifyUserRequest, opts ...grpc.CallOption) (*LoginVerifyUserResponse, error)
@@ -70,6 +72,15 @@ func (c *userServiceClient) AuthorizeUser(ctx context.Context, in *AuthorizeUser
 func (c *userServiceClient) EnableUser(ctx context.Context, in *EnableUserRequest, opts ...grpc.CallOption) (*EnableUserResponse, error) {
 	out := new(EnableUserResponse)
 	err := c.cc.Invoke(ctx, UserService_EnableUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) DisableUser(ctx context.Context, in *DisableUserRequest, opts ...grpc.CallOption) (*DisableUserResponse, error) {
+	out := new(DisableUserResponse)
+	err := c.cc.Invoke(ctx, UserService_DisableUser_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -119,6 +130,7 @@ type UserServiceServer interface {
 	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
 	AuthorizeUser(context.Context, *AuthorizeUserRequest) (*AuthorizeUserResponse, error)
 	EnableUser(context.Context, *EnableUserRequest) (*EnableUserResponse, error)
+	DisableUser(context.Context, *DisableUserRequest) (*DisableUserResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	Login(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
 	LoginVerify(context.Context, *LoginVerifyUserRequest) (*LoginVerifyUserResponse, error)
@@ -138,6 +150,9 @@ func (UnimplementedUserServiceServer) AuthorizeUser(context.Context, *AuthorizeU
 }
 func (UnimplementedUserServiceServer) EnableUser(context.Context, *EnableUserRequest) (*EnableUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EnableUser not implemented")
+}
+func (UnimplementedUserServiceServer) DisableUser(context.Context, *DisableUserRequest) (*DisableUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DisableUser not implemented")
 }
 func (UnimplementedUserServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
@@ -214,6 +229,24 @@ func _UserService_EnableUser_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).EnableUser(ctx, req.(*EnableUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_DisableUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DisableUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).DisableUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_DisableUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).DisableUser(ctx, req.(*DisableUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -308,6 +341,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EnableUser",
 			Handler:    _UserService_EnableUser_Handler,
+		},
+		{
+			MethodName: "DisableUser",
+			Handler:    _UserService_DisableUser_Handler,
 		},
 		{
 			MethodName: "UpdateUser",

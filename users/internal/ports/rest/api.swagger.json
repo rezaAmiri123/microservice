@@ -54,6 +54,40 @@
         ]
       }
     },
+    "/v1/disable_user": {
+      "patch": {
+        "summary": "Disable user",
+        "description": "Use this API to disable user",
+        "operationId": "UserService_DisableUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/userspbDisableUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userspbDisableUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/v1/enable_user": {
       "patch": {
         "summary": "Enable user",
@@ -299,6 +333,17 @@
     "userspbAuthorizeUserResponse": {
       "type": "object"
     },
+    "userspbDisableUserRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "userspbDisableUserResponse": {
+      "type": "object"
+    },
     "userspbEnableUserRequest": {
       "type": "object",
       "properties": {
@@ -473,6 +518,9 @@
         "updatedAt": {
           "type": "string",
           "format": "date-time"
+        },
+        "enabled": {
+          "type": "boolean"
         }
       }
     }

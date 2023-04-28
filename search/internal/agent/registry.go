@@ -4,6 +4,7 @@ import (
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/registry"
 	"github.com/rezaAmiri123/microservice/search/internal/constants"
+	"github.com/rezaAmiri123/microservice/stores/storespb"
 	"github.com/rezaAmiri123/microservice/users/userspb"
 )
 
@@ -15,9 +16,9 @@ func (a *Agent) setupRegistry() error {
 	if err := userspb.Registrations(reg); err != nil {
 		return err
 	}
-	//if err := storespb.Registrations(reg); err != nil {
-	//	return err
-	//}
+	if err := storespb.Registrations(reg); err != nil {
+		return err
+	}
 
 	a.container.AddSingleton(constants.RegistryKey, func(c di.Container) (any, error) {
 		return reg, nil

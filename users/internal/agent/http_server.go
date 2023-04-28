@@ -3,6 +3,8 @@ package agent
 import (
 	"context"
 	"fmt"
+	"github.com/rezaAmiri123/microservice/pkg/logger"
+	"github.com/rezaAmiri123/microservice/users/internal/constants"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -29,7 +31,9 @@ func (a *Agent) setupHttpServer() error {
 
 	a.httpServer = webServer
 	go func() {
-		err := a.httpServer.ListenAndServe()
+		log := a.container.Get(constants.LoggerKey).(logger.Logger)
+		log.Infof("run http at %s", webServer.Addr)
+		err := webServer.ListenAndServe()
 		if err != nil {
 			_ = a.Shutdown()
 		}

@@ -54,15 +54,15 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "cosec" <<-EOSQL
 EOSQL
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
-  CREATE DATABASE customers TEMPLATE commondb;
+  CREATE DATABASE users TEMPLATE commondb;
 
-  CREATE USER customers_user WITH ENCRYPTED PASSWORD 'customers_pass';
-  GRANT USAGE ON SCHEMA public TO customers_user;
-  GRANT CREATE, CONNECT ON DATABASE customers TO customers_user;
+  CREATE USER users_user WITH ENCRYPTED PASSWORD 'users_pass';
+  GRANT USAGE ON SCHEMA public TO users_user;
+  GRANT CREATE, CONNECT ON DATABASE users TO users_user;
 EOSQL
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "customers" <<-EOSQL
-  CREATE SCHEMA customers;
-  GRANT CREATE, USAGE ON SCHEMA customers TO customers_user;
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "users" <<-EOSQL
+  CREATE SCHEMA users;
+  GRANT CREATE, USAGE ON SCHEMA users TO users_user;
 EOSQL
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL

@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package basketspb;
+option go_package = "github.com/rezaAmiri123/microservice/search/searchpb";
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "search Service API";
+    version: "1.1";
+    contact: {
+      name: "Search service";
+      url: "https://github.com/rezaAmiri123/microservice";
+      // email: "example@example.com";
+    };
+  };
+};
+
+service SearchService {
+  rpc SearchOrders(SearchOrdersRequest) returns (SearchOrdersResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/search/search_orders"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to search orders";
+      summary: "Search orders";
+    };
+  };
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/search/get_order"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get order";
+      summary: "Get order";
+    };
+  };
+}
+
+message Order {
+  message Item {
+    string product_id = 1;
+    string store_id = 2;
+    string product_name = 3;
+    string store_name = 4;
+    double price = 5;
+    int64 quantity = 6;
+  }
+
+  string order_id = 1;
+  string customer_id = 2;
+  string customer_name = 3;
+  repeated Item items = 4;
+  double total = 5;
+  string status = 6;
+}
+
+message SearchOrdersRequest {
+  message Filters {
+    string customer_id = 1;
+    google.protobuf.Timestamp after = 2;
+    google.protobuf.Timestamp before = 3;
+    repeated string store_ids = 4;
+    repeated string product_ids = 5;
+    double min_total = 6;
+    double max_total = 7;
+    string status = 8;
+  }
+  Filters filters = 1;
+  string next = 2;
+  int32 limit = 3;
+}
+message SearchOrdersResponse {
+  repeated Order orders = 1;
+  string next = 2;
+}
+
+message GetOrderRequest {
+  string id = 1;
+}
+message GetOrderResponse {
+  Order order = 1;
+}

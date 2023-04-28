@@ -2,8 +2,6 @@ package pg
 
 import (
 	"context"
-	"fmt"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/users/internal/domain"
 )
 
@@ -13,8 +11,8 @@ const getUser = `SELECT
 				WHERE id = $1`
 
 func (r *PGUserRepository) Find(ctx context.Context, id string) (*domain.User, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "PGRepository.Find")
-	defer span.Finish()
+	//span, ctx := opentracing.StartSpanFromContext(ctx, "PGRepository.Find")
+	//defer span.Finish()
 
 	const query = `SELECT username, email, Enabled, bio, image FROM users WHERE id = $1`
 
@@ -26,7 +24,7 @@ func (r *PGUserRepository) Find(ctx context.Context, id string) (*domain.User, e
 		&u.Bio,
 		&u.Image,
 	); err != nil {
-		fmt.Println("pg error after QueryRowContext, ", err.Error())
+		//fmt.Println("pg error after QueryRowContext, ", err.Error())
 		return nil, err
 	}
 	//if err := r.DB.GetContext(ctx, u, getUser, id); err != nil {
