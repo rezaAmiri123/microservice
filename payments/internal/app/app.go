@@ -34,6 +34,7 @@ type (
 		ConfirmPayment(ctx context.Context, cmd commands.ConfirmPayment) error
 		PayInvoice(ctx context.Context, cmd commands.PayInvoice) error
 		CancelInvoice(ctx context.Context, cmd commands.CancelInvoice) error
+		AdjustInvoice(ctx context.Context, cmd commands.AdjustInvoice) error
 	}
 	Queries interface {
 	}
@@ -47,6 +48,7 @@ type (
 		commands.ConfirmPaymentHandler
 		commands.PayInvoiceHandler
 		commands.CancelInvoiceHandler
+		commands.AdjustInvoiceHandler
 	}
 	appQueries struct {
 	}
@@ -67,6 +69,7 @@ func New(
 			ConfirmPaymentHandler:   commands.NewConfirmPaymentHandler(payments, log),
 			PayInvoiceHandler:       commands.NewPayInvoiceHandler(invoices, publisher, log),
 			CancelInvoiceHandler:    commands.NewCancelInvoiceHandler(invoices, log),
+			AdjustInvoiceHandler:    commands.NewAdjustInvoiceHandler(invoices, log),
 		},
 		appQueries: appQueries{},
 	}

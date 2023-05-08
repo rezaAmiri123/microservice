@@ -122,6 +122,40 @@
         ]
       }
     },
+    "/v1/api/ordering/get_order": {
+      "post": {
+        "summary": "Get an order",
+        "description": "Use this API to get an order",
+        "operationId": "OrderingService_GetOrder",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/orderingpbGetOrderResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/orderingpbGetOrderRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OrderingService"
+        ]
+      }
+    },
     "/v1/api/ordering/ready_order": {
       "post": {
         "summary": "Ready order",
@@ -202,6 +236,14 @@
       }
     },
     "orderingpbCreateOrderResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "orderingpbGetOrderRequest": {
       "type": "object",
       "properties": {
         "id": {

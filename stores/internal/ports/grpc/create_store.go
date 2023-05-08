@@ -4,13 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"github.com/google/uuid"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/pkg/di"
+	"github.com/rezaAmiri123/microservice/pkg/errorsotel"
 	"github.com/rezaAmiri123/microservice/stores/internal/app/commands"
 	"github.com/rezaAmiri123/microservice/stores/internal/constants"
 	"github.com/rezaAmiri123/microservice/stores/storespb"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func (s serverTx) CreateStore(ctx context.Context, request *storespb.CreateStoreRequest) (resp *storespb.CreateStoreResponse, err error) {
@@ -24,12 +25,15 @@ func (s serverTx) CreateStore(ctx context.Context, request *storespb.CreateStore
 }
 
 func (s server) CreateStore(ctx context.Context, request *storespb.CreateStoreRequest) (*storespb.CreateStoreResponse, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "server.CreateStore")
-	defer span.Finish()
+	span := trace.SpanFromContext(ctx)
 
-	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
 	id := uuid.New().String()
-	err := s.cfg.App.Commands.CreateStore.Handle(ctx, commands.CreateStore{
+
+	span.SetAttributes(
+		attribute.String("StoreID", id),
+	)
+
+	err := s.cfg.App.CreateStore(ctx, commands.CreateStore{
 		ID:       id,
 		Name:     request.GetName(),
 		Location: request.GetLocation(),
@@ -37,8 +41,9 @@ func (s server) CreateStore(ctx context.Context, request *storespb.CreateStoreRe
 
 	if err != nil {
 		s.cfg.Logger.Errorf("failed to create store: %s", err)
-		//s.cfg.Metric.ErrorGrpcRequests.Inc()
-		return nil, status.Errorf(codes.Internal, "failed to create store: %s", err)
+		span.RecordError(err, trace.WithAttributes(errorsotel.ErrAttrs(err)...))
+		span.SetStatus(codes.Error, err.Error())
+		return nil, err
 	}
 
 	resp := &storespb.CreateStoreResponse{Id: id}

@@ -39,15 +39,15 @@ func registrations(reg registry.Registry) (err error) {
 	if err = serde.Register(domain.StoreCreated{}); err != nil {
 		return
 	}
-	//if err = serde.RegisterKey(domain.StoreParticipationEnabledEvent, domain.StoreParticipationToggled{}); err != nil {
-	//	return
-	//}
-	//if err = serde.RegisterKey(domain.StoreParticipationDisabledEvent, domain.StoreParticipationToggled{}); err != nil {
-	//	return
-	//}
-	//if err = serde.Register(domain.StoreRebranded{}); err != nil {
-	//	return
-	//}
+	if err = serde.RegisterKey(domain.StoreParticipationEnabledEvent, domain.StoreParticipationToggled{}); err != nil {
+		return
+	}
+	if err = serde.RegisterKey(domain.StoreParticipationDisabledEvent, domain.StoreParticipationToggled{}); err != nil {
+		return
+	}
+	if err = serde.Register(domain.StoreRebranded{}); err != nil {
+		return
+	}
 	// store snapshots
 	if err = serde.RegisterKey(domain.StoreV1{}.SnapshotName(), domain.StoreV1{}); err != nil {
 		return
@@ -65,18 +65,18 @@ func registrations(reg registry.Registry) (err error) {
 	if err = serde.Register(domain.ProductAdded{}); err != nil {
 		return
 	}
-	//if err = serde.Register(domain.ProductRebranded{}); err != nil {
-	//	return
-	//}
-	//if err = serde.RegisterKey(domain.ProductPriceIncreasedEvent, domain.ProductPriceChanged{}); err != nil {
-	//	return
-	//}
-	//if err = serde.RegisterKey(domain.ProductPriceDecreasedEvent, domain.ProductPriceChanged{}); err != nil {
-	//	return
-	//}
-	//if err = serde.Register(domain.ProductRemoved{}); err != nil {
-	//	return
-	//}
+	if err = serde.Register(domain.ProductRebranded{}); err != nil {
+		return
+	}
+	if err = serde.RegisterKey(domain.ProductPriceIncreasedEvent, domain.ProductPriceChanged{}); err != nil {
+		return
+	}
+	if err = serde.RegisterKey(domain.ProductPriceDecreasedEvent, domain.ProductPriceChanged{}); err != nil {
+		return
+	}
+	if err = serde.Register(domain.ProductRemoved{}); err != nil {
+		return
+	}
 	// product snapshots
 	if err = serde.RegisterKey(domain.ProductV1{}.SnapshotName(), domain.ProductV1{}); err != nil {
 		return

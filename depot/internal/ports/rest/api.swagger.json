@@ -54,6 +54,40 @@
         ]
       }
     },
+    "/v1/api/depot/cancel_shopping_list": {
+      "post": {
+        "summary": "Cancel a shopping list",
+        "description": "Use this API to cancel a shopping list",
+        "operationId": "DepotService_CancelShoppingList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/depotpbCancelShoppingListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/depotpbCancelShoppingListRequest"
+            }
+          }
+        ],
+        "tags": [
+          "DepotService"
+        ]
+      }
+    },
     "/v1/api/depot/complete_shopping_list": {
       "post": {
         "summary": "complete a shopping list",
@@ -137,6 +171,14 @@
     },
     "depotpbAssignShoppingListResponse": {
       "type": "object"
+    },
+    "depotpbCancelShoppingListRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
     },
     "depotpbCancelShoppingListResponse": {
       "type": "object"

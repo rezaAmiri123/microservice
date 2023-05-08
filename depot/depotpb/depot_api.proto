@@ -30,7 +30,16 @@ service DepotService {
       summary: "Create new shopping list";
     };
   }
-  rpc CancelShoppingList(CancelShoppingListRequest) returns (CancelShoppingListResponse) {}
+  rpc CancelShoppingList(CancelShoppingListRequest) returns (CancelShoppingListResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/depot/cancel_shopping_list"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to cancel a shopping list";
+      summary: "Cancel a shopping list";
+    };
+  }
   rpc AssignShoppingList(AssignShoppingListRequest) returns (AssignShoppingListResponse) {
     option (google.api.http) = {
       post: "/v1/api/depot/assign_shopping_list"

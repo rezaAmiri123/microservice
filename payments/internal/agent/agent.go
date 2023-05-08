@@ -34,12 +34,13 @@ type Config struct {
 
 	//DBConfig     adapters.GORMConfig
 	// postgres.Config
-	PGDriver   string `mapstructure:"POSTGRES_DRIVER"`
-	PGHost     string `mapstructure:"POSTGRES_HOST"`
-	PGPort     string `mapstructure:"POSTGRES_PORT"`
-	PGUser     string `mapstructure:"POSTGRES_USER"`
-	PGDBName   string `mapstructure:"POSTGRES_DB_NAME"`
-	PGPassword string `mapstructure:"POSTGRES_PASSWORD"`
+	PGDriver     string `mapstructure:"POSTGRES_DRIVER"`
+	PGHost       string `mapstructure:"POSTGRES_HOST"`
+	PGPort       string `mapstructure:"POSTGRES_PORT"`
+	PGUser       string `mapstructure:"POSTGRES_USER"`
+	PGDBName     string `mapstructure:"POSTGRES_DB_NAME"`
+	PGPassword   string `mapstructure:"POSTGRES_PASSWORD"`
+	PGSearchPath string `mapstructure:"POSTGRES_SEARCH_PATH"`
 
 	// kafka config
 	KafkaBrokers []string `mapstructure:"KAFKA_BROKERS"`

@@ -87,6 +87,414 @@
           "StoresService"
         ]
       }
+    },
+    "/v1/api/stores/decrease_product_price": {
+      "post": {
+        "summary": "Decrease a product price",
+        "description": "Use this API to decrease a product price",
+        "operationId": "StoresService_DecreaseProductPrice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/storespbDecreaseProductPriceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/storespbDecreaseProductPriceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StoresService"
+        ]
+      }
+    },
+    "/v1/api/stores/disable_participation": {
+      "post": {
+        "summary": "Disable participation",
+        "description": "Use this API to disable participation",
+        "operationId": "StoresService_DisableParticipation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/storespbDisableParticipationResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/storespbDisableParticipationRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StoresService"
+        ]
+      }
+    },
+    "/v1/api/stores/enable_participation": {
+      "post": {
+        "summary": "Enable participation",
+        "description": "Use this API to enable participation",
+        "operationId": "StoresService_EnableParticipation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/storespbEnableParticipationResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/storespbEnableParticipationRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StoresService"
+        ]
+      }
+    },
+    "/v1/api/stores/get_catalog": {
+      "post": {
+        "summary": "Get a catalog",
+        "description": "Use this API to get a catalog",
+        "operationId": "StoresService_GetCatalog",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/storespbGetCatalogResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/storespbGetCatalogRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StoresService"
+        ]
+      }
+    },
+    "/v1/api/stores/get_participation_stores": {
+      "post": {
+        "summary": "Get participation stores",
+        "description": "Use this API to get participation stores",
+        "operationId": "StoresService_GetParticipatingStores",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/storespbGetParticipatingStoresResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/storespbGetParticipatingStoresRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StoresService"
+        ]
+      }
+    },
+    "/v1/api/stores/get_product": {
+      "post": {
+        "summary": "Get a product",
+        "description": "Use this API to get a product",
+        "operationId": "StoresService_GetProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/storespbGetProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/storespbGetProductRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StoresService"
+        ]
+      }
+    },
+    "/v1/api/stores/get_store": {
+      "post": {
+        "summary": "Get a store",
+        "description": "Use this API to get a store",
+        "operationId": "StoresService_GetStore",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/storespbGetStoreResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/storespbGetStoreRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StoresService"
+        ]
+      }
+    },
+    "/v1/api/stores/get_stores": {
+      "post": {
+        "summary": "Get stores",
+        "description": "Use this API to get stores",
+        "operationId": "StoresService_GetStores",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/storespbGetStoresResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/storespbGetStoresRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StoresService"
+        ]
+      }
+    },
+    "/v1/api/stores/increase_product_price": {
+      "post": {
+        "summary": "Increase a product price",
+        "description": "Use this API to increase a product price",
+        "operationId": "StoresService_IncreaseProductPrice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/storespbIncreaseProductPriceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/storespbIncreaseProductPriceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StoresService"
+        ]
+      }
+    },
+    "/v1/api/stores/rebrand_product": {
+      "post": {
+        "summary": "Rebrand a product",
+        "description": "Use this API to rebrand a product",
+        "operationId": "StoresService_RebrandProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/storespbRebrandProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/storespbRebrandProductRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StoresService"
+        ]
+      }
+    },
+    "/v1/api/stores/rebrand_store": {
+      "post": {
+        "summary": "Rebrand a store",
+        "description": "Use this API to rebrand a store",
+        "operationId": "StoresService_RebrandStore",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/storespbRebrandStoreResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/storespbRebrandStoreRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StoresService"
+        ]
+      }
+    },
+    "/v1/api/stores/remove_product": {
+      "post": {
+        "summary": "Remove a product",
+        "description": "Use this API to remove a product",
+        "operationId": "StoresService_RemoveProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/storespbRemoveProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/storespbRemoveProductRequest"
+            }
+          }
+        ],
+        "tags": [
+          "StoresService"
+        ]
+      }
     }
   },
   "definitions": {
@@ -166,14 +574,50 @@
         }
       }
     },
+    "storespbDecreaseProductPriceRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
     "storespbDecreaseProductPriceResponse": {
       "type": "object"
+    },
+    "storespbDisableParticipationRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
     },
     "storespbDisableParticipationResponse": {
       "type": "object"
     },
+    "storespbEnableParticipationRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
     "storespbEnableParticipationResponse": {
       "type": "object"
+    },
+    "storespbGetCatalogRequest": {
+      "type": "object",
+      "properties": {
+        "storeId": {
+          "type": "string"
+        }
+      }
     },
     "storespbGetCatalogResponse": {
       "type": "object",
@@ -187,6 +631,9 @@
         }
       }
     },
+    "storespbGetParticipatingStoresRequest": {
+      "type": "object"
+    },
     "storespbGetParticipatingStoresResponse": {
       "type": "object",
       "properties": {
@@ -199,11 +646,27 @@
         }
       }
     },
+    "storespbGetProductRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
     "storespbGetProductResponse": {
       "type": "object",
       "properties": {
         "product": {
           "$ref": "#/definitions/storespbProduct"
+        }
+      }
+    },
+    "storespbGetStoreRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
         }
       }
     },
@@ -215,6 +678,9 @@
         }
       }
     },
+    "storespbGetStoresRequest": {
+      "type": "object"
+    },
     "storespbGetStoresResponse": {
       "type": "object",
       "properties": {
@@ -224,6 +690,18 @@
             "type": "object",
             "$ref": "#/definitions/storespbStore"
           }
+        }
+      }
+    },
+    "storespbIncreaseProductPriceRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "double"
         }
       }
     },
@@ -254,11 +732,44 @@
         }
       }
     },
+    "storespbRebrandProductRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
     "storespbRebrandProductResponse": {
       "type": "object"
     },
+    "storespbRebrandStoreRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "storespbRebrandStoreResponse": {
       "type": "object"
+    },
+    "storespbRemoveProductRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
     },
     "storespbRemoveProductResponse": {
       "type": "object"

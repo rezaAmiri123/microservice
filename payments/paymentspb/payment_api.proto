@@ -50,7 +50,16 @@ service PaymentsService {
       summary: "Create new invoice";
     };
   };
-  rpc AdjustInvoice(AdjustInvoiceRequest) returns (AdjustInvoiceResponse) {};
+  rpc AdjustInvoice(AdjustInvoiceRequest) returns (AdjustInvoiceResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/payments/adjust_invoice"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to adjust an invoice";
+      summary: "Adjust an invoice";
+    };
+  };
   rpc PayInvoice(PayInvoiceRequest) returns (PayInvoiceResponse) {
     option (google.api.http) = {
       post: "/v1/api/payments/pay_invoice"

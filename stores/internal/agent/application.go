@@ -6,7 +6,12 @@ import (
 	"fmt"
 	"github.com/nats-io/nats.go"
 	"github.com/rezaAmiri123/microservice/pkg/am"
+	"github.com/rezaAmiri123/microservice/pkg/amotel"
+	_ "github.com/rezaAmiri123/microservice/pkg/amotel"
+	"github.com/rezaAmiri123/microservice/pkg/amprom"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
+	"github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
+	_ "github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/es"
@@ -16,8 +21,6 @@ import (
 	"github.com/rezaAmiri123/microservice/pkg/tm"
 	"github.com/rezaAmiri123/microservice/stores/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/stores/internal/app"
-	"github.com/rezaAmiri123/microservice/stores/internal/app/commands"
-	"github.com/rezaAmiri123/microservice/stores/internal/app/queries"
 	"github.com/rezaAmiri123/microservice/stores/internal/constants"
 	"github.com/rezaAmiri123/microservice/stores/internal/domain"
 	"github.com/rezaAmiri123/microservice/stores/internal/ports/handlers"
@@ -25,12 +28,13 @@ import (
 
 func (a *Agent) setupApplication() error {
 	dbConn, err := postgres.NewDB(postgres.Config{
-		PGDriver:   a.PGDriver,
-		PGHost:     a.PGHost,
-		PGPort:     a.PGPort,
-		PGUser:     a.PGUser,
-		PGDBName:   a.PGDBName,
-		PGPassword: a.PGPassword,
+		PGDriver:     a.PGDriver,
+		PGHost:       a.PGHost,
+		PGPort:       a.PGPort,
+		PGUser:       a.PGUser,
+		PGDBName:     a.PGDBName,
+		PGPassword:   a.PGPassword,
+		PGSearchPath: a.PGSearchPath,
 	})
 	if err != nil {
 		return fmt.Errorf("cannot load db: %w", err)
@@ -63,16 +67,24 @@ func (a *Agent) setupApplication() error {
 	a.container.AddScoped(constants.DatabaseTransactionKey, func(c di.Container) (any, error) {
 		return dbConn.Begin()
 	})
+
+	sentCounter := amprom.SentMessagesCounter(constants.ServiceName)
 	a.container.AddScoped(constants.MessagePublisherKey, func(c di.Container) (any, error) {
-		tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
+		tx := postgresotel.Trace(c.Get(constants.DatabaseTransactionKey).(*sql.Tx))
 		outboxStore := postgres.NewOutboxStore(constants.OutboxTableName, tx)
 		return am.NewMessagePublisher(
 			stream,
+			amotel.OtelMessageContextInjector(),
+			sentCounter,
 			tm.OutboxPublisher(outboxStore),
 		), nil
 	})
 	a.container.AddScoped(constants.MessageSubscriberKey, func(c di.Container) (any, error) {
-		return am.NewMessageSubscriber(stream), nil
+		return am.NewMessageSubscriber(
+			stream,
+			amotel.OtelMessageContextExtractor(),
+			amprom.ReceivedMessagesCounter(constants.ServiceName),
+		), nil
 	})
 	a.container.AddScoped(constants.EventPublisherKey, func(c di.Container) (any, error) {
 		return am.NewEventPublisher(
@@ -82,12 +94,12 @@ func (a *Agent) setupApplication() error {
 	})
 
 	a.container.AddScoped(constants.InboxStoreKey, func(c di.Container) (any, error) {
-		tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
+		tx := postgresotel.Trace(c.Get(constants.DatabaseTransactionKey).(*sql.Tx))
 		return postgres.NewInboxStore(constants.InboxTableName, tx), nil
 	})
 
 	a.container.AddScoped(constants.AggregateStoreKey, func(c di.Container) (any, error) {
-		tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
+		tx := postgresotel.Trace(c.Get(constants.DatabaseTransactionKey).(*sql.Tx))
 		reg := c.Get(constants.RegistryKey).(registry.Registry)
 		return es.AggregateStoreWithMiddleware(
 			postgres.NewEventStore(constants.EventsTableName, tx, reg),
@@ -113,14 +125,14 @@ func (a *Agent) setupApplication() error {
 	a.container.AddScoped(constants.CatalogRepoKey, func(c di.Container) (any, error) {
 		return pg.NewCatalogRepository(
 			constants.CatalogTableName,
-			c.Get(constants.DatabaseTransactionKey).(*sql.Tx),
+			postgresotel.Trace(c.Get(constants.DatabaseTransactionKey).(*sql.Tx)),
 		), nil
 	})
 
 	a.container.AddScoped(constants.MallRepoKey, func(c di.Container) (any, error) {
 		return pg.NewMallRepository(
 			constants.MallTableName,
-			c.Get(constants.DatabaseTransactionKey).(*sql.Tx),
+			postgresotel.Trace(c.Get(constants.DatabaseTransactionKey).(*sql.Tx)),
 		), nil
 	})
 
@@ -132,17 +144,18 @@ func (a *Agent) setupApplication() error {
 		malls := c.Get(constants.MallRepoKey).(domain.MallRepository)
 		log := c.Get(constants.LoggerKey).(logger.Logger)
 
+		application := app.New(stores, products, catalog, malls, publisher, log)
 		//fmt.Println("pubsher", publisher)
-		application := &app.Application{
-			Commands: app.Commands{
-				CreateStore: commands.NewCreateStoreHandler(stores, publisher, log),
-				AddProduct:  commands.NewAddProductHandler(products, publisher, log),
-			},
-			Queries: app.Queries{
-				GetProduct: queries.NewGetProductHandler(catalog, log),
-				GetStore:   queries.NewGetStoreHandler(malls, log),
-			},
-		}
+		//application := &app.Application{
+		//	Commands: app.Commands{
+		//		CreateStore: commands.NewCreateStoreHandler(stores, publisher, log),
+		//		AddProduct:  commands.NewAddProductHandler(products, publisher, log),
+		//	},
+		//	Queries: app.Queries{
+		//		GetProduct: queries.NewGetProductHandler(catalog, log),
+		//		GetStore:   queries.NewGetStoreHandler(malls, log),
+		//	},
+		//}
 		//a.Application = application
 		return application, nil
 	})

@@ -56,6 +56,8 @@ func (h commandHandlers) HandleCommand(ctx context.Context, cmd ddd.Command) (re
 	switch cmd.CommandName() {
 	case depotpb.CreateShoppingListCommand:
 		return h.doCreateShoppingList(ctx, cmd)
+	case depotpb.CancelShoppingListCommand:
+		return h.doCancelShoppingList(ctx, cmd)
 	case depotpb.InitiateShoppingCommand:
 		return h.doInitiateShopping(ctx, cmd)
 	}
@@ -86,6 +88,17 @@ func (h commandHandlers) doCreateShoppingList(ctx context.Context, cmd ddd.Comma
 	}), err
 
 }
+
+func (h commandHandlers) doCancelShoppingList(ctx context.Context, cmd ddd.Command) (ddd.Reply, error) {
+	payload := cmd.Payload().(*depotpb.CancelShoppingList)
+	err := h.app.CancelShoppingList(ctx, commands.CancelShoppingList{
+		ID: payload.GetId(),
+	})
+
+	// returning nil returns a simple Success or Failure reply; err being nil determines which
+	return nil, err
+}
+
 func (h commandHandlers) doInitiateShopping(ctx context.Context, cmd ddd.Command) (ddd.Reply, error) {
 	payload := cmd.Payload().(*depotpb.InitiateShopping)
 	err := h.app.InitiateShopping(ctx, commands.InitiateShopping{

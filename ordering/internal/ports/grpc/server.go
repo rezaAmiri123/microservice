@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/rezaAmiri123/microservice/ordering/internal/app"
 	"github.com/rezaAmiri123/microservice/ordering/internal/constants"
+	"github.com/rezaAmiri123/microservice/ordering/internal/domain"
 	"github.com/rezaAmiri123/microservice/ordering/orderingpb"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -58,5 +59,19 @@ func (s serverTx) closeTx(tx *sql.Tx, err error) error {
 		return err
 	} else {
 		return tx.Commit()
+	}
+}
+
+func (s server) orderFromDomain(order *domain.Order) *orderingpb.Order {
+	items := make([]*orderingpb.Item, len(order.Items))
+	for i, item := range order.Items {
+		items[i] = s.itemFromDomain(item)
+	}
+	return &orderingpb.Order{
+		Id:        order.ID(),
+		UserId:    order.UserID,
+		PaymentId: order.PaymentID,
+		Items:     items,
+		Status:    order.Status.String(),
 	}
 }

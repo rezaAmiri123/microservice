@@ -1,6 +1,6 @@
 DB_NAME=depot
-DB_USER=postgres
-DB_PASSWORD=postgres
+DB_USER=depot_user
+DB_PASSWORD=depot_pass
 DB_ADDR=microservice_postgesql
 DB_URL=postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_ADDR):5432/$(DB_NAME)?sslmode=disable
 MIGRATION_PATH=internal/adapters/migrations

@@ -12,7 +12,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       # - POSTGRES_DB=microservice
     volumes:
-      - pgdata7:/var/lib/postgresql/data
+      - pgdata9:/var/lib/postgresql/data
       - ./docker/database:/docker-entrypoint-initdb.d
     networks: [ "microservice" ]
 
@@ -162,7 +162,7 @@ volumes:
   data_container:
   kafka_volumes:
   zoo_volumes:
-  pgdata7:
+  pgdata9:
   jsdata:
 
 networks:

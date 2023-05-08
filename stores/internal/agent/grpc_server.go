@@ -74,7 +74,7 @@ func (a *Agent) setupGrpcServer() error {
 		creds := credentials.NewTLS(t)
 		opts = append(opts, grpc.Creds(creds))
 	}
-	//application := a.container.Get(constants.ApplicationKey).(*app.Application)
+	//application := a.container.Get(constants.ApplicationKey).(app.App)
 	//serverConfig := &userGrpc.Config{
 	//	App:    application,
 	//	Logger: a.logger,

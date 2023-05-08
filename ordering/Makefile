@@ -1,6 +1,6 @@
 DB_NAME=ordering
-DB_USER=postgres
-DB_PASSWORD=postgres
+DB_USER=ordering_user
+DB_PASSWORD=ordering_pass
 DB_ADDR=microservice_postgesql
 DB_URL=postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_ADDR):5432/$(DB_NAME)?sslmode=disable
 MIGRATION_PATH=internal/adapters/migrations

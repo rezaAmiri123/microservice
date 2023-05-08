@@ -20,6 +20,40 @@
     "application/json"
   ],
   "paths": {
+    "/v1/api/payments/adjust_invoice": {
+      "post": {
+        "summary": "Adjust an invoice",
+        "description": "Use this API to adjust an invoice",
+        "operationId": "PaymentsService_AdjustInvoice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/paymentspbAdjustInvoiceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/paymentspbAdjustInvoiceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PaymentsService"
+        ]
+      }
+    },
     "/v1/api/payments/authorize_payment": {
       "post": {
         "summary": "Authorize a payment",
@@ -192,6 +226,18 @@
     }
   },
   "definitions": {
+    "paymentspbAdjustInvoiceRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
     "paymentspbAdjustInvoiceResponse": {
       "type": "object"
     },

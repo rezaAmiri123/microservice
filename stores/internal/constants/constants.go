@@ -31,6 +31,7 @@ const (
 	ReplyHandlersKey            = "replyHandlers"
 	HttpServerKey               = "webServer"
 	GrpcServerKey               = "grpcServer"
+	TracerKey                   = "tracer"
 
 	CatalogHandlersKey = "catalogHandlers"
 	MallHandlersKey    = "mallHandlers"

@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"github.com/rezaAmiri123/microservice/ordering/internal/app/commands"
+	"github.com/rezaAmiri123/microservice/ordering/internal/app/queries"
 	"github.com/rezaAmiri123/microservice/ordering/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -38,6 +39,7 @@ type (
 		CancelOrder(ctx context.Context, cmd commands.CancelOrder) error
 	}
 	Queries interface {
+		GetOrder(ctx context.Context, query queries.GetOrder) (*domain.Order, error)
 	}
 	Application struct {
 		appCommands
@@ -51,6 +53,7 @@ type (
 		commands.CancelOrderHandler
 	}
 	appQueries struct {
+		queries.GetOrderHandler
 	}
 )
 
@@ -68,6 +71,9 @@ func New(
 			ApproveOrderHandler:  commands.NewApproveOrderHandler(order, publisher, logger),
 			CompleteOrderHandler: commands.NewCompleteOrderHandler(order, publisher, logger),
 			CancelOrderHandler:   commands.NewCancelOrderHandler(order, publisher, logger),
+		},
+		appQueries: appQueries{
+			GetOrderHandler: queries.NewGetOrderHandler(order, logger),
 		},
 	}
 }

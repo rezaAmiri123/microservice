@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"github.com/rezaAmiri123/microservice/depot/internal/app/commands"
+	"github.com/rezaAmiri123/microservice/depot/internal/app/queries"
 	"github.com/rezaAmiri123/microservice/depot/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -33,8 +34,10 @@ type (
 		InitiateShopping(ctx context.Context, cmd commands.InitiateShopping) error
 		AssignShoppingList(ctx context.Context, cmd commands.AssignShoppingList) error
 		CompleteShoppingList(ctx context.Context, cmd commands.CompleteShoppingList) error
+		CancelShoppingList(ctx context.Context, cmd commands.CancelShoppingList) error
 	}
 	Queries interface {
+		GetShoppingList(ctx context.Context, query queries.GetShoppingList) (*domain.ShoppingList, error)
 	}
 	Application struct {
 		appCommands
@@ -45,8 +48,10 @@ type (
 		commands.InitiateShoppingHandler
 		commands.AssignShoppingListHandler
 		commands.CompleteShoppingListHandler
+		commands.CancelShoppingListHandler
 	}
 	appQueries struct {
+		queries.GetShoppingListHandler
 	}
 )
 
@@ -65,7 +70,10 @@ func New(
 			InitiateShoppingHandler:     commands.NewInitiateShoppingHandler(shoppingLists, domainPublisher, log),
 			AssignShoppingListHandler:   commands.NewAssignShoppingListHandler(shoppingLists, domainPublisher, log),
 			CompleteShoppingListHandler: commands.NewCompleteShoppingListHandler(shoppingLists, domainPublisher, log),
+			CancelShoppingListHandler:   commands.NewCancelShoppingListHandler(shoppingLists, domainPublisher, log),
 		},
-		appQueries: appQueries{},
+		appQueries: appQueries{
+			GetShoppingListHandler: queries.NewGetShoppingListHandler(shoppingLists, log),
+		},
 	}
 }

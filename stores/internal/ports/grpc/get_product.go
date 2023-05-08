@@ -3,13 +3,14 @@ package grpc
 import (
 	"context"
 	"database/sql"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/pkg/di"
+	"github.com/rezaAmiri123/microservice/pkg/errorsotel"
 	"github.com/rezaAmiri123/microservice/stores/internal/app/queries"
 	"github.com/rezaAmiri123/microservice/stores/internal/constants"
 	"github.com/rezaAmiri123/microservice/stores/storespb"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func (s serverTx) GetProduct(ctx context.Context, request *storespb.GetProductRequest) (resp *storespb.GetProductResponse, err error) {
@@ -23,19 +24,24 @@ func (s serverTx) GetProduct(ctx context.Context, request *storespb.GetProductRe
 }
 
 func (s server) GetProduct(ctx context.Context, request *storespb.GetProductRequest) (*storespb.GetProductResponse, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "server.GetProduct")
-	defer span.Finish()
+	span := trace.SpanFromContext(ctx)
 
-	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
+	span.SetAttributes(
+		attribute.String("ProductID", request.GetId()),
+	)
 
-	product, err := s.cfg.App.Queries.GetProduct.Handle(ctx, queries.GetProduct{
+	product, err := s.cfg.App.GetProduct(ctx, queries.GetProduct{
 		ID: request.GetId(),
 	})
 	if err != nil {
-		s.cfg.Logger.Errorf("failed to get product: %s", err)
-		//s.cfg.Metric.ErrorGrpcRequests.Inc()
-		return nil, status.Errorf(codes.NotFound, "failed to get product: %s", err)
+		s.cfg.Logger.Errorf("GetProduct: %s", err)
+		span.RecordError(err, trace.WithAttributes(errorsotel.ErrAttrs(err)...))
+		span.SetStatus(codes.Error, err.Error())
+		return nil, err
+	}
+	resp := &storespb.GetProductResponse{
+		Product: s.productFromDomain(product),
 	}
 
-	return &storespb.GetProductResponse{Product: s.productFromDomain(product)}, nil
+	return resp, nil
 }

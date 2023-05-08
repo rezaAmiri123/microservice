@@ -31,7 +31,16 @@ service OrderingService {
       summary: "Create new order";
     };
   };
-  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {};
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/ordering/get_order"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get an order";
+      summary: "Get an order";
+    };
+  };
   rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse) {
     option (google.api.http) = {
       post: "/v1/api/ordering/cancel_order"

@@ -4,13 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"github.com/google/uuid"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/pkg/di"
+	"github.com/rezaAmiri123/microservice/pkg/errorsotel"
 	"github.com/rezaAmiri123/microservice/stores/internal/app/commands"
 	"github.com/rezaAmiri123/microservice/stores/internal/constants"
 	"github.com/rezaAmiri123/microservice/stores/storespb"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func (s serverTx) AddProduct(ctx context.Context, request *storespb.AddProductRequest) (resp *storespb.AddProductResponse, err error) {
@@ -24,12 +25,15 @@ func (s serverTx) AddProduct(ctx context.Context, request *storespb.AddProductRe
 }
 
 func (s server) AddProduct(ctx context.Context, request *storespb.AddProductRequest) (*storespb.AddProductResponse, error) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "server.AddProduct")
-	defer span.Finish()
+	span := trace.SpanFromContext(ctx)
 
-	//s.cfg.Metric.CreateUserGrpcRequests.Inc()
 	id := uuid.New().String()
-	err := s.cfg.App.Commands.AddProduct.Handle(ctx, commands.AddProduct{
+
+	span.SetAttributes(
+		attribute.String("ProductID", id),
+	)
+
+	err := s.cfg.App.AddProduct(ctx, commands.AddProduct{
 		ID:          id,
 		StoreID:     request.GetStoreId(),
 		Name:        request.GetName(),
@@ -38,9 +42,10 @@ func (s server) AddProduct(ctx context.Context, request *storespb.AddProductRequ
 		Price:       request.GetPrice(),
 	})
 	if err != nil {
-		s.cfg.Logger.Errorf("failed to add product: %s", err)
-		//s.cfg.Metric.ErrorGrpcRequests.Inc()
-		return nil, status.Errorf(codes.Internal, "failed to add product: %s", err)
+		s.cfg.Logger.Errorf("AddProduct: %s", err)
+		span.RecordError(err, trace.WithAttributes(errorsotel.ErrAttrs(err)...))
+		span.SetStatus(codes.Error, err.Error())
+		return nil, err
 	}
 	resp := &storespb.AddProductResponse{Id: id}
 

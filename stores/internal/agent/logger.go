@@ -13,7 +13,7 @@ func (a *Agent) setupLogger() error {
 		LogEncoder: a.LogEncoder,
 	})
 	appLogger.InitLogger()
-	appLogger.WithName("Users")
+	appLogger.WithName(constants.ServiceName)
 	a.container.AddSingleton(constants.LoggerKey, func(c di.Container) (any, error) {
 		return appLogger, nil
 	})

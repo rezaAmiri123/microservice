@@ -1,6 +1,6 @@
 DB_NAME=stores
-DB_USER=postgres
-DB_PASSWORD=postgres
+DB_USER=stores_user
+DB_PASSWORD=stores_pass
 DB_ADDR=microservice_postgesql
 DB_URL=postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_ADDR):5432/$(DB_NAME)?sslmode=disable
 MIGRATION_PATH=internal/adapters/migrations

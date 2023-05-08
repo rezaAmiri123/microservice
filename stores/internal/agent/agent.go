@@ -4,11 +4,10 @@ import (
 	"context"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/stores/internal/constants"
+	"go.opentelemetry.io/otel/sdk/trace"
 	"google.golang.org/grpc"
-	"net/http"
-
-	//"github.com/rezaAmiri123/microservice/users/internal/app"
 	"io"
+	"net/http"
 	"sync"
 	"time"
 )
@@ -35,12 +34,13 @@ type Config struct {
 
 	//DBConfig     adapters.GORMConfig
 	// postgres.Config
-	PGDriver   string `mapstructure:"POSTGRES_DRIVER"`
-	PGHost     string `mapstructure:"POSTGRES_HOST"`
-	PGPort     string `mapstructure:"POSTGRES_PORT"`
-	PGUser     string `mapstructure:"POSTGRES_USER"`
-	PGDBName   string `mapstructure:"POSTGRES_DB_NAME"`
-	PGPassword string `mapstructure:"POSTGRES_PASSWORD"`
+	PGDriver     string `mapstructure:"POSTGRES_DRIVER"`
+	PGHost       string `mapstructure:"POSTGRES_HOST"`
+	PGPort       string `mapstructure:"POSTGRES_PORT"`
+	PGUser       string `mapstructure:"POSTGRES_USER"`
+	PGDBName     string `mapstructure:"POSTGRES_DB_NAME"`
+	PGPassword   string `mapstructure:"POSTGRES_PASSWORD"`
+	PGSearchPath string `mapstructure:"POSTGRES_SEARCH_PATH"`
 
 	// kafka config
 	KafkaBrokers []string `mapstructure:"KAFKA_BROKERS"`
@@ -74,7 +74,7 @@ type Agent struct {
 	//httpServer *http.Server
 	//grpcServer *grpc.Server
 	//repository  user.Repository
-	//Application *app.Application
+	//Application app.App
 	//Maker       token.Maker
 	// AuthClient  auth.AuthClient
 
@@ -95,7 +95,7 @@ func NewAgent(config Config) (*Agent, error) {
 		a.setupRegistry,
 
 		//a.setupRepository,
-		//a.setupTracing,
+		a.setupTracer,
 		a.setupApplication,
 		//a.setupAuthClient,
 		a.setupGrpcServer,
@@ -131,6 +131,11 @@ func (a *Agent) Shutdown() error {
 			httpServer := a.container.Get(constants.HttpServerKey).(*http.Server)
 			return httpServer.Shutdown(context.Background())
 		},
+		func() error {
+			tp := a.container.Get(constants.TracerKey).(*trace.TracerProvider)
+			return tp.Shutdown(context.Background())
+		},
+
 		//func() error {
 		//	return a.jaegerCloser.Close()
 		//},

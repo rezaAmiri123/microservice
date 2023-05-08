@@ -47,6 +47,7 @@ func RegisterIntegrationEventHandlers(subscriber am.MessageSubscriber, handlers 
 		storespb.ProductRebrandedEvent,
 		storespb.ProductRemovedEvent,
 	}, am.GroupName("depot-products"))
+
 	return err
 }
 
@@ -71,8 +72,14 @@ func (h integrationHandlers[T]) HandleEvent(ctx context.Context, event T) (err e
 	switch event.EventName() {
 	case storespb.StoreCreatedEvent:
 		return h.onStoreCreated(ctx, event)
+	case storespb.StoreRebrandedEvent:
+		return h.onStoreRebranded(ctx, event)
 	case storespb.ProductAddedEvent:
 		return h.onProductAdded(ctx, event)
+	case storespb.ProductRebrandedEvent:
+		return h.onProductRebranded(ctx, event)
+	case storespb.ProductRemovedEvent:
+		return h.onProductRemoved(ctx, event)
 	}
 	return nil
 }

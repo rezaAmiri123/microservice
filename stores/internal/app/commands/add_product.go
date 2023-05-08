@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"github.com/opentracing/opentracing-go"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
 	"github.com/rezaAmiri123/microservice/stores/internal/domain"
@@ -24,17 +23,18 @@ type AddProductHandler struct {
 	logger    logger.Logger
 }
 
-func NewAddProductHandler(products domain.ProductRepository, publisher ddd.EventPublisher[ddd.Event], logger logger.Logger) *AddProductHandler {
-	return &AddProductHandler{
+func NewAddProductHandler(
+	products domain.ProductRepository,
+	publisher ddd.EventPublisher[ddd.Event],
+	logger logger.Logger,
+) AddProductHandler {
+	return AddProductHandler{
 		products:  products,
 		publisher: publisher,
 		logger:    logger,
 	}
 }
-func (h AddProductHandler) Handle(ctx context.Context, cmd AddProduct) error {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "AddProductHandler.Handle")
-	defer span.Finish()
-
+func (h AddProductHandler) AddProduct(ctx context.Context, cmd AddProduct) error {
 	product, err := h.products.Load(ctx, cmd.ID)
 	if err != nil {
 		return errors.Wrap(err, "error adding product")
