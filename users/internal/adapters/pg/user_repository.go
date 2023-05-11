@@ -40,15 +40,19 @@ func (r UserRepository) Find(ctx context.Context, userID string) (*domain.User, 
 
 func (r UserRepository) Save(ctx context.Context, user *domain.User) error {
 	const query = `INSERT INTO %s (id, username, password, email, bio, image, enabled) VALUES ($1, $2, $3, $4, $5, $6, $7)`
+	fmt.Println("user pg repository: ", user.Username)
 	_, err := r.db.ExecContext(ctx, r.table(query),
 		user.ID(),
-		&user.Username,
-		&user.Password,
-		&user.Email,
-		&user.Bio,
-		&user.Image,
-		&user.Enabled,
+		user.Username,
+		user.Password,
+		user.Email,
+		user.Bio,
+		user.Image,
+		user.Enabled,
 	)
+	if err != nil {
+		fmt.Println("pg err: ", err.Error())
+	}
 	return err
 }
 func (r UserRepository) Update(ctx context.Context, user *domain.User) error {
@@ -72,5 +76,7 @@ func (r UserRepository) Update(ctx context.Context, user *domain.User) error {
 }
 
 func (r UserRepository) table(query string) string {
-	return fmt.Sprintf(query, r.tableName)
+	q := fmt.Sprintf(query, r.tableName)
+	fmt.Println("pg query:", q)
+	return q
 }

@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
 	"github.com/rezaAmiri123/microservice/users/internal/app"
@@ -66,11 +67,14 @@ func (s server) userFromDomain(user *domain.User) *userspb.User {
 func (s serverTx) closeTx(tx *sql.Tx, err error) error {
 	if p := recover(); p != nil {
 		_ = tx.Rollback()
+		fmt.Println("rollback")
 		panic(p)
 	} else if err != nil {
 		_ = tx.Rollback()
+		fmt.Println("rollback")
 		return err
 	} else {
+		fmt.Println("commit")
 		return tx.Commit()
 	}
 }

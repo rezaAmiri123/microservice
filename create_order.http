@@ -9,7 +9,7 @@ curl -X 'POST' \
 }
 '
 {
-  "id": "79da5827-39b5-439f-9c94-d0cc4c336a62"
+  "id": "dba71564-f99f-473b-ace0-2059455312d5"
 }
 ### Create Product
 curl -X 'POST' \
@@ -17,7 +17,7 @@ curl -X 'POST' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
-  "storeId": "79da5827-39b5-439f-9c94-d0cc4c336a62",
+  "storeId": "dba71564-f99f-473b-ace0-2059455312d5",
   "name": "Product ABC",
   "description": "Product description",
   "sku": "productABC",
@@ -25,7 +25,7 @@ curl -X 'POST' \
 }
 '
 {
-  "id": "7476d928-8949-4c0b-9340-3fcfba387a41"
+  "id":"2b645f11-0c89-44dc-9ea4-47ec0daa82a1"
 }
 
 ### Register User
@@ -41,7 +41,7 @@ curl -X 'POST' \
   "image": "user_abc"
 }'
 {
-  "id": "89d6a78b-9414-40b3-bc75-a7d2b6a9e45f"
+  "id":"e6415399-fcd5-4560-b04b-24ab72c1f617"
 }
 
 ### Start Basket
@@ -50,10 +50,10 @@ curl -X 'POST' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
-  "userId": "89d6a78b-9414-40b3-bc75-a7d2b6a9e45f"
+  "userId": "e6415399-fcd5-4560-b04b-24ab72c1f617"
 }'
 {
-    "id":"b0e7f23c-eed9-4da9-9cb3-70ea804af726"
+    "id":"180b75b7-9669-4adc-ba7f-c68648f730be"
 }
 ### Add Items
 curl -X 'POST' \
@@ -61,8 +61,8 @@ curl -X 'POST' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
-  "id": "b0e7f23c-eed9-4da9-9cb3-70ea804af726",
-  "productId": "7476d928-8949-4c0b-9340-3fcfba387a41",
+  "id": "180b75b7-9669-4adc-ba7f-c68648f730be",
+  "productId": "8175bcf8-c18c-438d-a69f-62ae9633b5b1",
   "quantity": 5
 }
 '
@@ -72,11 +72,11 @@ curl -X 'POST' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
-  "userId": "89d6a78b-9414-40b3-bc75-a7d2b6a9e45f",
+  "userId": "e6415399-fcd5-4560-b04b-24ab72c1f617",
   "amount": 200
 }'
 {
-  "id":"88b7dff7-f5d1-4681-a9ab-34a58f596d1c"
+  "id":"abbac81f-a128-4d23-a2b8-85fb023d5682"
 }# payment id
 
 ### Checkout Basket
@@ -85,6 +85,6 @@ curl -X 'POST' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
-  "id": "b0e7f23c-eed9-4da9-9cb3-70ea804af726",
-  "paymentId": "88b7dff7-f5d1-4681-a9ab-34a58f596d1c"
+  "id": "180b75b7-9669-4adc-ba7f-c68648f730be",
+  "paymentId": "abbac81f-a128-4d23-a2b8-85fb023d5682"
 }'

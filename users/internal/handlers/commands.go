@@ -60,6 +60,10 @@ func (h commandHandlers) HandleCommand(ctx context.Context, cmd ddd.Command) (re
 func (h commandHandlers) doAuthorizeUser(ctx context.Context, cmd ddd.Command) (ddd.Reply, error) {
 	payload := cmd.Payload().(*userspb.AuthorizeUser)
 	fmt.Println("authorize user handler with user id: ", payload.GetId())
-	return nil, h.app.AuthorizeUser(ctx, app.AuthorizeUser{ID: payload.GetId()})
+	err := h.app.AuthorizeUser(ctx, app.AuthorizeUser{ID: payload.GetId()})
+	if err != nil {
+		fmt.Println("err: ", err.Error())
+	}
+	return nil, err
 
 }

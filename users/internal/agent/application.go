@@ -71,8 +71,8 @@ func (a *Agent) setupApplication() error {
 
 	sentCounter := amprom.SentMessagesCounter(constants.ServiceName)
 	a.container.AddScoped(constants.MessagePublisherKey, func(c di.Container) (any, error) {
-		tx := postgresotel.Trace(c.Get(constants.DatabaseTransactionKey).(*sql.Tx))
-		outboxStore := postgres.NewOutboxStore(constants.OutboxTableName, tx)
+		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
+		outboxStore := postgres.NewOutboxStore(constants.OutboxTableName, db)
 		return am.NewMessagePublisher(
 			stream,
 			amotel.OtelMessageContextInjector(),
@@ -103,13 +103,13 @@ func (a *Agent) setupApplication() error {
 	})
 
 	a.container.AddScoped(constants.InboxStoreKey, func(c di.Container) (any, error) {
-		tx := postgresotel.Trace(c.Get(constants.DatabaseTransactionKey).(*sql.Tx))
-		return postgres.NewInboxStore(constants.InboxTableName, tx), nil
+		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
+		return postgres.NewInboxStore(constants.InboxTableName, db), nil
 	})
 
 	a.container.AddScoped(constants.UsersRepoKey, func(c di.Container) (any, error) {
-		tx := postgresotel.Trace(c.Get(constants.DatabaseTransactionKey).(*sql.Tx))
-		return pg.NewUserRepository(constants.UsersTableName, tx), nil
+		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
+		return pg.NewUserRepository(constants.UsersTableName, db), nil
 	})
 
 	a.container.AddScoped(constants.ApplicationKey, func(c di.Container) (any, error) {

@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"github.com/rezaAmiri123/microservice/ordering/orderingpb"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/registry"
 	"github.com/rezaAmiri123/microservice/search/internal/constants"
@@ -17,6 +18,9 @@ func (a *Agent) setupRegistry() error {
 		return err
 	}
 	if err := storespb.Registrations(reg); err != nil {
+		return err
+	}
+	if err := orderingpb.Registrations(reg); err != nil {
 		return err
 	}
 

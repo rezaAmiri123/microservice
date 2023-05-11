@@ -2,12 +2,9 @@ package grpc
 
 import (
 	"context"
-	"database/sql"
 	"github.com/google/uuid"
-	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/errorsotel"
 	"github.com/rezaAmiri123/microservice/users/internal/app"
-	"github.com/rezaAmiri123/microservice/users/internal/constants"
 	"github.com/rezaAmiri123/microservice/users/userspb"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -18,9 +15,9 @@ import (
 
 func (s serverTx) RegisterUser(ctx context.Context, request *userspb.RegisterUserRequest) (resp *userspb.RegisterUserResponse, err error) {
 	ctx = s.c.Scoped(ctx)
-	defer func(tx *sql.Tx) {
-		err = s.closeTx(tx, err)
-	}(di.Get(ctx, constants.DatabaseTransactionKey).(*sql.Tx))
+	//defer func(tx *sql.Tx) {
+	//	err = s.closeTx(tx, err)
+	//}(di.Get(ctx, constants.DatabaseTransactionKey).(*sql.Tx))
 
 	next := s.getNextServer()
 	return next.RegisterUser(ctx, request)

@@ -28,7 +28,7 @@ func NewOrderRepository(tableName string, db postgres.DB) OrderRepository {
 
 func (r OrderRepository) Add(ctx context.Context, order *domain.Order) error {
 	const query = `INSERT INTO %s (
-order_id, customer_id, customer_name,
+order_id, user_id, username,
 items, status, product_ids, store_ids,
 created_at) VALUES (
 $1, $2, $3,
@@ -71,7 +71,7 @@ func (r OrderRepository) Search(ctx context.Context, search domain.SearchOrders)
 }
 
 func (r OrderRepository) Get(ctx context.Context, orderID string) (*domain.Order, error) {
-	const query = `SELECT user_id, customer_name, items, status, created_at FROM %s WHERE order_id = $1`
+	const query = `SELECT user_id, username, items, status, created_at FROM %s WHERE order_id = $1`
 
 	order := &domain.Order{
 		OrderID: orderID,

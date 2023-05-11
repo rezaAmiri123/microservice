@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/users/internal/domain"
 )
@@ -74,6 +75,7 @@ func (a Application) RegisterUser(ctx context.Context, cmd RegisterUser) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println("register user app:", user.Username)
 	if err = a.users.Save(ctx, user); err != nil {
 		return err
 	}
