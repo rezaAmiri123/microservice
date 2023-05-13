@@ -3,6 +3,7 @@ package pg
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
@@ -30,7 +31,7 @@ func (r OrderRepository) Add(ctx context.Context, order *domain.Order) error {
 	const query = `INSERT INTO %s (
 order_id, user_id, username,
 items, status, product_ids, store_ids,
-created_at) VALUES (
+ total) VALUES (
 $1, $2, $3,
 $4, $5, $6, $7,
 $8)`
@@ -53,7 +54,7 @@ $8)`
 	_, err = r.db.ExecContext(ctx, r.table(query),
 		order.OrderID, order.UserID, order.Username,
 		items, order.Status, productIDs, storeIDs,
-		order.CreatedAt,
+		order.Total,
 	)
 	return err
 }
@@ -64,10 +65,141 @@ func (r OrderRepository) UpdateStatus(ctx context.Context, orderID, status strin
 	_, err := r.db.ExecContext(ctx, r.table(query), orderID, status)
 	return err
 }
+func (r OrderRepository) getFilters(search domain.SearchOrders) (query string, filterArgs []any) {
+	filters := search.Filters
+	var filterNum = 1
 
-func (r OrderRepository) Search(ctx context.Context, search domain.SearchOrders) ([]*domain.Order, error) {
+	if filters.Status != "" {
+		query += fmt.Sprintf("status = $%d ", filterNum)
+		filterNum++
+		filterArgs = append(filterArgs, filters.Status)
+	}
+
+	if filters.UserID != "" {
+		if filterNum > 1 {
+			query += fmt.Sprintf("AND ")
+		}
+		query += fmt.Sprintf("user_id = $%d ", filterNum)
+		filterNum++
+		filterArgs = append(filterArgs, filters.UserID)
+	}
+
+	if len(filters.StoreIDs) > 0 {
+		if filterNum > 1 {
+			query += fmt.Sprintf("AND ")
+		}
+		query += fmt.Sprintf("store_ids IN ($%d) ", filterNum)
+		filterNum++
+		storeIDs := make(IDArray, 0)
+		for _, id := range filters.StoreIDs {
+			storeIDs = append(storeIDs, id)
+		}
+		filterArgs = append(filterArgs, storeIDs)
+	}
+
+	if len(filters.ProductIDs) > 0 {
+		if filterNum > 1 {
+			query += fmt.Sprintf("AND ")
+		}
+		query += fmt.Sprintf("product_ids IN ($%d) ", filterNum)
+		filterNum++
+		productIDs := make(IDArray, 0)
+		for _, id := range filters.ProductIDs {
+			productIDs = append(productIDs, id)
+		}
+		filterArgs = append(filterArgs, productIDs)
+	}
+
+	if !filters.After.IsZero() {
+		if filterNum > 1 {
+			query += fmt.Sprintf("AND ")
+		}
+		query += fmt.Sprintf("created_at > $%d ", filterNum)
+		filterNum++
+		filterArgs = append(filterArgs, filters.After)
+	}
+
+	if !filters.Before.IsZero() {
+		if filterNum > 1 {
+			query += fmt.Sprintf("AND ")
+		}
+		query += fmt.Sprintf("created_at < $%d ", filterNum)
+		filterNum++
+		filterArgs = append(filterArgs, filters.Before)
+	}
+
+	if filters.MinTotal != 0 {
+		if filterNum > 1 {
+			query += fmt.Sprintf("AND ")
+		}
+		query += fmt.Sprintf("total > $%d ", filterNum)
+		filterNum++
+		filterArgs = append(filterArgs, filters.MinTotal)
+	}
+
+	if filters.MaxTotal != 0 {
+		if filterNum > 1 {
+			query += fmt.Sprintf("AND ")
+		}
+		query += fmt.Sprintf("total < $%d ", filterNum)
+		filterNum++
+		filterArgs = append(filterArgs, filters.MaxTotal)
+	}
+
+	if search.Limit == 0 {
+		search.Limit = 10
+	}
+	query += fmt.Sprintf("Limit $%d ", filterNum)
+	filterArgs = append(filterArgs, search.Limit)
+	
+	return
+}
+func (r OrderRepository) Search(ctx context.Context, search domain.SearchOrders) (orders []*domain.Order, err error) {
+	var query = `SELECT order_id, user_id, username, items, status, created_at, total FROM %s `
+	filterQuery, filterArgs := r.getFilters(search)
+	if filterQuery != "" {
+		query = query + fmt.Sprintf("WHERE %s", filterQuery)
+	}
+
+	var rows *sql.Rows
+	rows, err = r.db.QueryContext(ctx, r.table(query), filterArgs...)
+	if err != nil {
+		return nil, errors.Wrap(err, "querying orders")
+	}
+	defer func(rows *sql.Rows) {
+		err = rows.Close()
+		if err != nil {
+			err = errors.Wrap(err, "closing orders rows")
+		}
+	}(rows)
+
+	for rows.Next() {
+		order := &domain.Order{}
+		var itemData []byte
+
+		err := rows.Scan(
+			&order.OrderID,
+			&order.UserID,
+			&order.Username,
+			&itemData,
+			&order.Status,
+			&order.CreatedAt,
+			&order.Total,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		var items []domain.Item
+		err = json.Unmarshal(itemData, &items)
+		if err != nil {
+			return nil, err
+		}
+		order.Items = items
+		orders = append(orders, order)
+	}
 	// TODO not implemented
-	return nil, fmt.Errorf("not implemented")
+	return orders, nil
 }
 
 func (r OrderRepository) Get(ctx context.Context, orderID string) (*domain.Order, error) {
@@ -77,7 +209,7 @@ func (r OrderRepository) Get(ctx context.Context, orderID string) (*domain.Order
 		OrderID: orderID,
 	}
 	var itemData []byte
-	err := r.db.QueryRowContext(ctx, r.table(query)).Scan(
+	err := r.db.QueryRowContext(ctx, r.table(query), orderID).Scan(
 		&order.UserID,
 		&order.Username,
 		&itemData,

@@ -42,19 +42,19 @@ service SearchService {
   };
 }
 
-message Order {
-  message Item {
-    string product_id = 1;
-    string store_id = 2;
-    string product_name = 3;
-    string store_name = 4;
-    double price = 5;
-    int64 quantity = 6;
-  }
+message Item {
+  string product_id = 1;
+  string store_id = 2;
+  string product_name = 3;
+  string store_name = 4;
+  double price = 5;
+  int64 quantity = 6;
+}
 
+message Order {
   string order_id = 1;
-  string customer_id = 2;
-  string customer_name = 3;
+  string user_id = 2;
+  string username = 3;
   repeated Item items = 4;
   double total = 5;
   string status = 6;
@@ -62,7 +62,7 @@ message Order {
 
 message SearchOrdersRequest {
   message Filters {
-    string customer_id = 1;
+    string user_id = 1;
     google.protobuf.Timestamp after = 2;
     google.protobuf.Timestamp before = 3;
     repeated string store_ids = 4;

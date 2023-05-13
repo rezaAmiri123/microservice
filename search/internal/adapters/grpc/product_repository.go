@@ -44,8 +44,9 @@ func (r ProductRepository) Find(ctx context.Context, productID string) (product 
 
 func (r ProductRepository) productToDomain(product *storespb.Product) *domain.Product {
 	return &domain.Product{
-		ID:   product.GetId(),
-		Name: product.GetName(),
+		ID:      product.GetId(),
+		Name:    product.GetName(),
+		StoreID: product.GetStoreId(),
 	}
 }
 

@@ -2,11 +2,11 @@ package grpc
 
 import (
 	"database/sql"
-
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
 	"github.com/rezaAmiri123/microservice/search/internal/app"
 	"github.com/rezaAmiri123/microservice/search/internal/constants"
+	"github.com/rezaAmiri123/microservice/search/internal/domain"
 	"github.com/rezaAmiri123/microservice/search/searchpb"
 	"google.golang.org/grpc"
 )
@@ -69,5 +69,30 @@ func (s serverTx) closeTx(tx *sql.Tx, err error) error {
 		return err
 	} else {
 		return tx.Commit()
+	}
+}
+
+func (s server) orderFromDomain(order *domain.Order) *searchpb.Order {
+	items := make([]*searchpb.Item, len(order.Items))
+	for i, item := range order.Items {
+		items[i] = s.itemFromDomain(item)
+	}
+	return &searchpb.Order{
+		OrderId:  order.OrderID,
+		UserId:   order.UserID,
+		Username: order.Username,
+		Items:    items,
+		Status:   order.Status,
+		Total:    order.Total,
+	}
+}
+func (s server) itemFromDomain(item domain.Item) *searchpb.Item {
+	return &searchpb.Item{
+		StoreId:     item.StoreID,
+		ProductId:   item.ProductID,
+		StoreName:   item.StoreName,
+		ProductName: item.ProductName,
+		Price:       item.Price,
+		Quantity:    int64(item.Quantity),
 	}
 }

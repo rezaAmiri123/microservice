@@ -90,35 +90,10 @@
     }
   },
   "definitions": {
-    "OrderItem": {
-      "type": "object",
-      "properties": {
-        "productId": {
-          "type": "string"
-        },
-        "storeId": {
-          "type": "string"
-        },
-        "productName": {
-          "type": "string"
-        },
-        "storeName": {
-          "type": "string"
-        },
-        "price": {
-          "type": "number",
-          "format": "double"
-        },
-        "quantity": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
     "SearchOrdersRequestFilters": {
       "type": "object",
       "properties": {
-        "customerId": {
+        "userId": {
           "type": "string"
         },
         "after": {
@@ -170,23 +145,48 @@
         }
       }
     },
+    "basketspbItem": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string"
+        },
+        "storeId": {
+          "type": "string"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "storeName": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "double"
+        },
+        "quantity": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
     "basketspbOrder": {
       "type": "object",
       "properties": {
         "orderId": {
           "type": "string"
         },
-        "customerId": {
+        "userId": {
           "type": "string"
         },
-        "customerName": {
+        "username": {
           "type": "string"
         },
         "items": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/OrderItem"
+            "$ref": "#/definitions/basketspbItem"
           }
         },
         "total": {

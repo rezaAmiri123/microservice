@@ -56,15 +56,16 @@ CREATE TRIGGER updated_at_products_trgr
 
 CREATE TABLE orders
 (
-    order_id    text        NOT NULL,
-    user_id     text        NOT NULL,
-    username    text        NOT NULL,
-    items       bytea       NOT NULL,
-    status      text        NOT NULL,
+    order_id    text          NOT NULL,
+    user_id     text          NOT NULL,
+    username    text          NOT NULL,
+    items       bytea         NOT NULL,
+    status      text          NOT NULL,
     product_ids text ARRAY NOT NULL,
     store_ids   text ARRAY NOT NULL,
-    created_at  timestamptz NOT NULL DEFAULT NOW(),
-    updated_at  timestamptz NOT NULL DEFAULT NOW(),
+    total       decimal(9, 4) NOT NULL,
+    created_at  timestamptz   NOT NULL DEFAULT NOW(),
+    updated_at  timestamptz   NOT NULL DEFAULT NOW(),
     PRIMARY KEY (order_id)
 );
 
