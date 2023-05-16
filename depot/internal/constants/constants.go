@@ -31,6 +31,7 @@ const (
 	GrpcServerKey               = "grpcServer"
 	DatabaseKey                 = "database"
 	TracerKey                   = "tracer"
+	StreamKey                   = "stream"
 
 	ShoppingListsRepoKey = "shoppingListRepo"
 	StoresCacheRepoKey   = "storesCacheRepo"

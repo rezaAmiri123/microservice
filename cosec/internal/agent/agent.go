@@ -3,6 +3,7 @@ package agent
 import (
 	"context"
 	"github.com/rezaAmiri123/microservice/cosec/internal/constants"
+	"github.com/rezaAmiri123/microservice/pkg/am"
 	"go.opentelemetry.io/otel/sdk/trace"
 	"io"
 	"sync"
@@ -40,6 +41,8 @@ type Config struct {
 	PGDBName   string `mapstructure:"POSTGRES_DB_NAME"`
 	PGPassword string `mapstructure:"POSTGRES_PASSWORD"`
 
+	// Event Server
+	EventServerType string `mapstructure:"EVENT_SERVER_TYPE"`
 	// kafka config
 	KafkaBrokers []string `mapstructure:"KAFKA_BROKERS"`
 
@@ -94,6 +97,7 @@ func NewAgent(config Config) (*Agent, error) {
 		a.setupTracer,
 		//a.setupRepository,
 		//a.setupTracing,
+		a.setupEventServer,
 		a.setupApplication,
 		//a.setupAuthClient,
 		//a.setupGrpcServer,
@@ -135,6 +139,10 @@ func (a *Agent) Shutdown() error {
 		func() error {
 			tp := a.container.Get(constants.TracerKey).(*trace.TracerProvider)
 			return tp.Shutdown(context.Background())
+		},
+		func() error {
+			stream := a.container.Get(constants.StreamKey).(am.MessageStream)
+			return stream.Unsubscribe()
 		},
 	}
 	for _, fn := range shutdown {

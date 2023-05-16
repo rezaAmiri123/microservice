@@ -4,18 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/nats-io/nats.go"
 	"github.com/rezaAmiri123/microservice/pkg/am"
 	"github.com/rezaAmiri123/microservice/pkg/amotel"
-	_ "github.com/rezaAmiri123/microservice/pkg/amotel"
 	"github.com/rezaAmiri123/microservice/pkg/amprom"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
-	_ "github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/es"
-	"github.com/rezaAmiri123/microservice/pkg/jetstream"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
 	"github.com/rezaAmiri123/microservice/pkg/registry"
 	"github.com/rezaAmiri123/microservice/pkg/tm"
@@ -52,12 +48,12 @@ func (a *Agent) setupApplication() error {
 	//if err = userspb.Registrations(reg); err != nil {
 	//	return err
 	//}
-	js, err := a.nats()
-	if err != nil {
-		return err
-	}
+	//js, err := a.nats()
+	//if err != nil {
+	//	return err
+	//}
 	//log := a.container.Get(constants.LoggerKey).(logger.Logger)
-	stream := jetstream.NewStream(a.NatsStream, js, a.container.Get(constants.LoggerKey).(logger.Logger))
+	//stream := jetstream.NewStream(a.NatsStream, js, a.container.Get(constants.LoggerKey).(logger.Logger))
 	//a.container.AddSingleton(constants.DomainDispatcherKey, func(c di.Container) (any, error) {
 	//	return ddd.NewEventDispatcher[ddd.AggregateEvent](), nil
 	//})
@@ -73,7 +69,7 @@ func (a *Agent) setupApplication() error {
 		tx := postgresotel.Trace(c.Get(constants.DatabaseTransactionKey).(*sql.Tx))
 		outboxStore := postgres.NewOutboxStore(constants.OutboxTableName, tx)
 		return am.NewMessagePublisher(
-			stream,
+			c.Get(constants.StreamKey).(am.MessageStream),
 			amotel.OtelMessageContextInjector(),
 			sentCounter,
 			tm.OutboxPublisher(outboxStore),
@@ -81,7 +77,7 @@ func (a *Agent) setupApplication() error {
 	})
 	a.container.AddScoped(constants.MessageSubscriberKey, func(c di.Container) (any, error) {
 		return am.NewMessageSubscriber(
-			stream,
+			c.Get(constants.StreamKey).(am.MessageStream),
 			amotel.OtelMessageContextExtractor(),
 			amprom.ReceivedMessagesCounter(constants.ServiceName),
 		), nil
@@ -145,18 +141,7 @@ func (a *Agent) setupApplication() error {
 		log := c.Get(constants.LoggerKey).(logger.Logger)
 
 		application := app.New(stores, products, catalog, malls, publisher, log)
-		//fmt.Println("pubsher", publisher)
-		//application := &app.Application{
-		//	Commands: app.Commands{
-		//		CreateStore: commands.NewCreateStoreHandler(stores, publisher, log),
-		//		AddProduct:  commands.NewAddProductHandler(products, publisher, log),
-		//	},
-		//	Queries: app.Queries{
-		//		GetProduct: queries.NewGetProductHandler(catalog, log),
-		//		GetStore:   queries.NewGetStoreHandler(malls, log),
-		//	},
-		//}
-		//a.Application = application
+
 		return application, nil
 	})
 
@@ -172,7 +157,7 @@ func (a *Agent) setupApplication() error {
 		return handlers.NewDomainEventHandlers(c.Get(constants.EventPublisherKey).(am.EventPublisher)), nil
 	})
 	outboxProcessor := tm.NewOutboxProcessor(
-		stream,
+		a.container.Get(constants.StreamKey).(am.MessageStream),
 		postgres.NewOutboxStore(constants.OutboxTableName, dbConn),
 	)
 	handlers.RegisterCatalogHandlersTx(a.container)
@@ -189,22 +174,4 @@ func startOutboxProcessor(ctx context.Context, outboxProcessor tm.OutboxProcesso
 			//logger.Error().Err(err).Msg("customers outbox processor encountered an error")
 		}
 	}()
-}
-func (a *Agent) nats() (nats.JetStreamContext, error) {
-	nc, err := nats.Connect(a.NatsURL)
-	if err != nil {
-		return nil, err
-	}
-	// defer nc.Close()
-	js, err := nc.JetStream()
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = js.AddStream(&nats.StreamConfig{
-		Name:     a.NatsStream,
-		Subjects: []string{fmt.Sprintf("%s.>", a.NatsStream)},
-	})
-
-	return js, err
 }

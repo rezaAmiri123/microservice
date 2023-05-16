@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/nats-io/nats.go"
 	"github.com/rezaAmiri123/microservice/cosec/internal"
 	"github.com/rezaAmiri123/microservice/cosec/internal/constants"
 	"github.com/rezaAmiri123/microservice/cosec/internal/domain"
@@ -15,7 +14,6 @@ import (
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
 	"github.com/rezaAmiri123/microservice/pkg/di"
-	"github.com/rezaAmiri123/microservice/pkg/jetstream"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
 	"github.com/rezaAmiri123/microservice/pkg/registry"
 	"github.com/rezaAmiri123/microservice/pkg/sec"
@@ -24,8 +22,8 @@ import (
 
 func (a *Agent) setupApplication() (err error) {
 	//stream := jetstream.NewStream(svc.Config().Nats.Stream, svc.JS(), svc.Logger())
-	js, _ := a.nats()
-	stream := jetstream.NewStream(a.NatsStream, js, a.container.Get(constants.LoggerKey).(logger.Logger))
+	//js, _ := a.nats()
+	//stream := jetstream.NewStream(a.NatsStream, js, a.container.Get(constants.LoggerKey).(logger.Logger))
 	dbConn, err := postgres.NewPsqlDB(postgres.Config{
 		PGDriver:   a.PGDriver,
 		PGHost:     a.PGHost,
@@ -46,7 +44,7 @@ func (a *Agent) setupApplication() (err error) {
 		tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
 		outboxStore := postgres.NewOutboxStore(constants.OutboxTableName, tx)
 		publisher := am.NewMessagePublisher(
-			stream,
+			c.Get(constants.StreamKey).(am.MessageStream),
 			amotel.OtelMessageContextInjector(),
 			sentCounter,
 			tm.OutboxPublisher(outboxStore),
@@ -55,7 +53,7 @@ func (a *Agent) setupApplication() (err error) {
 	})
 	a.container.AddSingleton(constants.MessageSubscriberKey, func(c di.Container) (any, error) {
 		return am.NewMessageSubscriber(
-			stream,
+			c.Get(constants.StreamKey).(am.MessageStream),
 			amotel.OtelMessageContextExtractor(),
 			amprom.ReceivedMessagesCounter(constants.ServiceName),
 		), nil
@@ -108,7 +106,7 @@ func (a *Agent) setupApplication() (err error) {
 		), nil
 	})
 	outboxProcessor := tm.NewOutboxProcessor(
-		stream,
+		a.container.Get(constants.StreamKey).(am.MessageStream),
 		postgres.NewOutboxStore(constants.OutboxTableName, dbConn),
 	)
 
@@ -130,23 +128,4 @@ func startOutboxProcessor(ctx context.Context, outboxProcessor tm.OutboxProcesso
 			//logger.Error().Err(err).Msg("customers outbox processor encountered an error")
 		}
 	}()
-}
-
-func (a *Agent) nats() (nats.JetStreamContext, error) {
-	nc, err := nats.Connect(a.NatsURL)
-	if err != nil {
-		return nil, err
-	}
-	// defer nc.Close()
-	js, err := nc.JetStream()
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = js.AddStream(&nats.StreamConfig{
-		Name:     a.NatsStream,
-		Subjects: []string{fmt.Sprintf("%s.>", a.NatsStream)},
-	})
-
-	return js, err
 }

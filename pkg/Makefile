@@ -18,3 +18,7 @@ proto:
 		--go_out=jetstream --go_opt=paths=source_relative \
 		--go-grpc_out=jetstream --go-grpc_opt=paths=source_relative \
 		--proto_path=jetstream jetstream/*.proto
+	protoc \
+		--go_out=kafka/kafkastream --go_opt=paths=source_relative \
+		--go-grpc_out=kafka/kafkastream --go-grpc_opt=paths=source_relative \
+		--proto_path=kafka/kafkastream kafka/kafkastream/*.proto

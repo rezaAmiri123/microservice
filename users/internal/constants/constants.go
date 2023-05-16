@@ -30,6 +30,7 @@ const (
 	LoggerKey                   = "logger"
 	TracerKey                   = "tracer"
 	UsersRepoKey                = "usersRepo"
+	StreamKey                   = "stream"
 )
 
 // Repository Table Names

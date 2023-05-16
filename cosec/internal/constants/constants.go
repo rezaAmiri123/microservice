@@ -28,6 +28,7 @@ const (
 	ReplyHandlersKey            = "replyHandlers"
 	LoggerKey                   = "logger"
 	TracerKey                   = "tracer"
+	StreamKey                   = "stream"
 
 	SagaKey         = "saga"
 	OrchestratorKey = "orchestrator"

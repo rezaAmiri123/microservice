@@ -31,6 +31,7 @@ const (
 	DatabaseKey                 = "database"
 	HttpServerKey               = "httpServer"
 	GrpcServerKey               = "rpcServer"
+	StreamKey                   = "stream"
 
 	OrdersRepoKey   = "ordersRepo"
 	UsersRepoKey    = "usersRepo"

@@ -32,6 +32,7 @@ const (
 	HttpServerKey               = "webServer"
 	GrpcServerKey               = "grpcServer"
 	TracerKey                   = "tracer"
+	StreamKey                   = "sream"
 
 	CatalogHandlersKey = "catalogHandlers"
 	MallHandlersKey    = "mallHandlers"

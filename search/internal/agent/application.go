@@ -3,14 +3,12 @@ package agent
 import (
 	"database/sql"
 	"fmt"
-	"github.com/nats-io/nats.go"
 	"github.com/rezaAmiri123/microservice/pkg/am"
 	"github.com/rezaAmiri123/microservice/pkg/amotel"
 	"github.com/rezaAmiri123/microservice/pkg/amprom"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
 	"github.com/rezaAmiri123/microservice/pkg/di"
-	"github.com/rezaAmiri123/microservice/pkg/jetstream"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
 	"github.com/rezaAmiri123/microservice/pkg/registry"
 	"github.com/rezaAmiri123/microservice/pkg/tm"
@@ -44,13 +42,15 @@ func (a *Agent) setupApplication() error {
 		return dbConn, nil
 	})
 
-	js, err := a.nats()
-	if err != nil {
-		return err
-	}
-
-	stream := jetstream.NewStream(a.NatsStream, js, a.container.Get(constants.LoggerKey).(logger.Logger))
-
+	//js, err := a.nats()
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//stream1 := jetstream.NewStream(a.NatsStream, js, a.container.Get(constants.LoggerKey).(logger.Logger))
+	//fmt.Println(stream1)
+	//stream := kafkastream.NewStream(a.NatsStream, a.container.Get(constants.LoggerKey).(logger.Logger), a.KafkaBrokers)
+	// "github.com/rezaAmiri123/microservice/pkg/kafka/kafkastream"
 	a.container.AddScoped(constants.DatabaseTransactionKey, func(c di.Container) (any, error) {
 		//return c.Get(constants.DatabaseKey).(*sql.DB).Begin()
 		return dbConn.Begin()
@@ -58,7 +58,7 @@ func (a *Agent) setupApplication() error {
 
 	a.container.AddScoped(constants.MessageSubscriberKey, func(c di.Container) (any, error) {
 		return am.NewMessageSubscriber(
-			stream,
+			c.Get(constants.StreamKey).(am.MessageStream),
 			amotel.OtelMessageContextExtractor(),
 			amprom.ReceivedMessagesCounter(constants.ServiceName),
 		), nil
@@ -126,23 +126,4 @@ func (a *Agent) setupApplication() error {
 		return err
 	}
 	return nil
-}
-
-func (a *Agent) nats() (nats.JetStreamContext, error) {
-	nc, err := nats.Connect(a.NatsURL)
-	if err != nil {
-		return nil, err
-	}
-	// defer nc.Close()
-	js, err := nc.JetStream()
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = js.AddStream(&nats.StreamConfig{
-		Name:     a.NatsStream,
-		Subjects: []string{fmt.Sprintf("%s.>", a.NatsStream)},
-	})
-
-	return js, err
 }
