@@ -36,6 +36,12 @@ rebuild-baskets:
 build-baskets:
 	docker build -t mallbots-baskets --file docker/Dockerfile.microservices --build-arg=service=baskets .
 
+rebuild-notifications:
+	docker image rm -f mallbots-notifications
+	docker build -t mallbots-notifications --file docker/Dockerfile.microservices --build-arg=service=notifications .
+build-notifications:
+	docker build -t mallbots-notifications --file docker/Dockerfile.microservices --build-arg=service=notifications .
+
 rebuild-stores:
 	docker image rm -f mallbots-stores
 	docker build -t mallbots-stores --file docker/Dockerfile.microservices --build-arg=service=stores .

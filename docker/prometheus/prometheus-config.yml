@@ -12,6 +12,11 @@ scrape_configs:
     static_configs:
       - targets:
         - 'baskets:8080'
+  - job_name: notifications
+    scrape_interval: 10s
+    static_configs:
+      - targets:
+        - 'notifications:8080'
   - job_name: stores
     scrape_interval: 10s
     static_configs:

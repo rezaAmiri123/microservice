@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package notificationspb;
+option go_package = "github.com/rezaAmiri123/microservice/notifications/notificationspb";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "notification Service API";
+    version: "1.1";
+    contact: {
+      name: "notification service";
+      url: "https://github.com/rezaAmiri123/microservice";
+      // email: "example@example.com";
+    };
+  };
+};
+
+service NotificationsService {
+  rpc NotifyOrderCreated(NotifyOrderCreatedRequest) returns (NotifyOrderCreatedResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/notification/notify_order_created"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to notify order created";
+      summary: "Notify order created";
+    };
+  };
+  rpc NotifyOrderCanceled(NotifyOrderCanceledRequest) returns (NotifyOrderCanceledResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/notification/notify_order_canceled"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to notify order canceled";
+      summary: "Notify order canceled";
+    };
+  };
+  rpc NotifyOrderReady(NotifyOrderReadyRequest) returns (NotifyOrderReadyResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/notification/notify_order_ready"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to notify order ready";
+      summary: "Notify order ready";
+    };
+  };
+}
+
+message NotifyOrderCreatedRequest {
+  string order_id = 1;
+  string user_id = 2;
+}
+message NotifyOrderCreatedResponse {}
+
+message NotifyOrderCanceledRequest {
+  string order_id = 1;
+  string user_id = 2;
+}
+message NotifyOrderCanceledResponse {}
+
+message NotifyOrderReadyRequest {
+  string order_id = 1;
+  string user_id = 2;
+}
+message NotifyOrderReadyResponse {}
