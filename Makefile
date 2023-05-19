@@ -23,6 +23,8 @@ docker_down:
 	@echo Stoping docker compose
 	docker-compose -f docker-compose.yaml down --remove-orphans
 
+build-services: build-users build-baskets build-notifications build-stores build-search build-payments build-ordering build-depot build-cosec  
+
 rebuild-users:
 	docker image rm -f mallbots-users
 	docker build -t mallbots-users --file docker/Dockerfile.microservices --build-arg=service=users .
