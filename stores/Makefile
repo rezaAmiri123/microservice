@@ -1,4 +1,5 @@
-DB_NAME=stores
+SERVICE = stores
+DB_NAME=$(SERVICE)
 DB_USER=stores_user
 DB_PASSWORD=stores_pass
 DB_ADDR=microservice_postgesql
@@ -56,3 +57,9 @@ generate_test:
 
 test_coverage:
 	go test --cover ./...
+
+test_coverage_html:
+	go test -v -coverprofile /tmp/$(SERVICE).cover.out ./...
+	go tool cover -html /tmp/$(SERVICE).cover.out -o /tmp/$(SERVICE).cover.html
+	echo html file path: /tmp/$(SERVICE).cover.html
+

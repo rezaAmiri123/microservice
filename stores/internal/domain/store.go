@@ -29,6 +29,9 @@ var _ interface {
 	registry.Registrable
 } = (*Store)(nil)
 
+// Key implements registry.Registerable
+func (Store) Key() string { return StoreAggregate }
+
 func NewStore(id string) *Store {
 	return &Store{
 		Aggregate: es.NewAggregate(id, StoreAggregate),
@@ -48,9 +51,6 @@ func (s *Store) InitStore(name, location string) (ddd.Event, error) {
 	})
 	return ddd.NewEvent(StoreCreatedEvent, s), nil
 }
-
-// Key implements registry.Registerable
-func (Store) Key() string { return StoreAggregate }
 
 func (s *Store) EnableParticipation() (ddd.Event, error) {
 	if s.Participating {
@@ -112,7 +112,7 @@ func (s *Store) ApplySnapshot(snapshot es.Snapshot) error {
 
 // ToSnapshot implements es.Snapshotter
 func (s Store) ToSnapshot() es.Snapshot {
-	return StoreV1{
+	return &StoreV1{
 		Name:          s.Name,
 		Location:      s.Location,
 		Participating: s.Participating,
