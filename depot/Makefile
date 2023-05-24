@@ -49,3 +49,10 @@ migrateforce:
 
 psql:
 	psql -h $(DB_ADDR) -U $(DB_USER) -d $(DB_NAME) -W
+
+generate_test:
+	mockery --quiet --dir ./internal -r --all --inpackage --case underscore
+	mockery --quiet --dir ./depotpb -r --all --inpackage --case underscore
+
+test_coverage:
+	go test --cover ./...

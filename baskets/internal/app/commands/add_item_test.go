@@ -60,7 +60,7 @@ func TestAddItemHandler_Handle(t *testing.T) {
 				}, nil)
 				f.products.On("Find", context.Background(), "product-id").Return(product, nil)
 				f.stores.On("Find", context.Background(), "store-id").Return(store, nil)
-				f.baskets.On("UpdateItems", context.Background(), mock.AnythingOfType("*domain.Basket")).Return(nil)
+				f.baskets.On("Save", context.Background(), mock.AnythingOfType("*domain.Basket")).Return(nil)
 			},
 		},
 		"NoBasket": {
@@ -139,7 +139,7 @@ func TestAddItemHandler_Handle(t *testing.T) {
 				}, nil)
 				f.products.On("Find", context.Background(), "product-id").Return(product, nil)
 				f.stores.On("Find", context.Background(), "store-id").Return(store, nil)
-				f.baskets.On("UpdateItems", context.Background(), mock.AnythingOfType("*domain.Basket")).Return(fmt.Errorf("save failed"))
+				f.baskets.On("Save", context.Background(), mock.AnythingOfType("*domain.Basket")).Return(fmt.Errorf("save failed"))
 			},
 			wantErr: true,
 		},

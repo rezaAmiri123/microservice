@@ -62,5 +62,5 @@ func (h AddItemHandler) AddItem(ctx context.Context, cmd AddItem) error {
 		return err
 	}
 
-	return h.baskets.UpdateItems(ctx, basket)
+	return h.baskets.Save(ctx, basket)
 }

@@ -46,7 +46,7 @@ func (h CancelBasketHandler) CancelBasket(ctx context.Context, cmd CancelBasket)
 		return errors.Wrap(err, "basket cancel")
 	}
 
-	if err = h.baskets.Update(ctx, basket); err != nil {
+	if err = h.baskets.Save(ctx, basket); err != nil {
 		return errors.Wrap(err, "basket cancel")
 	}
 

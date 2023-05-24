@@ -47,7 +47,7 @@ func (h CheckoutBasketHandler) CheckoutBasket(ctx context.Context, cmd CheckoutB
 		return errors.Wrap(err, "baskets checkout")
 	}
 
-	if err = h.baskets.Update(ctx, basket); err != nil {
+	if err = h.baskets.Save(ctx, basket); err != nil {
 		return errors.Wrap(err, "basket checkout")
 	}
 

@@ -85,17 +85,7 @@ type Config struct {
 type Agent struct {
 	Config
 
-	//GrpcServerTLSConfig *tls.Config
-
 	container di.Container
-	//logger    logger.Logger
-	//metric *metrics.UserServiceMetric
-	//httpServer *http.Server
-	//grpcServer *grpc.Server
-	//repository  user.Repository
-	//Application *app.Application
-	//Maker       token.Maker
-	// AuthClient  auth.AuthClient
 
 	shutdown     bool
 	shutdowns    chan struct{}
@@ -118,16 +108,13 @@ func NewAgent(config Config) (*Agent, error) {
 	setupsFn := []func() error{
 		a.setupLogger,
 		a.setupRegistry,
-
-		//a.setupRepository,
 		a.setupTracer,
+		a.setupDatabase,
 		a.setupEventServer,
 		a.setupApplication,
-		//a.setupAuthClient,
+		a.setupEventHandler,
 		a.setupGrpcServer,
 		a.setupHttpServer,
-		//a.setupGRPCServer,
-		//a.setupTracer,
 	}
 	for _, fn := range setupsFn {
 		if err := fn(); err != nil {
