@@ -34,7 +34,7 @@ func (s *serverSuite) TestBasketService_AddItem() {
 		},
 		Status: domain.BasketIsOpen,
 	}, nil)
-	s.mocks.baskets.On("UpdateItems", mock.Anything, mock.AnythingOfType("*domain.Basket")).Return(nil)
+	s.mocks.baskets.On("Save", mock.Anything, mock.AnythingOfType("*domain.Basket")).Return(nil)
 	s.mocks.products.On("Find", mock.Anything, "product-id").Return(product, nil)
 	s.mocks.stores.On("Find", mock.Anything, "store-id").Return(store, nil)
 

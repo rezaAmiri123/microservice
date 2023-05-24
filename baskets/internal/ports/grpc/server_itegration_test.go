@@ -64,12 +64,6 @@ func (s *serverSuite) SetupTest() {
 
 	// create app
 	application := app.New(s.mocks.baskets, s.mocks.stores, s.mocks.products, s.mocks.publisher, s.mocks.logger)
-	//application := &app.Application{
-	//	Commands: app.Commands{
-	//		StartBasket: commands.NewStartBasketHandler(s.mocks.baskets, s.mocks.publisher, s.mocks.logger),
-	//		AddItem:     commands.NewAddItemHandler(s.mocks.baskets, s.mocks.stores, s.mocks.products, s.mocks.publisher, s.mocks.logger),
-	//	},
-	//}
 	// register app with server
 	if err = RegisterServer(application, s.server, s.mocks.logger); err != nil {
 		s.T().Fatal(err)
