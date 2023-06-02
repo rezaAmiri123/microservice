@@ -16,6 +16,7 @@ install-tools:
 	go install github.com/bufbuild/buf/cmd/buf@latest
 	go install github.com/vektra/mockery/v2@latest
 	go install github.com/go-swagger/go-swagger/cmd/swagger@latest
+	go install github.com/pact-foundation/pact-go/v2@2.x.x
 	echo done
 
 proto:
@@ -51,9 +52,10 @@ migrateforce:
 psql:
 	psql -h $(DB_ADDR) -U $(DB_USER) -d $(DB_NAME) -W
 
-generate_test:
+generate:
 	mockery --quiet --dir ./internal -r --all --inpackage --case underscore
 	mockery --quiet --dir ./storespb -r --all --inpackage --case underscore
+	swagger generate client -q -f ./internal/ports/rest/api.swagger.json -c storesclient -m storesclient/models --with-flatten=remove-unused
 
 test_coverage:
 	go test --cover ./...

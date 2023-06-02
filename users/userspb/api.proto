@@ -28,6 +28,8 @@ service UserService{
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to register a new user";
       summary: "Register new user";
+      operation_id: "registerUser";
+      tags:"User";
     };
   }
   rpc AuthorizeUser(AuthorizeUserRequest) returns (AuthorizeUserResponse) {
@@ -38,6 +40,8 @@ service UserService{
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to authorize a user";
       summary: "Authorize user";
+      operation_id: "authorizeUser";
+      tags:"User";
     };
   };
   rpc EnableUser(EnableUserRequest) returns (EnableUserResponse) {
@@ -48,6 +52,8 @@ service UserService{
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to enable user";
       summary: "Enable user";
+      operation_id: "enableUser";
+      tags:"User";
     };
 
   };
@@ -59,6 +65,8 @@ service UserService{
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to disable user";
       summary: "Disable user";
+      operation_id: "disableUser";
+      tags:"User";
     };
 
   };
@@ -70,6 +78,8 @@ service UserService{
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to update user";
       summary: "Update user";
+      operation_id: "updateUser";
+      tags:"User";
     };
   }
   rpc Login (LoginUserRequest) returns (LoginUserResponse) {
@@ -80,6 +90,8 @@ service UserService{
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to login user and get access token & refresh token";
       summary: "Login user";
+      operation_id: "login";
+      tags:"User";
     };
   }
   rpc LoginVerify (LoginVerifyUserRequest) returns (LoginVerifyUserResponse) {
@@ -90,6 +102,8 @@ service UserService{
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to verify login user payload";
       summary: "Login verify user";
+      operation_id: "loginVerify";
+      tags:"User";
     };
   }
   rpc GetUser(GetUserRequest) returns (GetUserResponse) {
@@ -100,6 +114,8 @@ service UserService{
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to get user payload";
       summary: "Get user";
+      operation_id: "getUser";
+      tags:"User";
     };
   };
 }

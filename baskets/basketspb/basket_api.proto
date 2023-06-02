@@ -28,6 +28,8 @@ service BasketService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to start a new basket";
       summary: "Create new basket";
+      operation_id: "startBasket";
+      tags: "Basket";
     };
   };
   rpc CancelBasket(CancelBasketRequest) returns (CancelBasketResponse) {
@@ -38,6 +40,8 @@ service BasketService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to cancel a basket";
       summary: "Cancel a basket";
+      operation_id: "cancelBasket";
+      tags: "Basket";
     };
   };
   rpc CheckoutBasket(CheckoutBasketRequest) returns (CheckoutBasketResponse) {
@@ -48,6 +52,8 @@ service BasketService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to checkout a basket";
       summary: "checkout a basket";
+      operation_id: "checkoutBasket";
+      tags:"Basket";
     };
   };
   rpc AddItem(AddItemRequest) returns (AddItemResponse) {
@@ -58,10 +64,35 @@ service BasketService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to add a new item";
       summary: "Create new item";
+      operation_id: "addItem";
+      tags:"Item";
     };
   };
-  rpc RemoveItem(RemoveItemRequest) returns (RemoveItemResponse) {};
-  rpc GetBasket(GetBasketRequest) returns (GetBasketResponse) {};
+  rpc RemoveItem(RemoveItemRequest) returns (RemoveItemResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/baskets/remove_item"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to remove an item";
+      summary: "Remove an item";
+      operation_id: "removeItem";
+      tags:"Item";
+    };
+  };
+  rpc GetBasket(GetBasketRequest) returns (GetBasketResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/baskets/get_basket"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a basket";
+      summary: "Get a basket";
+      operation_id: "getBasket";
+      tags:"Basket";
+    };
+
+  };
 }
 
 message Basket {

@@ -24,7 +24,7 @@
       "post": {
         "summary": "Authorize user",
         "description": "Use this API to authorize a user",
-        "operationId": "UserService_AuthorizeUser",
+        "operationId": "authorizeUser",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -50,7 +50,7 @@
           }
         ],
         "tags": [
-          "UserService"
+          "User"
         ]
       }
     },
@@ -58,7 +58,7 @@
       "patch": {
         "summary": "Disable user",
         "description": "Use this API to disable user",
-        "operationId": "UserService_DisableUser",
+        "operationId": "disableUser",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -84,7 +84,7 @@
           }
         ],
         "tags": [
-          "UserService"
+          "User"
         ]
       }
     },
@@ -92,7 +92,7 @@
       "patch": {
         "summary": "Enable user",
         "description": "Use this API to enable user",
-        "operationId": "UserService_EnableUser",
+        "operationId": "enableUser",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -118,7 +118,7 @@
           }
         ],
         "tags": [
-          "UserService"
+          "User"
         ]
       }
     },
@@ -126,7 +126,7 @@
       "post": {
         "summary": "Get user",
         "description": "Use this API to get user payload",
-        "operationId": "UserService_GetUser",
+        "operationId": "getUser",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -152,7 +152,7 @@
           }
         ],
         "tags": [
-          "UserService"
+          "User"
         ]
       }
     },
@@ -160,7 +160,7 @@
       "post": {
         "summary": "Login user",
         "description": "Use this API to login user and get access token \u0026 refresh token",
-        "operationId": "UserService_Login",
+        "operationId": "login",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -186,7 +186,7 @@
           }
         ],
         "tags": [
-          "UserService"
+          "User"
         ]
       }
     },
@@ -194,7 +194,7 @@
       "post": {
         "summary": "Login verify user",
         "description": "Use this API to verify login user payload",
-        "operationId": "UserService_LoginVerify",
+        "operationId": "loginVerify",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -220,7 +220,7 @@
           }
         ],
         "tags": [
-          "UserService"
+          "User"
         ]
       }
     },
@@ -228,7 +228,7 @@
       "post": {
         "summary": "Register new user",
         "description": "Use this API to register a new user",
-        "operationId": "UserService_RegisterUser",
+        "operationId": "registerUser",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -254,7 +254,7 @@
           }
         ],
         "tags": [
-          "UserService"
+          "User"
         ]
       }
     },
@@ -262,7 +262,7 @@
       "patch": {
         "summary": "Update user",
         "description": "Use this API to update user",
-        "operationId": "UserService_UpdateUser",
+        "operationId": "updateUser",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -288,7 +288,7 @@
           }
         ],
         "tags": [
-          "UserService"
+          "User"
         ]
       }
     }

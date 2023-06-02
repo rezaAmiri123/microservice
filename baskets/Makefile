@@ -30,7 +30,7 @@ createdb:
 	docker exec -it $(DB_ADDR) createdb --username=$(DB_USER) --owner=$(DB_USER) $(DB_NAME)
 
 migratecreate:
-	migrate create -ext sql -dir $(MIGRATION_PATH) -seq baskets
+	migrate create -ext sql -dir $(MIGRATION_PATH) -seq $(SERVICE)
 
 migrateup:
 	migrate -path $(MIGRATION_PATH) -database "$(DB_URL)" -verbose up
@@ -51,9 +51,10 @@ migrateforce:
 psql:
 	psql -h $(DB_ADDR) -U $(DB_USER) -d $(DB_NAME) -W
 
-generate_test:
+generate:
 	mockery --quiet --dir ./internal -r --all --inpackage --case underscore
 	mockery --quiet --dir ./basketspb -r --all --inpackage --case underscore
+	swagger generate client -q -f ./internal/ports/rest/api.swagger.json -c basketsclient -m basketsclient/models --with-flatten=remove-unused
 
 test_coverage:
 	go test --cover ./...

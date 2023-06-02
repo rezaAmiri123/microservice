@@ -36,7 +36,7 @@ func (h CancelOrderHandler) CancelOrder(ctx context.Context, cmd CancelOrder) er
 	//span, ctx := opentracing.StartSpanFromContext(ctx, "CancelOrderHandler.Handle")
 	//defer span.Finish()
 
-	order, err := h.orders.Find(ctx, cmd.ID)
+	order, err := h.orders.Load(ctx, cmd.ID)
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func (h CancelOrderHandler) CancelOrder(ctx context.Context, cmd CancelOrder) er
 	// 	return err
 	// }
 
-	if err = h.orders.Update(ctx, order); err != nil {
+	if err = h.orders.Save(ctx, order); err != nil {
 		return errors.Wrap(err, "complete order")
 	}
 

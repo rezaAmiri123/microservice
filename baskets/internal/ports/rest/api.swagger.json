@@ -24,7 +24,7 @@
       "post": {
         "summary": "Create new item",
         "description": "Use this API to add a new item",
-        "operationId": "BasketService_AddItem",
+        "operationId": "addItem",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -50,7 +50,7 @@
           }
         ],
         "tags": [
-          "BasketService"
+          "Item"
         ]
       }
     },
@@ -58,7 +58,7 @@
       "post": {
         "summary": "Cancel a basket",
         "description": "Use this API to cancel a basket",
-        "operationId": "BasketService_CancelBasket",
+        "operationId": "cancelBasket",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -84,7 +84,7 @@
           }
         ],
         "tags": [
-          "BasketService"
+          "Basket"
         ]
       }
     },
@@ -92,7 +92,7 @@
       "post": {
         "summary": "checkout a basket",
         "description": "Use this API to checkout a basket",
-        "operationId": "BasketService_CheckoutBasket",
+        "operationId": "checkoutBasket",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -118,7 +118,75 @@
           }
         ],
         "tags": [
-          "BasketService"
+          "Basket"
+        ]
+      }
+    },
+    "/v1/api/baskets/get_basket": {
+      "post": {
+        "summary": "Get a basket",
+        "description": "Use this API to get a basket",
+        "operationId": "getBasket",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/basketspbGetBasketResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/basketspbGetBasketRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Basket"
+        ]
+      }
+    },
+    "/v1/api/baskets/remove_item": {
+      "post": {
+        "summary": "Remove an item",
+        "description": "Use this API to remove an item",
+        "operationId": "removeItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/basketspbRemoveItemResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/basketspbRemoveItemRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Item"
         ]
       }
     },
@@ -126,7 +194,7 @@
       "post": {
         "summary": "Create new basket",
         "description": "Use this API to start a new basket",
-        "operationId": "BasketService_StartBasket",
+        "operationId": "startBasket",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -152,7 +220,7 @@
           }
         ],
         "tags": [
-          "BasketService"
+          "Basket"
         ]
       }
     }
@@ -216,6 +284,14 @@
     "basketspbCheckoutBasketResponse": {
       "type": "object"
     },
+    "basketspbGetBasketRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
     "basketspbGetBasketResponse": {
       "type": "object",
       "properties": {
@@ -242,6 +318,21 @@
         "productPrice": {
           "type": "number",
           "format": "double"
+        },
+        "quantity": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "basketspbRemoveItemRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "productId": {
+          "type": "string"
         },
         "quantity": {
           "type": "integer",

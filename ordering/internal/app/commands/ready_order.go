@@ -36,7 +36,7 @@ func (h ReadyOrderHandler) ReadyOrder(ctx context.Context, cmd ReadyOrder) error
 	//span, ctx := opentracing.StartSpanFromContext(ctx, "ReadyOrderHandler.Handle")
 	//defer span.Finish()
 
-	order, err := h.orders.Find(ctx, cmd.ID)
+	order, err := h.orders.Load(ctx, cmd.ID)
 	if err != nil {
 		return err
 	}
@@ -46,7 +46,7 @@ func (h ReadyOrderHandler) ReadyOrder(ctx context.Context, cmd ReadyOrder) error
 		return errors.Wrap(err, "ready order command")
 	}
 
-	if err = h.orders.Update(ctx, order); err != nil {
+	if err = h.orders.Save(ctx, order); err != nil {
 		return errors.Wrap(err, "order ready")
 	}
 

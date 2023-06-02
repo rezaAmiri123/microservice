@@ -5,7 +5,7 @@ import (
 	"github.com/rezaAmiri123/microservice/baskets/internal/constants"
 	basketGrpc "github.com/rezaAmiri123/microservice/baskets/internal/ports/grpc"
 	"github.com/rezaAmiri123/microservice/pkg/di"
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	//"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc/reflection"
 	"net"
 	"time"
@@ -50,7 +50,7 @@ func (a *Agent) setupGrpcServer() error {
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpc_ctxtags.UnaryServerInterceptor(),
 			//grpc_opentracing.UnaryServerInterceptor(),
-			otelgrpc.UnaryServerInterceptor(),
+			//otelgrpc.UnaryServerInterceptor(),
 			grpc_prometheus.UnaryServerInterceptor,
 			grpc_recovery.UnaryServerInterceptor(),
 			// grpc_auth.UnaryServerInterceptor(auth.Authenticate),

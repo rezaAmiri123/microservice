@@ -13,8 +13,8 @@ type MockOrderRepository struct {
 	mock.Mock
 }
 
-// Find provides a mock function with given fields: ctx, orderID
-func (_m *MockOrderRepository) Find(ctx context.Context, orderID string) (*Order, error) {
+// Load provides a mock function with given fields: ctx, orderID
+func (_m *MockOrderRepository) Load(ctx context.Context, orderID string) (*Order, error) {
 	ret := _m.Called(ctx, orderID)
 
 	var r0 *Order
@@ -41,20 +41,6 @@ func (_m *MockOrderRepository) Find(ctx context.Context, orderID string) (*Order
 
 // Save provides a mock function with given fields: ctx, order
 func (_m *MockOrderRepository) Save(ctx context.Context, order *Order) error {
-	ret := _m.Called(ctx, order)
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *Order) error); ok {
-		r0 = rf(ctx, order)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// Update provides a mock function with given fields: ctx, order
-func (_m *MockOrderRepository) Update(ctx context.Context, order *Order) error {
 	ret := _m.Called(ctx, order)
 
 	var r0 error

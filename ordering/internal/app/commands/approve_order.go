@@ -37,7 +37,7 @@ func (h ApproveOrderHandler) ApproveOrder(ctx context.Context, cmd ApproveOrder)
 	//span, ctx := opentracing.StartSpanFromContext(ctx, "ApproveOrderHandler.Handle")
 	//defer span.Finish()
 
-	order, err := h.orders.Find(ctx, cmd.ID)
+	order, err := h.orders.Load(ctx, cmd.ID)
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,7 @@ func (h ApproveOrderHandler) ApproveOrder(ctx context.Context, cmd ApproveOrder)
 		return errors.Wrap(err, "approve order command")
 	}
 
-	if err = h.orders.Update(ctx, order); err != nil {
+	if err = h.orders.Save(ctx, order); err != nil {
 		return errors.Wrap(err, "approve order")
 	}
 

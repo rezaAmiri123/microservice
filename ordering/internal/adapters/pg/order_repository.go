@@ -14,7 +14,7 @@ type OrderRepository struct {
 	db        postgres.DB
 }
 
-var _ domain.OrderRepository = (*OrderRepository)(nil)
+//var _ domain.OrderRepository = (*OrderRepository)(nil)
 
 func NewOrderRepository(tableName string, db postgres.DB) OrderRepository {
 	return OrderRepository{

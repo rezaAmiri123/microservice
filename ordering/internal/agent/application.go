@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/rezaAmiri123/microservice/pkg/es"
 
-	"github.com/rezaAmiri123/microservice/ordering/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/ordering/internal/app"
 	"github.com/rezaAmiri123/microservice/ordering/internal/constants"
 	"github.com/rezaAmiri123/microservice/ordering/internal/domain"
@@ -102,24 +102,24 @@ func (a *Agent) setupApplication() error {
 		return postgres.NewInboxStore(constants.InboxTableName, db), nil
 	})
 
-	a.container.AddScoped(constants.OrdersRepoKey, func(c di.Container) (any, error) {
-		//tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
-		db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
-		return pg.NewOrderRepository(constants.OrdersTableName, db), nil
-	})
-
 	//a.container.AddScoped(constants.OrdersRepoKey, func(c di.Container) (any, error) {
-	//	tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
-	//	reg := c.Get(constants.RegistryKey).(registry.Registry)
-	//	return es.NewAggregateRepository[*domain.Order](
-	//		domain.OrderAggregate,
-	//		c.Get(constants.RegistryKey).(registry.Registry),
-	//		es.AggregateStoreWithMiddleware(
-	//			pg.NewEventStore(constants.EventsTableName, tx, reg),
-	//			pg.NewSnapshotStore(constants.SnapshotsTableName, tx, reg),
-	//		),
-	//	), nil
+	//	//tx := c.Get(constants.DatabaseTransactionKey).(*sql.Tx)
+	//	db := postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB))
+	//	return pg.NewOrderRepository(constants.OrdersTableName, db), nil
 	//})
+
+	a.container.AddScoped(constants.OrdersRepoKey, func(c di.Container) (any, error) {
+		db := c.Get(constants.DatabaseKey).(*sql.DB)
+		reg := c.Get(constants.RegistryKey).(registry.Registry)
+		return es.NewAggregateRepository[*domain.Order](
+			domain.OrderAggregate,
+			c.Get(constants.RegistryKey).(registry.Registry),
+			es.AggregateStoreWithMiddleware(
+				postgres.NewEventStore(constants.EventsTableName, db, reg),
+				postgres.NewSnapshotStore(constants.SnapshotsTableName, db, reg),
+			),
+		), nil
+	})
 
 	// setup application
 	a.container.AddScoped(constants.ApplicationKey, func(c di.Container) (any, error) {

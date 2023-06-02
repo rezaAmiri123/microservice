@@ -1,0 +1,75 @@
+{
+  "consumer": {
+    "name": "baskets-api-consumer-match"
+  },
+  "interactions": [
+    {
+      "description": "A request to do a foo",
+      "providerState": "a store exists",
+      "request": {
+        "body": {
+          "id": "store-id"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.header.$.Authorization[0]": {
+            "match": "type"
+          }
+        },
+        "method": "POST",
+        "path": "/v1/api/stores/get_store"
+      },
+      "response": {
+        "body": {
+          "store": {
+            "id": "d0657889-1f1d-4689-86db-d7cba549dfc6",
+            "name": "Waldorf Books1685536603467513624",
+            "location": "anywhere",
+            "participating": false
+          }
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "$.body.store.id": {
+            "match": "type"
+          },
+          "$.body.store.name": {
+            "match": "type"
+          },
+          "$.body.store.location": {
+            "match": "type"
+          },
+          "$.body.store.participating": {
+            "match": "type"
+          },
+          "$.header.$['Content-Type'][0]": {
+            "match": "regex",
+            "regex": "application\\/json"
+          }
+        },
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.4",
+      "mockserver": "0.9.8",
+      "models": "1.0.2"
+    },
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  },
+  "provider": {
+    "name": "baskets-api-provider-match"
+  }
+}

@@ -64,8 +64,8 @@ curl -X 'POST' \
   "id": "180b75b7-9669-4adc-ba7f-c68648f730be",
   "productId": "8175bcf8-c18c-438d-a69f-62ae9633b5b1",
   "quantity": 5
-}
-'
+}'
+
 ### Create Payment
 curl -X 'POST' \
   'http://localhost:8080/v1/api/payments/authorize_payment' \

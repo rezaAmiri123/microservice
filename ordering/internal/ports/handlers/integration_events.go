@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"github.com/rezaAmiri123/microservice/baskets/basketspb"
 	"github.com/rezaAmiri123/microservice/depot/depotpb"
 	"github.com/rezaAmiri123/microservice/ordering/internal/app"
@@ -88,7 +87,7 @@ func (h integrationHandlers[T]) onBasketCheckedOut(ctx context.Context, event dd
 			Quantity:    int(item.GetQuantity()),
 		}
 	}
-	fmt.Println("user id: ", payload.GetUserId())
+
 	return h.app.CreateOrder(ctx, commands.CreateOrder{
 		ID:        payload.GetId(),
 		UserID:    payload.GetUserId(),

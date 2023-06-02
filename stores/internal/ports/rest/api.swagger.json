@@ -24,7 +24,7 @@
       "post": {
         "summary": "Add new product",
         "description": "Use this API to add a new product",
-        "operationId": "StoresService_AddProduct",
+        "operationId": "addProduct",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -50,7 +50,7 @@
           }
         ],
         "tags": [
-          "StoresService"
+          "Product"
         ]
       }
     },
@@ -58,7 +58,7 @@
       "post": {
         "summary": "Create new store",
         "description": "Use this API to create a new store",
-        "operationId": "StoresService_CreateStore",
+        "operationId": "createStore",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -84,7 +84,7 @@
           }
         ],
         "tags": [
-          "StoresService"
+          "Store"
         ]
       }
     },
@@ -92,7 +92,7 @@
       "post": {
         "summary": "Decrease a product price",
         "description": "Use this API to decrease a product price",
-        "operationId": "StoresService_DecreaseProductPrice",
+        "operationId": "decreaseProductPrice",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -118,7 +118,7 @@
           }
         ],
         "tags": [
-          "StoresService"
+          "Product"
         ]
       }
     },
@@ -126,7 +126,7 @@
       "post": {
         "summary": "Disable participation",
         "description": "Use this API to disable participation",
-        "operationId": "StoresService_DisableParticipation",
+        "operationId": "disableParticipation",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -152,7 +152,7 @@
           }
         ],
         "tags": [
-          "StoresService"
+          "Participation"
         ]
       }
     },
@@ -160,7 +160,7 @@
       "post": {
         "summary": "Enable participation",
         "description": "Use this API to enable participation",
-        "operationId": "StoresService_EnableParticipation",
+        "operationId": "enableParticipation",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -186,7 +186,7 @@
           }
         ],
         "tags": [
-          "StoresService"
+          "Participation"
         ]
       }
     },
@@ -194,7 +194,7 @@
       "post": {
         "summary": "Get a catalog",
         "description": "Use this API to get a catalog",
-        "operationId": "StoresService_GetCatalog",
+        "operationId": "getStoreProducts",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -220,7 +220,7 @@
           }
         ],
         "tags": [
-          "StoresService"
+          "Product"
         ]
       }
     },
@@ -228,7 +228,7 @@
       "post": {
         "summary": "Get participation stores",
         "description": "Use this API to get participation stores",
-        "operationId": "StoresService_GetParticipatingStores",
+        "operationId": "getParticipatingStores",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -254,7 +254,7 @@
           }
         ],
         "tags": [
-          "StoresService"
+          "Participation"
         ]
       }
     },
@@ -262,7 +262,7 @@
       "post": {
         "summary": "Get a product",
         "description": "Use this API to get a product",
-        "operationId": "StoresService_GetProduct",
+        "operationId": "getProduct",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -288,7 +288,7 @@
           }
         ],
         "tags": [
-          "StoresService"
+          "Product"
         ]
       }
     },
@@ -296,7 +296,7 @@
       "post": {
         "summary": "Get a store",
         "description": "Use this API to get a store",
-        "operationId": "StoresService_GetStore",
+        "operationId": "getStore",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -322,7 +322,7 @@
           }
         ],
         "tags": [
-          "StoresService"
+          "Store"
         ]
       }
     },
@@ -330,7 +330,7 @@
       "post": {
         "summary": "Get stores",
         "description": "Use this API to get stores",
-        "operationId": "StoresService_GetStores",
+        "operationId": "getStores",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -356,7 +356,7 @@
           }
         ],
         "tags": [
-          "StoresService"
+          "Store"
         ]
       }
     },
@@ -364,7 +364,7 @@
       "post": {
         "summary": "Increase a product price",
         "description": "Use this API to increase a product price",
-        "operationId": "StoresService_IncreaseProductPrice",
+        "operationId": "increaseProductPrice",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -390,7 +390,7 @@
           }
         ],
         "tags": [
-          "StoresService"
+          "Product"
         ]
       }
     },
@@ -398,7 +398,7 @@
       "post": {
         "summary": "Rebrand a product",
         "description": "Use this API to rebrand a product",
-        "operationId": "StoresService_RebrandProduct",
+        "operationId": "rebrandProduct",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -424,7 +424,7 @@
           }
         ],
         "tags": [
-          "StoresService"
+          "Product"
         ]
       }
     },
@@ -432,7 +432,7 @@
       "post": {
         "summary": "Rebrand a store",
         "description": "Use this API to rebrand a store",
-        "operationId": "StoresService_RebrandStore",
+        "operationId": "rebrandStore",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -458,7 +458,7 @@
           }
         ],
         "tags": [
-          "StoresService"
+          "Store"
         ]
       }
     },
@@ -466,7 +466,7 @@
       "post": {
         "summary": "Remove a product",
         "description": "Use this API to remove a product",
-        "operationId": "StoresService_RemoveProduct",
+        "operationId": "removeProduct",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -492,7 +492,7 @@
           }
         ],
         "tags": [
-          "StoresService"
+          "Product"
         ]
       }
     }

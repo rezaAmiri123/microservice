@@ -32,7 +32,7 @@ func NewGetOrderHandler(
 }
 
 func (h GetOrderHandler) GetOrder(ctx context.Context, query GetOrder) (*domain.Order, error) {
-	order, err := h.orders.Find(ctx, query.ID)
+	order, err := h.orders.Load(ctx, query.ID)
 
 	return order, errors.Wrap(err, "get order query")
 }

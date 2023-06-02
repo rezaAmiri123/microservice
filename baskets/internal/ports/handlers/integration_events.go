@@ -68,9 +68,18 @@ func (h integrationHandlers[T]) HandleEvent(ctx context.Context, event T) (err e
 	switch event.EventName() {
 	case storespb.StoreCreatedEvent:
 		return h.onStoreCreated(ctx, event)
+	case storespb.StoreRebrandedEvent:
+		return h.onStoreRebranded(ctx, event)
 	case storespb.ProductAddedEvent:
 		return h.onProductAdded(ctx, event)
+	case storespb.ProductRebrandedEvent:
+		return h.onProductRebranded(ctx, event)
+	case storespb.ProductPriceIncreasedEvent, storespb.ProductPriceDecreasedEvent:
+		return h.onProductPriceChanged(ctx, event)
+	case storespb.ProductRemovedEvent:
+		return h.onProductRemoved(ctx, event)
 	}
+
 	return nil
 }
 
@@ -79,7 +88,27 @@ func (h integrationHandlers[T]) onStoreCreated(ctx context.Context, event ddd.Ev
 	return h.stores.Add(ctx, payload.GetId(), payload.GetName())
 }
 
+func (h integrationHandlers[T]) onStoreRebranded(ctx context.Context, event ddd.Event) error {
+	payload := event.Payload().(*storespb.StoreRebranded)
+	return h.stores.Rename(ctx, payload.GetId(), payload.GetName())
+}
+
 func (h integrationHandlers[T]) onProductAdded(ctx context.Context, event ddd.Event) error {
 	payload := event.Payload().(*storespb.ProductAdded)
 	return h.products.Add(ctx, payload.GetId(), payload.GetStoreId(), payload.GetName(), payload.GetPrice())
+}
+
+func (h integrationHandlers[T]) onProductRebranded(ctx context.Context, event ddd.Event) error {
+	payload := event.Payload().(*storespb.ProductRebranded)
+	return h.products.Rebrand(ctx, payload.GetId(), payload.GetName())
+}
+
+func (h integrationHandlers[T]) onProductPriceChanged(ctx context.Context, event ddd.Event) error {
+	payload := event.Payload().(*storespb.ProductPriceChanged)
+	return h.products.UpdatePrice(ctx, payload.GetId(), payload.GetDelta())
+}
+
+func (h integrationHandlers[T]) onProductRemoved(ctx context.Context, event ddd.Event) error {
+	payload := event.Payload().(*storespb.ProductRemoved)
+	return h.products.Remove(ctx, payload.GetId())
 }

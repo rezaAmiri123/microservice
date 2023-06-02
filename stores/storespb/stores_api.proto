@@ -29,6 +29,8 @@ service StoresService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to create a new store";
       summary: "Create new store";
+      operation_id: "createStore";
+      tags:"Store";
     };
   };
   rpc EnableParticipation(EnableParticipationRequest) returns (EnableParticipationResponse) {
@@ -39,6 +41,8 @@ service StoresService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to enable participation";
       summary: "Enable participation";
+      operation_id: "enableParticipation";
+      tags:"Participation";
     };
   };
   rpc DisableParticipation(DisableParticipationRequest) returns (DisableParticipationResponse) {
@@ -49,6 +53,8 @@ service StoresService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to disable participation";
       summary: "Disable participation";
+      operation_id: "disableParticipation";
+      tags:"Participation";
     };
   };
   rpc RebrandStore(RebrandStoreRequest) returns (RebrandStoreResponse) {
@@ -59,6 +65,8 @@ service StoresService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to rebrand a store";
       summary: "Rebrand a store";
+      operation_id: "rebrandStore";
+      tags:"Store";
     };
   };
   rpc GetStore(GetStoreRequest) returns (GetStoreResponse) {
@@ -69,6 +77,8 @@ service StoresService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to get a store";
       summary: "Get a store";
+      operation_id: "getStore";
+      tags:"Store";
     };
   };
   rpc GetStores(GetStoresRequest) returns (GetStoresResponse) {
@@ -79,6 +89,8 @@ service StoresService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to get stores";
       summary: "Get stores";
+      operation_id: "getStores";
+      tags:"Store";
     };
   };
   rpc GetParticipatingStores(GetParticipatingStoresRequest) returns (GetParticipatingStoresResponse) {
@@ -89,6 +101,8 @@ service StoresService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to get participation stores";
       summary: "Get participation stores";
+      operation_id: "getParticipatingStores";
+      tags:"Participation";
     };
   };
 
@@ -100,6 +114,8 @@ service StoresService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to add a new product";
       summary: "Add new product";
+      operation_id: "addProduct";
+      tags:"Product";
     };
   };
   rpc RebrandProduct(RebrandProductRequest) returns (RebrandProductResponse) {
@@ -110,6 +126,8 @@ service StoresService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to rebrand a product";
       summary: "Rebrand a product";
+      operation_id: "rebrandProduct";
+      tags:"Product";
     };
   };
   rpc IncreaseProductPrice(IncreaseProductPriceRequest) returns (IncreaseProductPriceResponse) {
@@ -120,6 +138,8 @@ service StoresService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to increase a product price";
       summary: "Increase a product price";
+      operation_id: "increaseProductPrice";
+      tags:"Product";
     };
   };
   rpc DecreaseProductPrice(DecreaseProductPriceRequest) returns (DecreaseProductPriceResponse) {
@@ -130,6 +150,8 @@ service StoresService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to decrease a product price";
       summary: "Decrease a product price";
+      operation_id: "decreaseProductPrice";
+      tags:"Product";
     };
   };
   rpc RemoveProduct(RemoveProductRequest) returns (RemoveProductResponse) {
@@ -140,6 +162,8 @@ service StoresService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to remove a product";
       summary: "Remove a product";
+      operation_id: "removeProduct";
+      tags:"Product";
     };
   };
   rpc GetProduct(GetProductRequest) returns (GetProductResponse) {
@@ -150,6 +174,8 @@ service StoresService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to get a product";
       summary: "Get a product";
+      operation_id: "getProduct";
+      tags:"Product";
     };
   };
   rpc GetCatalog(GetCatalogRequest) returns (GetCatalogResponse) {
@@ -160,6 +186,8 @@ service StoresService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to get a catalog";
       summary: "Get a catalog";
+      operation_id: "getStoreProducts";
+      tags:"Product";
     };
   };
 }

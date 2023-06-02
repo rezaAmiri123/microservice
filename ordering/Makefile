@@ -1,4 +1,5 @@
-DB_NAME=ordering
+SERVICE=ordering
+DB_NAME=$(SERVICE)
 DB_USER=ordering_user
 DB_PASSWORD=ordering_pass
 DB_ADDR=microservice_postgesql
@@ -50,9 +51,15 @@ migrateforce:
 psql:
 	psql -h $(DB_ADDR) -U $(DB_USER) -d $(DB_NAME) -W
 
-generate_test:
+generate_test_mock:
 	mockery --quiet --dir ./internal -r --all --inpackage --case underscore
 	mockery --quiet --dir ./orderingpb -r --all --inpackage --case underscore
 
 test_coverage:
 	go test --cover ./...
+
+test_coverage_html:
+	go test -v -coverprofile /tmp/$(SERVICE).cover.out ./...
+	go tool cover -html /tmp/$(SERVICE).cover.out -o /tmp/$(SERVICE).cover.html
+	echo html file path: /tmp/$(SERVICE).cover.html
+

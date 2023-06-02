@@ -4,3 +4,5 @@ package users
 
 //go:generate mockery --quiet --dir ./userspb/ -r --all --inpackage --case underscore
 //go:generate mockery --quiet --dir ./internal/ -r --all --inpackage --case underscore
+
+//go:generate swagger generate client -q -f ./internal/ports/rest/api.swagger.json -c usersclient -m usersclient/models --with-flatten=remove-unused

@@ -1,0 +1,56 @@
+{
+  "consumer": {
+    "name": "baskets-sub"
+  },
+  "interactions": [
+    {
+      "description": "A request to do a foo",
+      "providerState": "a basket exists",
+      "request": {
+        "body": {
+          "userId": "user-id"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "$.body.id": {
+            "match": "type"
+          }
+        },
+        "method": "POST",
+        "path": "/v1/api/baskets/start_basket"
+      },
+      "response": {
+        "body": {
+          "id": "f289fa61-76b2-4c45-9f0e-22b189359eac"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.header.$['Content-Type'][0]": {
+            "match": "regex",
+            "regex": "application\\/json"
+          }
+        },
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.3.5",
+      "models": "0.4.1"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "baskets-api"
+  }
+}
