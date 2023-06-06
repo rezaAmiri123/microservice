@@ -2,16 +2,21 @@
   "consumer": {
     "name": "baskets-sub"
   },
-  "messages": [
+  "interactions": [
     {
       "contents": {
-        "Name": "storesapi.StoreCreated",
-        "Payload": {
-          "id": "store-id",
-          "name": "NewStore"
-        }
+        "content": {
+          "Name": "storesapi.StoreCreated",
+          "Payload": {
+            "id": "store-id",
+            "name": "NewStore"
+          }
+        },
+        "contentType": "application/json",
+        "encoded": false
       },
       "description": "a StoreCreated message",
+      "key": "925d0b4b1cee572b",
       "matchingRules": {
         "body": {
           "$.Payload": {
@@ -27,17 +32,24 @@
       "metadata": {
         "contentType": "application/json",
         "subject": "mallbots.stores.events.Store"
-      }
+      },
+      "pending": false,
+      "type": "Asynchronous/Messages"
     },
     {
       "contents": {
-        "Name": "storesapi.StoreRebranded",
-        "Payload": {
-          "id": "store-id",
-          "name": "RebrandedStore"
-        }
+        "content": {
+          "Name": "storesapi.StoreRebranded",
+          "Payload": {
+            "id": "store-id",
+            "name": "RebrandedStore"
+          }
+        },
+        "contentType": "application/json",
+        "encoded": false
       },
       "description": "a StoreRebranded message",
+      "key": "f32b0ec4a4295ece",
       "matchingRules": {
         "body": {
           "$.Payload": {
@@ -53,16 +65,18 @@
       "metadata": {
         "contentType": "application/json",
         "subject": "mallbots.stores.events.Store"
-      }
+      },
+      "pending": false,
+      "type": "Asynchronous/Messages"
     }
   ],
   "metadata": {
     "pactRust": {
-      "ffi": "0.4.5",
-      "models": "1.1.2"
+      "ffi": "0.4.4",
+      "models": "1.0.13"
     },
     "pactSpecification": {
-      "version": "3.0.0"
+      "version": "4.0"
     }
   },
   "provider": {

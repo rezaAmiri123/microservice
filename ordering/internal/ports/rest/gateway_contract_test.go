@@ -7,9 +7,10 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/pact-foundation/pact-go/v2/models"
 	"github.com/pact-foundation/pact-go/v2/provider"
-	"github.com/rezaAmiri123/microservice/baskets/internal/app"
-	"github.com/rezaAmiri123/microservice/baskets/internal/domain"
-	"github.com/rezaAmiri123/microservice/baskets/internal/ports/grpc"
+	"github.com/pact-foundation/pact-go/v2/version"
+	"github.com/rezaAmiri123/microservice/ordering/internal/app"
+	"github.com/rezaAmiri123/microservice/ordering/internal/domain"
+	"github.com/rezaAmiri123/microservice/ordering/internal/ports/grpc"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger/applogger"
 	"github.com/rezaAmiri123/microservice/pkg/registry"
@@ -27,6 +28,9 @@ var pactUser string
 var pactPass string
 var pactToken string
 
+var dir, _ = os.Getwd()
+var pactDir = fmt.Sprintf("%s/pacts", dir)
+
 func init() {
 	getEnv := func(key, fallback string) string {
 		if value, ok := os.LookupEnv(key); ok {
@@ -42,8 +46,7 @@ func init() {
 }
 
 func TestProvider(t *testing.T) {
-	var dir, _ = os.Getwd()
-	var pactDir = fmt.Sprintf("%s/pacts", dir)
+	version.CheckVersion()
 
 	var err error
 
@@ -54,16 +57,17 @@ func TestProvider(t *testing.T) {
 		t.Fatal(err)
 	}
 	// init repos
-	baskets := domain.NewFakeBasketRepository()
-	stores := domain.NewFakeStoreCacheRepository()
-	products := domain.NewFakeProductCacheRepository()
+	orders := domain.NewFakeOrderRepository()
+	//users := domain.NewFakeUserRepository()
+	//payments := domain.NewFakePaymentRepository()
+	//shopping := domain.NewFakeShoppingRepository()
 	dispatcher := ddd.NewEventDispatcher[ddd.Event]()
 	appLogger := applogger.NewAppLogger(applogger.Config{})
 
 	webAddress := fmt.Sprintf(":9091")
 	grpcAddress := fmt.Sprintf(":9095")
 
-	application := app.New(baskets, stores, products, dispatcher, appLogger)
+	application := app.New(orders, dispatcher, appLogger)
 	grpcServer := grpcstd.NewServer()
 
 	mux := chi.NewMux()
@@ -112,9 +116,9 @@ func TestProvider(t *testing.T) {
 	verifier := provider.NewVerifier()
 	assert.NoError(t, verifier.VerifyProvider(t, provider.VerifyRequest{
 		PactFiles: []string{
-			filepath.ToSlash(fmt.Sprintf("%s/gateway.json", pactDir)),
+			filepath.ToSlash(fmt.Sprintf("%s/PactGoV2ConsumerMatch-V2ProviderMatch.json", pactDir)),
 		},
-		Provider:                   "baskets-api",
+		Provider:                   "api-provider-match",
 		ProviderBaseURL:            fmt.Sprintf("http://%s", webAddress),
 		ProviderVersion:            "1.0.0",
 		BrokerURL:                  pactBrokerURL,
@@ -123,29 +127,45 @@ func TestProvider(t *testing.T) {
 		BrokerPassword:             pactPass,
 		PublishVerificationResults: true,
 		AfterEach: func() error {
-			baskets.Reset()
-			products.Reset()
-			stores.Reset()
+			orders.Reset()
 			return nil
 		},
 		StateHandlers: map[string]models.StateHandler{
-			"a basket exists": func(setup bool, state models.ProviderState) (models.ProviderStateResponse, error) {
-				basket := domain.NewBasket("basket-id")
-				if v, exists := state.Parameters["id"]; exists {
-					basket = domain.NewBasket(v.(string))
-				}
-				basket.Items = map[string]domain.Item{}
-				basket.UserID = "user-id"
-				if v, exists := state.Parameters["userId"]; exists {
-					basket.UserID = v.(string)
-				}
-				basket.Status = domain.BasketIsOpen
-				if v, exists := state.Parameters["status"]; exists && domain.BasketStatus(v.(string)).String() != "" {
-					basket.Status = domain.BasketStatus(v.(string))
-				}
-				baskets.Reset(basket)
+			"create an order": func(setup bool, state models.ProviderState) (models.ProviderStateResponse, error) {
+				//storeID := "store-id"
+				//if v, exists := state.Parameters["id"]; exists {
+				//	storeID = v.(string)
+				//}
+				////stores.Reset(store)
+				//domainMall := &domain.MallStore{
+				//	ID:       storeID,
+				//	Name:     "store-name",
+				//	Location: "store-location",
+				//}
+				orders.Reset()
+				return nil, nil
+			},
+			"complete an order": func(setup bool, state models.ProviderState) (models.ProviderStateResponse, error) {
+				order := getFakeOrder()
+				orders.Reset(order)
 				return nil, nil
 			},
 		},
 	}))
+}
+
+func getFakeOrder() *domain.Order {
+	order := domain.NewOrder("order-id")
+	order.UserID = "user-id"
+	order.PaymentID = "payment-id"
+	order.InvoiceID = "invoice-id"
+	order.Items = []domain.Item{{
+		StoreID:     "store-id",
+		StoreName:   "store-name",
+		ProductID:   "product-id",
+		ProductName: "product-name",
+		Price:       10,
+		Quantity:    2,
+	}}
+	return order
 }

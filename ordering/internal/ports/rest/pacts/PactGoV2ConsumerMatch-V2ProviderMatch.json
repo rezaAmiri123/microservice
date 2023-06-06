@@ -1,0 +1,121 @@
+{
+  "consumer": {
+    "name": "api-consumer-match"
+  },
+  "interactions": [
+    {
+      "description": "A request to create an order",
+      "providerState": "create an order",
+      "request": {
+        "body": {
+          "items": [
+            {
+              "storeId": "store-id",
+              "productId": "product-id",
+              "storeName": "store-name",
+              "productName": "product-name",
+              "price": 10,
+              "quantity": 2
+            }
+          ],
+          "userId": "user-id",
+          "paymentId": "payment-id"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+
+          "$.body.userId": {
+            "match": "type"
+          },
+          "$.body.paymentId": {
+            "match": "type"
+          },
+          "$.body.items[0].storeId": {
+            "match": "type"
+          },
+          "$.body.items[0].productId": {
+            "match": "type"
+          },
+          "$.header.$.Authorization[0]": {
+            "match": "type"
+          }
+        },
+        "method": "POST",
+        "path": "/v1/api/ordering/create_order"
+      },
+      "response": {
+        "body": {
+          "id": "order-id"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.header.$['Content-Type'][0]": {
+            "match": "regex",
+            "regex": "application\\/json"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "A request to complete an order",
+      "providerState": "complete an order",
+      "request": {
+        "body": {
+          "id": "order-id",
+          "invoiceId": "invoice-id"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.invoiceId": {
+            "match": "type"
+          },
+          "$.header.$.Authorization[0]": {
+            "match": "type"
+          }
+        },
+        "method": "POST",
+        "path": "/v1/api/ordering/complete_order"
+      },
+      "response": {
+        "body": {},
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "$.header.$['Content-Type'][0]": {
+            "match": "regex",
+            "regex": "application\\/json"
+          }
+        },
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.4",
+      "mockserver": "0.9.8",
+      "models": "1.0.2"
+    },
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  },
+  "provider": {
+    "name": "api-provider-match"
+  }
+}

@@ -97,8 +97,8 @@ func TestStoresConsumer(t *testing.T) {
 				tc.on(m)
 			}
 			handlers := integrationHandlers[ddd.Event]{m.stores, m.products}
-			msgconsumerFn := func(contents v4.MessageContents) error {
-				event := contents.Content.(*rawEvent)
+			msgconsumerFn := func(contents v4.AsynchronousMessage) error {
+				event := contents.Body.(*rawEvent)
 
 				data, err := json.Marshal(event.Payload)
 				if err != nil {

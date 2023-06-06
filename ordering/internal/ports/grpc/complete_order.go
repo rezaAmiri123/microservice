@@ -12,16 +12,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s serverTx) CompleteOrder(ctx context.Context, request *orderingpb.CompleteOrderRequest) (resp *orderingpb.CompleteOrderResponse, err error) {
-	ctx = s.c.Scoped(ctx)
-	//defer func(tx *sql.Tx) {
-	//	err = s.closeTx(tx, err)
-	//}(di.Get(ctx, constants.DatabaseTransactionKey).(*sql.Tx))
-
-	next := s.getNextServer()
-	return next.CompleteOrder(ctx, request)
-}
-
 func (s server) CompleteOrder(ctx context.Context, request *orderingpb.CompleteOrderRequest) (*orderingpb.CompleteOrderResponse, error) {
 	span := trace.SpanFromContext(ctx)
 

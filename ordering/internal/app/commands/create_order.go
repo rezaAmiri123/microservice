@@ -36,15 +36,10 @@ func NewCreateOrderHandler(
 }
 
 func (h CreateOrderHandler) CreateOrder(ctx context.Context, cmd CreateOrder) error {
-	//span, ctx := opentracing.StartSpanFromContext(ctx, "CreateOrderHandler.Handle")
-	//defer span.Finish()
-
-	//order, err := h.orders.Load(ctx, cmd.ID)
-	//if err != nil {
-	//	return err
-	//}
-
-	order := domain.NewOrder(cmd.ID)
+	order, err := h.orders.Load(ctx, cmd.ID)
+	if err != nil {
+		return err
+	}
 
 	event, err := order.CreateOrder(cmd.UserID, cmd.PaymentID, cmd.Items)
 	if err != nil {

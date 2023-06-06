@@ -1,0 +1,135 @@
+{
+  "consumer": {
+    "name": "orders-sub"
+  },
+  "messages": [
+    {
+      "contents": {
+        "Name": "ordersapi.OrderCreated",
+        "Payload": {
+          "id": "order-id",
+          "user_id": "user-id",
+          "payment_id":"payment-id",
+          "items": [{
+            "store_id": "store-id",
+            "product_id":"product-id",
+            "price": 10,
+            "quantity": 2
+          }]
+        }
+      },
+      "description": "a OrderCreated message",
+      "matchingRules": {
+        "body": {
+          "$.Payload": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        }
+      },
+      "metadata": {
+        "contentType": "application/json",
+        "subject": "mallbots.ordering.events.Order"
+      }
+    },
+    {
+      "contents": {
+        "Name": "ordersapi.OrderReadied",
+        "Payload": {
+          "id": "order-id",
+          "user_id": "user-id",
+          "payment_id":"payment-id",
+          "total": 20
+        }
+      },
+      "description": "a OrderReadied message",
+      "matchingRules": {
+        "body": {
+          "$.Payload": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        }
+      },
+      "metadata": {
+        "contentType": "application/json",
+        "subject": "mallbots.ordering.events.Order"
+      }
+    },
+    {
+      "contents": {
+        "Name": "ordersapi.OrderCompleted",
+        "Payload": {
+          "id": "order-id",
+          "user_id": "user-id",
+          "invoice_id":"invoice-id"
+        }
+      },
+      "description": "a OrderCompleted message",
+      "matchingRules": {
+        "body": {
+          "$.Payload": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        }
+      },
+      "metadata": {
+        "contentType": "application/json",
+        "subject": "mallbots.ordering.events.Order"
+      }
+    },
+    {
+      "contents": {
+        "Name": "ordersapi.OrderCanceled",
+        "Payload": {
+          "id": "order-id",
+          "user_id": "user-id",
+          "payment_id":"payment-id"
+        }
+      },
+      "description": "a OrderCanceled message",
+      "matchingRules": {
+        "body": {
+          "$.Payload": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        }
+      },
+      "metadata": {
+        "contentType": "application/json",
+        "subject": "mallbots.ordering.events.Order"
+      }
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.4",
+      "mockserver": "0.9.8",
+      "models": "1.0.2"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "orders-pub"
+  }
+}

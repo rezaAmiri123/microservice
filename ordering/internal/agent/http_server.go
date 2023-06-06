@@ -5,23 +5,26 @@ import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rezaAmiri123/microservice/ordering/internal/constants"
 	"github.com/rezaAmiri123/microservice/ordering/internal/ports/rest"
-	"github.com/rezaAmiri123/microservice/ordering/orderingpb"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
 	"github.com/rezaAmiri123/microservice/pkg/web"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"net/http"
 )
 
 func (a *Agent) setupHttpServer() error {
 	mux := chi.NewMux()
-	a.setupSwagger(mux)
-	if err := a.setupGrpcEndpoint(mux); err != nil {
+	mux.Use(middleware.Heartbeat("/liveness"))
+	mux.Method("GET", "/metrics", promhttp.Handler())
+	mux.Mount("/", http.FileServer(http.FS(web.WebUI)))
+	//a.setupSwagger(mux)
+	if err := rest.RegisterSwagger(mux); err != nil {
+		return err
+	}
+	grpcAddress := fmt.Sprintf("%s:%d", a.Config.GRPCServerAddr, a.Config.GRPCServerPort)
+	if err := rest.RegisterGateway(context.Background(), mux, grpcAddress); err != nil {
 		return err
 	}
 	webServer := &http.Server{
@@ -42,25 +45,4 @@ func (a *Agent) setupHttpServer() error {
 	}()
 	return nil
 
-}
-func (a *Agent) setupSwagger(mux *chi.Mux) {
-	mux.Use(middleware.Heartbeat("/liveness"))
-	mux.Method("GET", "/metrics", promhttp.Handler())
-	mux.Mount("/", http.FileServer(http.FS(web.WebUI)))
-	const specRoot = "/ordering-spec/"
-	mux.Mount(specRoot, http.StripPrefix(specRoot, http.FileServer(http.FS(rest.SwaggerUI))))
-}
-func (a *Agent) setupGrpcEndpoint(mux *chi.Mux) error {
-	grpcAddress := fmt.Sprintf("%s:%d", a.Config.GRPCServerAddr, a.Config.GRPCServerPort)
-	gateway := runtime.NewServeMux()
-	err := orderingpb.RegisterOrderingServiceHandlerFromEndpoint(context.Background(), gateway, grpcAddress, []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	})
-	if err != nil {
-		return err
-	}
-
-	// mount the GRPC gateway
-	mux.Mount("/v1", gateway)
-	return nil
 }

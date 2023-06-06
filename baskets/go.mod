@@ -6,7 +6,7 @@ replace github.com/rezaAmiri123/microservice/pkg => ../pkg
 
 replace github.com/rezaAmiri123/microservice/stores => ../stores
 
-replace github.com/pact-foundation/pact-go/v2 => github.com/pact-foundation/pact-go/v2 v2.0.0-beta.14
+//replace github.com/pact-foundation/pact-go/v2 => github.com/pact-foundation/pact-go/v2 v2.0.0-beta.14
 
 require (
 	github.com/docker/go-connections v0.4.0
@@ -23,7 +23,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/nats-io/nats.go v1.26.0
 	github.com/opentracing/opentracing-go v1.2.0
-	github.com/pact-foundation/pact-go/v2 v2.0.0-beta.18
+	github.com/pact-foundation/pact-go/v2 v2.0.0-beta.20
 	github.com/prometheus/client_golang v1.15.1
 	github.com/rezaAmiri123/microservice/pkg v0.0.0-20230524145123-e0a5d5b6e364
 	github.com/rezaAmiri123/microservice/stores v0.0.0-00010101000000-000000000000
@@ -83,6 +83,7 @@ require (
 	github.com/hashicorp/go-version v1.5.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.14.0 // indirect
 	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa // indirect
@@ -124,6 +125,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spf13/afero v1.9.5 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
+	github.com/spf13/cobra v1.1.3 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect

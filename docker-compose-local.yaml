@@ -167,6 +167,7 @@ services:
       - postgesql
     environment:
       PACT_BROKER_PORT: '9292'
+      PACT_DO_NOT_TRACK: 'true'
       PACT_BROKER_DATABASE_URL: 'postgres://pactuser:pactpass@postgesql/pactdb'
       # PACT_BROKER_LOG_LEVEL: INFO
       # PACT_BROKER_SQL_LOG_LEVEL: DEBUG

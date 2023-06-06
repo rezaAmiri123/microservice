@@ -22,8 +22,10 @@ const (
 )
 
 func Registrations(reg registry.Registry) (err error) {
-	serde := serdes.NewProtoSerde(reg)
+	return RegistrationsWithSerde(serdes.NewProtoSerde(reg))
+}
 
+func RegistrationsWithSerde(serde registry.Serde) (err error) {
 	// Order events
 	if err = serde.Register(&OrderCreated{}); err != nil {
 		return err
