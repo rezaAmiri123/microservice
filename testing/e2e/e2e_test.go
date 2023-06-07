@@ -95,6 +95,7 @@ func TestEndToEnd(t *testing.T) {
 		&basketsFeature{},
 		&usersFeature{},
 		&storesFeature{},
+		&paymentsFeature{},
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -103,9 +104,10 @@ func TestEndToEnd(t *testing.T) {
 	featurePaths := []string{
 		"features/baskets",
 		"features/users",
-		//"features/kiosk",
-		//"features/orders",
+		"features/kiosk",
+		"features/orders",
 		"features/stores",
+		"features/payments",
 	}
 
 	suite := godog.TestSuite{
@@ -155,6 +157,9 @@ func iReceiveAError(ctx context.Context, msg string) error {
 }
 
 func setLastResponseAndError(ctx context.Context, resp any, err error) context.Context {
+	if err != nil {
+		fmt.Println("setLastResponseAndError: ", err.Error())
+	}
 	return context.WithValue(
 		context.WithValue(ctx, lastResponseKey{}, resp),
 		lastErrorKey{}, err,

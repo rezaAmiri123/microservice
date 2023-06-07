@@ -15,7 +15,7 @@ import (
 	"github.com/stackus/errors"
 )
 
-type userIDKey = struct{}
+type userIDKey struct{}
 
 type usersFeature struct {
 	client *usersclient.UserServiceAPI

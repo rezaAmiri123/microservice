@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"github.com/rezaAmiri123/microservice/baskets/internal/app/commands"
+	"github.com/rezaAmiri123/microservice/baskets/internal/app/queries"
 	"github.com/rezaAmiri123/microservice/baskets/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -35,6 +36,7 @@ type (
 		CancelBasket(ctx context.Context, cancel commands.CancelBasket) error
 	}
 	Queries interface {
+		GetBasket(ctx context.Context, cmd queries.GetBasket) (*domain.Basket, error)
 	}
 	Application struct {
 		appCommands
@@ -47,6 +49,7 @@ type (
 		commands.CancelBasketHandler
 	}
 	appQueries struct {
+		queries.GetBasketHandler
 	}
 )
 
@@ -65,6 +68,9 @@ func New(
 			CheckoutBasketHandler: commands.NewCheckoutBasketHandler(baskets, publisher, logger),
 			AddItemHandler:        commands.NewAddItemHandler(baskets, stores, products, publisher, logger),
 			CancelBasketHandler:   commands.NewCancelBasketHandler(baskets, publisher, logger),
+		},
+		appQueries: appQueries{
+			GetBasketHandler: queries.NewGetBasketHandler(baskets, logger),
 		},
 	}
 }

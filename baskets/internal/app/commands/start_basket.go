@@ -2,8 +2,6 @@ package commands
 
 import (
 	"context"
-	"database/sql"
-	"errors"
 	"github.com/rezaAmiri123/microservice/baskets/internal/domain"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
@@ -35,14 +33,11 @@ func (h StartBasketHandler) StartBasket(ctx context.Context, cmd StartBasket) er
 	//defer span.Finish()
 
 	basket, err := h.baskets.Load(ctx, cmd.ID)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			basket = domain.NewBasket(cmd.ID)
-		} else {
-			return err
-		}
 
+	if err != nil {
+		return err
 	}
+
 	event, err := basket.Start(cmd.UserID)
 	if err != nil {
 		return err

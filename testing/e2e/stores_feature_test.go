@@ -138,7 +138,6 @@ func (c *storesFeature) iCreateTheStoreCalled(ctx context.Context, name string) 
 		return ctx
 	}
 	ctx = context.WithValue(ctx, storeIDKey{}, resp.Payload.ID)
-	fmt.Println("store id = ", ctx.Value(storeIDKey{}))
 	return ctx
 }
 
@@ -201,7 +200,6 @@ func (c *storesFeature) iCreateTheProductCalledWithPrice(ctx context.Context, na
 
 	ctx = addProduct(ctx, resp.Payload.ID, name)
 	ctx = context.WithValue(ctx, productIDKey{}, resp.Payload.ID)
-	fmt.Println("product id = ", ctx.Value(productIDKey{}))
 	return ctx, nil
 }
 

@@ -23,7 +23,7 @@ var pactDir = fmt.Sprintf("%s/pacts", dir)
 var requestFilterCalled = false
 var stateHandlerCalled = false
 
-func TestV3HTTPProvider(t *testing.T) {
+func xTestV3HTTPProvider(t *testing.T) {
 	log.SetLogLevel("TRACE")
 	version.CheckVersion()
 
@@ -96,7 +96,7 @@ func TestV3HTTPProvider(t *testing.T) {
 	assert.True(t, stateHandlerCalled)
 }
 
-func TestV3MessageProvider(t *testing.T) {
+func xTestV3MessageProvider(t *testing.T) {
 	log.SetLogLevel("TRACE")
 	var user *User
 

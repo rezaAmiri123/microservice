@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"fmt"
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/es"
 	"github.com/stackus/errors"
@@ -79,6 +80,8 @@ func (b *Basket) Cancel() (ddd.Event, error) {
 }
 
 func (b *Basket) Checkout(paymentID string) (ddd.Event, error) {
+	fmt.Println("basket status: ", *b)
+	fmt.Println("basket items: ", b.Items)
 	if !b.IsOpen() {
 		return nil, ErrBasketCannotBeModified
 	}

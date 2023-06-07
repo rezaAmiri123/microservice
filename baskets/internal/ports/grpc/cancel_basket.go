@@ -12,16 +12,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s serverTx) CancelBasket(ctx context.Context, request *basketspb.CancelBasketRequest) (resp *basketspb.CancelBasketResponse, err error) {
-	ctx = s.c.Scoped(ctx)
-	//defer func(tx *sql.Tx) {
-	//	err = s.closeTx(tx, err)
-	//}(di.Get(ctx, constants.DatabaseTransactionKey).(*sql.Tx))
-
-	next := s.getNextServer()
-	return next.CancelBasket(ctx, request)
-}
-
 func (s server) CancelBasket(ctx context.Context, request *basketspb.CancelBasketRequest) (*basketspb.CancelBasketResponse, error) {
 	span := trace.SpanFromContext(ctx)
 

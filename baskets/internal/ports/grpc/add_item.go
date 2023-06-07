@@ -13,16 +13,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s serverTx) AddItem(ctx context.Context, request *basketspb.AddItemRequest) (resp *basketspb.AddItemResponse, err error) {
-	ctx = s.c.Scoped(ctx)
-	//defer func(tx *sql.Tx) {
-	//	err = s.closeTx(tx, err)
-	//}(di.Get(ctx, constants.DatabaseTransactionKey).(*sql.Tx))
-
-	next := s.getNextServer()
-	return next.AddItem(ctx, request)
-}
-
 func (s server) AddItem(ctx context.Context, request *basketspb.AddItemRequest) (*basketspb.AddItemResponse, error) {
 	span := trace.SpanFromContext(ctx)
 

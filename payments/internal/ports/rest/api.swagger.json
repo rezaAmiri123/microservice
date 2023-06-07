@@ -24,7 +24,7 @@
       "post": {
         "summary": "Adjust an invoice",
         "description": "Use this API to adjust an invoice",
-        "operationId": "PaymentsService_AdjustInvoice",
+        "operationId": "adjustInvoice",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -50,7 +50,7 @@
           }
         ],
         "tags": [
-          "PaymentsService"
+          "Invoice"
         ]
       }
     },
@@ -58,7 +58,7 @@
       "post": {
         "summary": "Authorize a payment",
         "description": "Use this API to authorize a payment",
-        "operationId": "PaymentsService_AuthorizePayment",
+        "operationId": "authorizePayment",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -84,7 +84,7 @@
           }
         ],
         "tags": [
-          "PaymentsService"
+          "Payment"
         ]
       }
     },
@@ -92,7 +92,7 @@
       "post": {
         "summary": "Cancel an invoice",
         "description": "Use this API to cancel an invoice",
-        "operationId": "PaymentsService_CancelInvoice",
+        "operationId": "cancelInvoice",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -118,7 +118,7 @@
           }
         ],
         "tags": [
-          "PaymentsService"
+          "Invoice"
         ]
       }
     },
@@ -126,7 +126,7 @@
       "post": {
         "summary": "Confirm a payment",
         "description": "Use this API to confirm a payment",
-        "operationId": "PaymentsService_ConfirmPayment",
+        "operationId": "confirmPayment",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -152,7 +152,7 @@
           }
         ],
         "tags": [
-          "PaymentsService"
+          "Payment"
         ]
       }
     },
@@ -160,7 +160,7 @@
       "post": {
         "summary": "Create new invoice",
         "description": "Use this API to create a new invoice",
-        "operationId": "PaymentsService_CreateInvoice",
+        "operationId": "createInvoice",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -186,7 +186,7 @@
           }
         ],
         "tags": [
-          "PaymentsService"
+          "Invoice"
         ]
       }
     },
@@ -194,7 +194,7 @@
       "post": {
         "summary": "Pay an invoice",
         "description": "Use this API to pay an invoice",
-        "operationId": "PaymentsService_PayInvoice",
+        "operationId": "payInvoice",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -220,7 +220,7 @@
           }
         ],
         "tags": [
-          "PaymentsService"
+          "Invoice"
         ]
       }
     }

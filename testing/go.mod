@@ -8,15 +8,18 @@ replace github.com/rezaAmiri123/microservice/baskets => ../baskets
 
 replace github.com/rezaAmiri123/microservice/users => ../users
 
+replace github.com/rezaAmiri123/microservice/payments => ../payments
+
 require (
 	github.com/cucumber/godog v0.12.6
 	github.com/go-openapi/runtime v0.26.0
 	github.com/go-openapi/strfmt v0.21.7
 	github.com/google/uuid v1.3.0
 	github.com/jackc/pgx/v4 v4.18.1
-	github.com/pact-foundation/pact-go/v2 v2.0.0-beta.18
+	github.com/pact-foundation/pact-go/v2 v2.0.0-beta.20
 	github.com/rdumont/assistdog v0.0.0-20201106100018-168b06230d14
 	github.com/rezaAmiri123/microservice/baskets v0.0.0-00010101000000-000000000000
+	github.com/rezaAmiri123/microservice/payments v0.0.0-00010101000000-000000000000
 	github.com/rezaAmiri123/microservice/stores v0.0.0-00010101000000-000000000000
 	github.com/rezaAmiri123/microservice/users v0.0.0-00010101000000-000000000000
 	github.com/stackus/errors v0.1.5

@@ -14,7 +14,7 @@ import (
 	"github.com/stackus/errors"
 )
 
-type basketIDKey = struct{}
+type basketIDKey struct{}
 
 type basketsFeature struct {
 	client *basketsclient.BasketServiceAPI
@@ -48,6 +48,9 @@ func (c *basketsFeature) register(ctx *godog.ScenarioContext) {
 
 	ctx.Step(`^I add the items$`, c.iAddTheItems)
 	ctx.Step(`^(?:I )?(?:ensure |expect )?the items (?:were|are) added$`, c.expectTheItemsWereAdded)
+
+	ctx.Step(`^I check out the basket$`, c.iCheckOutTheBasket)
+	ctx.Step(`^(?:I )?(?:ensure |expect )?the basket (?:was|is) checked out$`, c.expectTheBasketWasCheckedOut)
 }
 
 func (c *basketsFeature) reset() {
@@ -68,19 +71,20 @@ func (c *basketsFeature) reset() {
 
 func (c *basketsFeature) iStartANewBasket(ctx context.Context) (context.Context, error) {
 	userID, err := lastUserID(ctx)
-	fmt.Println("basket: user id: ", userID)
 	if err != nil {
 		return ctx, err
 	}
+
 	resp, err := c.client.Basket.StartBasket(basket.NewStartBasketParams().WithBody(&models.BasketspbStartBasketRequest{
 		UserID: userID,
 	}))
+
 	ctx = setLastResponseAndError(ctx, resp, err)
 	if err != nil {
 		return ctx, nil
 	}
+
 	ctx = context.WithValue(ctx, basketIDKey{}, resp.Payload.ID)
-	fmt.Println("basket id = ", ctx.Value(basketIDKey{}))
 	return ctx, nil
 
 }
@@ -97,9 +101,8 @@ func (c *basketsFeature) iAddTheItems(ctx context.Context, table *godog.Table) (
 		Name     string
 		Quantity int
 	}
-	fmt.Println("iAddTheItems Tables")
+
 	basketID, err := lastBasketID(ctx)
-	fmt.Println("basket id: ", basketID)
 	if err != nil {
 		return ctx, err
 	}
@@ -109,15 +112,11 @@ func (c *basketsFeature) iAddTheItems(ctx context.Context, table *godog.Table) (
 	}
 	for _, i := range items.([]*Item) {
 		productID := getProductID(ctx, i.Name)
-		fmt.Println("product id: ", productID)
 		resp, err := c.client.Item.AddItem(item.NewAddItemParams().WithBody(&models.BasketspbAddItemRequest{
 			ID:        basketID,
 			ProductID: productID,
 			Quantity:  int32(i.Quantity),
 		}))
-		if err != nil {
-			fmt.Println("got error: ", err.Error())
-		}
 		ctx = setLastResponseAndError(ctx, resp, err)
 		if err != nil {
 			break
@@ -129,6 +128,31 @@ func (c *basketsFeature) iAddTheItems(ctx context.Context, table *godog.Table) (
 
 func (c *basketsFeature) expectTheItemsWereAdded(ctx context.Context) error {
 	if err := lastResponseWas(ctx, &item.AddItemOK{}); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *basketsFeature) iCheckOutTheBasket(ctx context.Context) context.Context {
+	basketID, err := lastBasketID(ctx)
+	if err != nil {
+		return ctx
+	}
+	paymentID, err := lastPaymentID(ctx)
+	if err != nil {
+		return ctx
+	}
+	resp, err := c.client.Basket.CheckoutBasket(basket.NewCheckoutBasketParams().WithBody(&models.BasketspbCheckoutBasketRequest{
+		ID:        basketID,
+		PaymentID: paymentID,
+	}))
+	ctx = setLastResponseAndError(ctx, resp, err)
+
+	return ctx
+}
+
+func (c *basketsFeature) expectTheBasketWasCheckedOut(ctx context.Context) error {
+	if err := lastResponseWas(ctx, &basket.CheckoutBasketOK{}); err != nil {
 		return err
 	}
 	return nil

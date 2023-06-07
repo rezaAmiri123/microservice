@@ -12,16 +12,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s serverTx) CheckoutBasket(ctx context.Context, request *basketspb.CheckoutBasketRequest) (resp *basketspb.CheckoutBasketResponse, err error) {
-	ctx = s.c.Scoped(ctx)
-	//defer func(tx *sql.Tx) {
-	//	err = s.closeTx(tx, err)
-	//}(di.Get(ctx, constants.DatabaseTransactionKey).(*sql.Tx))
-
-	next := s.getNextServer()
-	return next.CheckoutBasket(ctx, request)
-}
-
 func (s server) CheckoutBasket(ctx context.Context, request *basketspb.CheckoutBasketRequest) (*basketspb.CheckoutBasketResponse, error) {
 	span := trace.SpanFromContext(ctx)
 

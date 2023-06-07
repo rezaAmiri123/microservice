@@ -49,3 +49,16 @@ migrateforce:
 
 psql:
 	psql -h $(DB_ADDR) -U $(DB_USER) -d $(DB_NAME) -W
+
+generate:
+	mockery --quiet --dir ./internal -r --all --inpackage --case underscore
+	mockery --quiet --dir ./paymentspb -r --all --inpackage --case underscore
+	swagger generate client -q -f ./internal/ports/rest/api.swagger.json -c paymentsclient -m paymentsclient/models --with-flatten=remove-unused
+
+test_coverage:
+	go test --cover ./...
+
+test_coverage_html:
+	go test -v -coverprofile /tmp/$(SERVICE).cover.out ./...
+	go tool cover -html /tmp/$(SERVICE).cover.out -o /tmp/$(SERVICE).cover.html
+	echo html file path: /tmp/$(SERVICE).cover.html

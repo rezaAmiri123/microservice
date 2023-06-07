@@ -28,6 +28,8 @@ service PaymentsService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to authorize a payment";
       summary: "Authorize a payment";
+      operation_id: "authorizePayment";
+      tags:"Payment";
     };
   };
   rpc ConfirmPayment(ConfirmPaymentRequest) returns (ConfirmPaymentResponse) {
@@ -38,6 +40,8 @@ service PaymentsService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to confirm a payment";
       summary: "Confirm a payment";
+      operation_id: "confirmPayment";
+      tags:"Payment";
     };
   };
   rpc CreateInvoice(CreateInvoiceRequest) returns (CreateInvoiceResponse) {
@@ -48,6 +52,8 @@ service PaymentsService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to create a new invoice";
       summary: "Create new invoice";
+      operation_id: "createInvoice";
+      tags:"Invoice";
     };
   };
   rpc AdjustInvoice(AdjustInvoiceRequest) returns (AdjustInvoiceResponse) {
@@ -58,6 +64,8 @@ service PaymentsService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to adjust an invoice";
       summary: "Adjust an invoice";
+      operation_id: "adjustInvoice";
+      tags:"Invoice";
     };
   };
   rpc PayInvoice(PayInvoiceRequest) returns (PayInvoiceResponse) {
@@ -68,6 +76,8 @@ service PaymentsService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to pay an invoice";
       summary: "Pay an invoice";
+      operation_id: "payInvoice";
+      tags:"Invoice";
     };
   };
   rpc CancelInvoice(CancelInvoiceRequest) returns (CancelInvoiceResponse) {
@@ -78,6 +88,8 @@ service PaymentsService {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to cancel an invoice";
       summary: "Cancel an invoice";
+      operation_id: "cancelInvoice";
+      tags:"Invoice";
     };
   };
 }
