@@ -14,8 +14,10 @@ const (
 )
 
 func Registration(reg registry.Registry) error {
-	serde := serdes.NewProtoSerde(reg)
+	return RegistrationWithSerde(serdes.NewProtoSerde(reg))
+}
 
+func RegistrationWithSerde(serde registry.Serde) error {
 	// basket events
 	if err := serde.Register(&BasketStarted{}); err != nil {
 		return err

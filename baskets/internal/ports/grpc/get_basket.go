@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"fmt"
 	"github.com/rezaAmiri123/microservice/baskets/basketspb"
 	"github.com/rezaAmiri123/microservice/baskets/internal/app/queries"
 	"github.com/rezaAmiri123/microservice/pkg/errorsotel"
@@ -28,8 +27,7 @@ func (s server) GetBasket(ctx context.Context, request *basketspb.GetBasketReque
 		span.SetStatus(codes.Error, err.Error())
 		return nil, err
 	}
-	fmt.Println("userid: ", basket.UserID)
-	fmt.Println("status: ", basket.Status)
+
 	resp := &basketspb.GetBasketResponse{
 		Basket: s.basketFromDomain(basket),
 	}

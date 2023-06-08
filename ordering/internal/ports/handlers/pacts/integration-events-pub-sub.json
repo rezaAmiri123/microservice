@@ -1,0 +1,94 @@
+{
+  "consumer": {
+    "name": "ordering-sub"
+  },
+  "interactions": [
+    {
+      "contents": {
+        "content": {
+          "Name": "basketsapi.BasketCheckedOut",
+          "Payload": {
+            "id": "order-id",
+            "user_id": "user-id",
+            "payment_id": "payment-id",
+            "items": [{
+              "store_id": "store-id",
+              "product_id": "product-id",
+              "store_name": "store-name",
+              "product_name": "product-name",
+              "price": 20,
+              "quantity": 2
+            }]
+          }
+        },
+        "contentType": "application/json",
+        "encoded": false
+      },
+      "description": "a BasketCheckedOut message",
+      "key": "925d0b4b1cee572b",
+      "matchingRules": {
+        "body": {
+          "$.Payload": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        }
+      },
+      "metadata": {
+        "contentType": "application/json",
+        "subject": "mallbots.baskets.events.Basket"
+      },
+      "pending": false,
+      "type": "Asynchronous/Messages"
+    },
+    {
+      "contents": {
+        "content": {
+          "Name": "storesapi.StoreRebranded",
+          "Payload": {
+            "id": "store-id",
+            "name": "RebrandedStore"
+          }
+        },
+        "contentType": "application/json",
+        "encoded": false
+      },
+      "description": "a StoreRebranded message",
+      "key": "f32b0ec4a4295ece",
+      "matchingRules": {
+        "body": {
+          "$.Payload": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        }
+      },
+      "metadata": {
+        "contentType": "application/json",
+        "subject": "mallbots.stores.events.Store"
+      },
+      "pending": false,
+      "type": "Asynchronous/Messages"
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.4",
+      "models": "1.0.13"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "ordering-pub"
+  }
+}
