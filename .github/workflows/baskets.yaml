@@ -55,9 +55,10 @@ jobs:
       - name: Build $SERVICE microservice
         env:
           # REGISTRY: ${{ steps.ecr.outputs.registry }}
+          REGISTRY: ${{secrets.DOCKER_USER}}
           GITHUB_SHA: ${{ github.sha }}
           DOCKERFILE: docker/Dockerfile.microservices
         run: |
           # docker build -t $REGISTRY/$SERVICE:$GITHUB_SHA -t $REGISTRY/$SERVICE:latest --file $DOCKERFILE --build-arg=service=$SERVICE .
           docker build -t $SERVICE:latest --file $DOCKERFILE --build-arg=service=$SERVICE .
-          docker push $SERVICE:latest
+          docker push $REGISTRY/$SERVICE:latest
