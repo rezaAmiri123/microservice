@@ -8,9 +8,11 @@ on:
     #   - internal/**
     #   - stores/storespb/**
 
-env:
-  SERVICE: baskets
+# env:
+#   SERVICE: baskets
 
 jobs:
-  call-workflow:
+  workflow_call:
     uses: ./.github/workflows/common.yaml
+    with:
+      SERVICE: baskets

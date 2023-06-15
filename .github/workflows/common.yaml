@@ -1,3 +1,11 @@
+name: Reusable workflow 
+
+on:
+  workflow_call:
+    env:
+      SERVICE:
+        required: true
+        type: string
 
 jobs:
   reusable_test:
