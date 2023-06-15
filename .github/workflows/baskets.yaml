@@ -17,9 +17,9 @@ jobs:
     # if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags')
     steps:
       - uses: actions/checkout@v2
-        # working-directory: ./baskets
       - name: Run Unit Tests
-        run: echo hi
+        working-directory: ./baskets
+        run: go test --cover ./...
 
   # build:
   #   name: Baskets microservice deployment to EKS cluster
