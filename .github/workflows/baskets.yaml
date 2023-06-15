@@ -60,5 +60,5 @@ jobs:
           DOCKERFILE: docker/Dockerfile.microservices
         run: |
           # docker build -t $REGISTRY/$SERVICE:$GITHUB_SHA -t $REGISTRY/$SERVICE:latest --file $DOCKERFILE --build-arg=service=$SERVICE .
-          docker build -t $SERVICE:latest --file $DOCKERFILE --build-arg=service=$SERVICE .
-          docker push $REGISTRY/$SERVICE
+          docker build -t $REGISTRY/$SERVICE:latest --file $DOCKERFILE --build-arg=service=$SERVICE .
+          docker push $REGISTRY/$SERVICE:latest
