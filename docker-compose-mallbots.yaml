@@ -108,7 +108,7 @@ services:
       - nats
       - postgesql
       - collector
-      - mongodb
+      - mongodb 
     networks: [ "microservice" ]
     # profiles: [ microservices ]
     command: [ "./wait-for", "microservice_postgesql:5432", "--", "/mallbots/service" ]
