@@ -5,22 +5,22 @@ import (
 )
 
 type Order struct {
-	OrderID   string
-	UserID    string
-	Username  string
-	Items     []Item
-	Total     float64
-	Status    string
-	CreatedAt time.Time
+	OrderID   string    `bson:"_id"`
+	UserID    string    `bson:"user_id"`
+	Username  string    `bson:"username"`
+	Items     []Item    `bson:"items"`
+	Total     float64   `bson:"total"`
+	Status    string    `bson:"status"`
+	CreatedAt time.Time `bson:"created_at"`
 }
 
 type Item struct {
-	ProductID   string
-	StoreID     string
-	ProductName string
-	StoreName   string
-	Price       float64
-	Quantity    int
+	ProductID   string  `bson:"product_id"`
+	StoreID     string  `bson:"store_id"`
+	ProductName string  `bson:"product_name"`
+	StoreName   string  `bson:"store_name"`
+	Price       float64 `bson:"price"`
+	Quantity    int     `bson:"quantity"`
 }
 
 type (

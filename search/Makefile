@@ -50,3 +50,7 @@ migrateforce:
 
 psql:
 	psql -h $(DB_ADDR) -U $(DB_USER) -d $(DB_NAME) -W
+
+mongo:
+	mongosh -u admin -p admin
+# db.users_cache.find()

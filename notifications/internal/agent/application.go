@@ -1,23 +1,23 @@
 package agent
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/rezaAmiri123/microservice/notifications/internal/adapters/grpc"
-	"github.com/rezaAmiri123/microservice/notifications/internal/adapters/pg"
+	mgo "github.com/rezaAmiri123/microservice/notifications/internal/adapters/mongo"
 	"github.com/rezaAmiri123/microservice/notifications/internal/app"
 	"github.com/rezaAmiri123/microservice/notifications/internal/constants"
-	"github.com/rezaAmiri123/microservice/pkg/db/postgresotel"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/pkg/logger"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func (a *Agent) setupApplication() error {
 	a.container.AddScoped(constants.UsersRepoKey, func(c di.Container) (any, error) {
 		grpcAddress := fmt.Sprintf("%s:%d", a.Config.GRPCUserClientAddr, a.Config.GRPCUserClientPort)
-		return pg.NewUserCacheRepository(
+		return mgo.NewUserCacheRepository(
+			constants.ServiceName,
 			constants.UsersCacheTableName,
-			postgresotel.Trace(c.Get(constants.DatabaseKey).(*sql.DB)),
+			c.Get(constants.DatabaseKey).(*mongo.Client),
 			grpc.NewUserRepository(grpcAddress, c.Get(constants.LoggerKey).(logger.Logger)),
 		), nil
 	})

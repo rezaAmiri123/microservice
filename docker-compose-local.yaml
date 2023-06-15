@@ -179,6 +179,20 @@ services:
       # PACT_DISABLE_SSL_VERIFICATION: 'true'
       
     networks: [ "microservice" ]
+  
+  mongodb:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGODB_DATABASE: notifications
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks: [ "microservice" ]
+
 
 volumes:
   data_container:
@@ -186,6 +200,7 @@ volumes:
   zoo_volumes:
   pgdata9:
   jsdata:
+  mongodb_data:
 
 networks:
   microservice:

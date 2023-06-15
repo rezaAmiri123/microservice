@@ -108,6 +108,7 @@ services:
       - nats
       - postgesql
       - collector
+      - mongodb
     networks: [ "microservice" ]
     # profiles: [ microservices ]
     command: [ "./wait-for", "microservice_postgesql:5432", "--", "/mallbots/service" ]
@@ -492,12 +493,26 @@ services:
     depends_on:
       - zoo1
     networks: [ "microservice" ]
+  
+  mongodb:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGODB_DATABASE: notifications
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks: [ "microservice" ]
 
 volumes:
   pgdata9:
   jsdata:
   kafka_volumes:
   zoo_volumes:
+  mongodb_data:
 
 
 networks:

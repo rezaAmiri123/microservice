@@ -29,6 +29,7 @@ const (
 	LoggerKey                   = "logger"
 	TracerKey                   = "tracer"
 	DatabaseKey                 = "database"
+	MongoDBKey                  = "mongodb"
 	HttpServerKey               = "httpServer"
 	GrpcServerKey               = "rpcServer"
 	StreamKey                   = "stream"

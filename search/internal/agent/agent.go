@@ -58,6 +58,11 @@ type Config struct {
 	PGPassword   string `mapstructure:"POSTGRES_PASSWORD"`
 	PGSearchPath string `mapstructure:"POSTGRES_SEARCH_PATH"`
 
+	//Mongo DB
+	MongoURI      string `mapstructure:"MONGO_URI"`
+	MongoUser     string `mapstructure:"MONGO_USER"`
+	MongoPassword string `mapstructure:"MONGO_PASSWORD"`
+
 	// Event Server
 	EventServerType string `mapstructure:"EVENT_SERVER_TYPE"`
 	// kafka config
@@ -118,7 +123,9 @@ func NewAgent(config Config) (*Agent, error) {
 		//a.setupRepository,
 		a.setupTracer,
 		a.setupEventServer,
+		a.setupDatabase,
 		a.setupApplication,
+		a.setupEventHandler,
 		a.setupHttpServer,
 		//a.setupAuthClient,
 		a.setupGrpcServer,
