@@ -1,4 +1,5 @@
-// /go:build contract
+//go:build contract
+
 package rest
 
 import (
