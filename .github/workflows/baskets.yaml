@@ -61,4 +61,4 @@ jobs:
         run: |
           # docker build -t $REGISTRY/$SERVICE:$GITHUB_SHA -t $REGISTRY/$SERVICE:latest --file $DOCKERFILE --build-arg=service=$SERVICE .
           docker build -t $SERVICE:latest --file $DOCKERFILE --build-arg=service=$SERVICE .
-          docker push $REGISTRY/$SERVICE:latest
+          docker push $REGISTRY/$SERVICE
