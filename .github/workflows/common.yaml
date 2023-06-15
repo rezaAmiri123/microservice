@@ -2,10 +2,14 @@ name: Reusable workflow
 
 on:
   workflow_call:
-    env:
-      SERVICE:
+    inputs:
+      service:
         required: true
         type: string
+    # env:
+    #   SERVICE:
+    #     required: true
+    #     type: string
 
 jobs:
   reusable_test:
@@ -14,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run Unit Tests
-        working-directory: ./$SERVICE
+        working-directory: ./${{ inputs.service }}
         run: |
           go mod tidy
           go test --cover ./...
@@ -48,13 +52,13 @@ jobs:
         run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
 
-      - name: Build $SERVICE microservice
+      - name: Build ${{ inputs.service }} microservice
         env:
           # REGISTRY: ${{ steps.ecr.outputs.registry }}
           REGISTRY: ${{secrets.DOCKER_USER}}
           GITHUB_SHA: ${{ github.sha }}
           DOCKERFILE: docker/Dockerfile.microservices
         run: |
-          # docker build -t $REGISTRY/$SERVICE:$GITHUB_SHA -t $REGISTRY/$SERVICE:latest --file $DOCKERFILE --build-arg=service=$SERVICE .
-          docker build -t $REGISTRY/$SERVICE:latest --file $DOCKERFILE --build-arg=service=$SERVICE .
-          docker push $REGISTRY/$SERVICE:latest
+          # docker build -t $REGISTRY/${{ inputs.service }}:$GITHUB_SHA -t $REGISTRY/${{ inputs.service }}:latest --file $DOCKERFILE --build-arg=service=${{ inputs.service }} .
+          docker build -t $REGISTRY/${{ inputs.service }}:latest --file $DOCKERFILE --build-arg=service=${{ inputs.service }} .
+          docker push $REGISTRY/${{ inputs.service }}:latest
