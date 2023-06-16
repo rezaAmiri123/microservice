@@ -14,6 +14,7 @@ on:
 jobs:
   test_call:
     strategy:
+      max-parallel: 2
       matrix:
         services: [baskets, ordering]
     uses: ./.github/workflows/test.yaml
@@ -21,12 +22,12 @@ jobs:
       service: ${{ matrix.services }}
     secrets: inherit
   
-  docker_image:
-    strategy:
-      matrix:
-        services: [baskets, ordering]
-    uses: ./.github/workflows/docker.yaml
-    # needs: test_call
-    with:
-      service: ${{ matrix.services }}
-    secrets: inherit
+  # docker_image:
+  #   strategy:
+  #     matrix:
+  #       services: [baskets, ordering]
+  #   uses: ./.github/workflows/docker.yaml
+  #   # needs: test_call
+  #   with:
+  #     service: ${{ matrix.services }}
+  #   secrets: inherit
