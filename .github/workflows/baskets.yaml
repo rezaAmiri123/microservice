@@ -12,16 +12,16 @@ on:
 #   SERVICE: baskets
 
 jobs:
-  # test_call:
-  #   strategy:
-  #     matrix:
-  #       services: [baskets, ordering]
-  #   uses: ./.github/workflows/test.yaml
-  #   with:
-  #     service: ${{ matrix.services }}
-  #   secrets: inherit
+  test_call:
+    strategy:
+      matrix:
+        services: [baskets, ordering]
+    uses: ./.github/workflows/test.yaml
+    with:
+      service: ${{ matrix.services }}
+    secrets: inherit
   
-  docker_call:
+  docker_image:
     strategy:
       matrix:
         services: [baskets, ordering]
