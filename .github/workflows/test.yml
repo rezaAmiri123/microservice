@@ -1,7 +1,7 @@
 name: Reusable workflow 
 
 on:
-  test_call:
+  workflow_call:
     inputs:
       service:
         required: true

@@ -12,14 +12,14 @@ on:
 #   SERVICE: baskets
 
 jobs:
-  test_call:
-    uses: ./.github/workflows/test/test.yml
+  test:
+    uses: ./.github/workflows/test.yml
     with:
       service: baskets
     secrets: inherit
-  build_call:
-    uses: ./.github/workflows/build/build.yml
-    needs: test_call
+  build:
+    uses: ./.github/workflows/build.yml
+    needs: test
     with:
       service: baskets
     secrets: inherit
