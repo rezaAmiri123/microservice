@@ -9,7 +9,6 @@ replace github.com/rezaAmiri123/microservice/users => ../users
 replace github.com/rezaAmiri123/microservice/ordering => ../ordering
 
 require (
-	github.com/docker/go-connections v0.4.0
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
@@ -44,6 +43,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/docker v23.0.6+incompatible // indirect
+	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect

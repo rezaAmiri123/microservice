@@ -1,10 +1,11 @@
 package domain
 
 import (
+	"time"
+
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/stackus/errors"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 )
 
 var (
@@ -58,7 +59,7 @@ func RegisterUser(id, username, password, email string) (*User, error) {
 	user.Enabled = true
 
 	if err := user.hashPassword(); err != nil {
-		return nil, errors.ErrInternal.Msgf("failed to hash password: %w", err.Error())
+		return nil, errors.ErrInternal.Msgf("failed to hash password: %s", err.Error())
 	}
 	user.AddEvent(UserRegisteredEvent, &UserRegistered{
 		User: user,
@@ -101,7 +102,7 @@ func (u *User) hashPassword() error {
 	return nil
 }
 
-func (u *User) Authorize( /* TODO authorize what? */) error {
+func (u *User) Authorize( /* TODO authorize what? */ ) error {
 	if !u.Enabled {
 		return ErrUserNotAuthorized
 	}

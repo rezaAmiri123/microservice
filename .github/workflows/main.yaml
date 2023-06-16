@@ -1,4 +1,4 @@
-name: Baskets
+name: main
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
     strategy:
       # max-parallel: 2
       matrix:
-        services: [baskets, ordering]
+        services: [baskets, cosec, depot, notifications, ordering, payments, search, stores, users]
     uses: ./.github/workflows/test.yml
     with:
       service: ${{ matrix.services }}
@@ -25,7 +25,7 @@ jobs:
     strategy:
       # max-parallel: 2
       matrix:
-        services: [baskets, ordering]
+        services: [baskets, cosec, depot, notifications, ordering, payments, search, stores, users]
     uses: ./.github/workflows/build.yml
     needs: test
     with:
