@@ -24,7 +24,7 @@ jobs:
           go test --cover ./...
 
   build:
-    name: $SERVICE microservice deployment to EKS cluster
+    name: microservice deployment to EKS cluster
     runs-on: ubuntu-latest
     needs: reusable_test
     steps:

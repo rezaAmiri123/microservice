@@ -13,7 +13,10 @@ on:
 
 jobs:
   workflow_call:
+    strategy:
+      matrix:
+        services: [baskets, ordering]
     uses: ./.github/workflows/common.yaml
     with:
-      service: baskets
+      service: ${{ matrix.services }}
     secrets: inherit
