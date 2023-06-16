@@ -1,7 +1,7 @@
-name: Reusable workflow 
+name: Reusable build 
 
 on:
-  build_call:
+  build:
     inputs:
       service:
         required: true
