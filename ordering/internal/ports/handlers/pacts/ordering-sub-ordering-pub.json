@@ -27,7 +27,7 @@
         "encoded": false
       },
       "description": "a BasketCheckedOut message",
-      "key": "10ecffb231e3b2e0",
+      "key": "6e6dce68214505e3",
       "matchingRules": {
         "body": {
           "$.Payload": {
