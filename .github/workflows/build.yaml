@@ -23,7 +23,7 @@ jobs:
   #         go mod tidy
   #         go test --cover ./...
 
-  build:
+  reusable_build:
     name: microservice deployment to EKS cluster
     runs-on: ubuntu-latest
     # needs: reusable_test
