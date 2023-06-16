@@ -21,7 +21,7 @@ jobs:
   #     service: ${{ matrix.services }}
   #   secrets: inherit
   
-  build:
+  docker_image:
     strategy:
       matrix:
         services: [baskets, ordering]

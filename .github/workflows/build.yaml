@@ -1,7 +1,7 @@
 name: Reusable build 
 
 on:
-  build:
+  docker_image:
     inputs:
       service:
         required: true
@@ -23,7 +23,7 @@ jobs:
   #         go mod tidy
   #         go test --cover ./...
 
-  reusable_build:
+  reusable_docker:
     name: microservice deployment to EKS cluster
     runs-on: ubuntu-latest
     # needs: reusable_test
