@@ -1,0 +1,19 @@
+name: Baskets
+
+on:
+  push:
+    branches: [ "main", "github" ]
+    # paths:
+    #   - baskets/**
+    #   - internal/**
+    #   - stores/storespb/**
+
+# env:
+#   SERVICE: baskets
+
+jobs:
+  workflow_call:
+    uses: ./.github/workflows/common.yaml
+    with:
+      service: baskets
+    secrets: inherit
