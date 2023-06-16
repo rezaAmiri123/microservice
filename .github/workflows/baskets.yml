@@ -17,7 +17,7 @@ jobs:
       max-parallel: 2
       matrix:
         services: [baskets, ordering]
-    uses: ./.github/workflows/test.yaml
+    uses: ./.github/workflows/workflow-1.yaml
     with:
       service: ${{ matrix.services }}
     secrets: inherit
