@@ -13,13 +13,21 @@ on:
 
 jobs:
   test:
+    strategy:
+      # max-parallel: 2
+      matrix:
+        services: [baskets, ordering]
     uses: ./.github/workflows/test.yml
     with:
-      service: baskets
+      service: ${{ matrix.services }}
     secrets: inherit
   build:
+    strategy:
+      # max-parallel: 2
+      matrix:
+        services: [baskets, ordering]
     uses: ./.github/workflows/build.yml
     needs: test
     with:
-      service: baskets
+      service: ${{ matrix.services }}
     secrets: inherit
