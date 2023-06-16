@@ -12,8 +12,14 @@ on:
 #   SERVICE: baskets
 
 jobs:
-  workflow_call:
-    uses: ./.github/workflows/common.yaml
+  test_call:
+    uses: ./.github/workflows/test/test.yml
+    with:
+      service: baskets
+    secrets: inherit
+  build_call:
+    uses: ./.github/workflows/build/build.yml
+    needs: test_call
     with:
       service: baskets
     secrets: inherit
