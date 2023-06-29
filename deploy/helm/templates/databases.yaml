@@ -1,0 +1,248 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-configuration
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: postgres_db
+  POSTGRES_USER: postgres_user
+  POSTGRES_PASSWORD: postgres_pass
+
+# ---
+# kind: StorageClass
+# apiVersion: storage.k8s.io/v1
+# metadata:
+#   name: microk8s-hostpath
+#   annotations:
+#     # storageclass.kubernetes.io/is-default-class: "true"
+#     storageclass.kubernetes.io/is-default-class: "false"
+# provisioner: microk8s.io/hostpath
+
+---
+# to install microk8s
+# sudo snap install microk8s --classic --edge
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-pv
+  labels:
+    app: postgres
+    type: local
+spec:
+  # storageClassName: microk8s-hostpath
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/var/data"
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-pv-claim
+  labels:
+    app: postgres
+spec:
+  # storageClassName: microk8s-hostpath
+  capacity:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-statefulset
+  labels:
+    app: postgres
+spec:
+  serviceName: "postgres"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:12-alpine
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: postgres-configuration
+        ports:
+        - containerPort: 5432
+          name: postgresdb
+        volumeMounts:
+        - name: pv-data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: pv-data
+        persistentVolumeClaim:
+          claimName: postgres-pv-claim
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  labels:
+    app: postgres
+spec:
+  ports:
+  - port: 5432
+    name: postgres
+    nodePort: 30001
+  type: NodePort 
+  selector:
+    app: postgres
+
+
+# initiating database
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: init-db-configuration
+  labels:
+    app: init-db
+data:
+  init_db.psql: |
+    CREATE DATABASE commondb TEMPLATE template0;
+
+    -- requires file is executed with psql
+    \c commondb
+
+    -- Apply to keep modifications to the created_at column from being made
+    CREATE OR REPLACE FUNCTION created_at_trigger() RETURNS TRIGGER AS
+    $$
+    BEGIN
+      NEW.created_at := OLD.created_at;
+      RETURN NEW;
+    END;
+    $$ LANGUAGE 'plpgsql';
+
+    -- Apply to a table to automatically update update_at columns
+    CREATE OR REPLACE FUNCTION updated_at_trigger() RETURNS TRIGGER AS
+    $$
+    BEGIN
+      IF ROW (NEW.*) IS DISTINCT FROM ROW (OLD.*) THEN
+        NEW.updated_at = NOW();
+        RETURN NEW;
+      ELSE
+        RETURN OLD;
+      END IF;
+    END;
+    $$ LANGUAGE 'plpgsql';
+  init_services_db.psql: |
+    CREATE DATABASE :db TEMPLATE commondb;
+
+    CREATE USER :user WITH ENCRYPTED PASSWORD :'pass';
+    GRANT USAGE ON SCHEMA public TO :user;
+    GRANT CREATE, CONNECT ON DATABASE :db TO :user;
+
+    \c :db
+
+    CREATE SCHEMA :db;
+    GRANT CREATE, USAGE ON SCHEMA :db TO :user;
+  init_db.sh: |
+    #!/bin/sh
+    export PGPASSWORD=postgres_pass
+    export POSTGRESQL_POSTGRES_PASSWORD=postgres_pass
+    # psql -U postgres -d postgres_db 
+    psql --file /script/init_db.psql -h postgres-service -U postgres_user -d postgres_db 
+    psql --file /script/init_services_db.psql -v db=baskets -v user=baskets_user -v pass=baskets_pass -h postgres-service -U postgres_user -d postgres_db 
+    psql --file /script/init_services_db.psql -v db=cosec -v user=cosec_user -v pass=cosec_pass -h postgres-service -U postgres_user -d postgres_db 
+    psql --file /script/init_services_db.psql -v db=depot -v user=depot_user -v pass=depot_pass -h postgres-service -U postgres_user -d postgres_db 
+    psql --file /script/init_services_db.psql -v db=notifications -v user=notifications_user -v pass=notifications_pass -h postgres-service -U postgres_user -d postgres_db 
+    psql --file /script/init_services_db.psql -v db=ordering -v user=ordering_user -v pass=ordering_pass -h postgres-service -U postgres_user -d postgres_db 
+    psql --file /script/init_services_db.psql -v db=search -v user=search_user -v pass=search_pass -h postgres-service -U postgres_user -d postgres_db 
+    psql --file /script/init_services_db.psql -v db=stores -v user=stores_user -v pass=stores_pass -h postgres-service -U postgres_user -d postgres_db 
+    psql --file /script/init_services_db.psql -v db=payments -v user=payments_user -v pass=payments_pass -h postgres-service -U postgres_user -d postgres_db 
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-db-job
+  labels:
+    app: init-db
+spec:
+  template:
+    metadata:
+      labels:
+        app: init-db
+    spec:
+      initContainers:
+        - name: init-mydb
+          image: busybox:1.28
+          command: [ 'sh', '-c', "until nslookup postgres-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for postgres; sleep 2; done"]
+          # command: [ 'sh', '-c', "sleep 20" ]
+
+      containers:
+        - name: test
+          image: reza879/deploytools:latest # busybox:1.28
+          imagePullPolicy: IfNotPresent
+          command: [ # 'sh', '-c', "until nslookup postgres-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for postgres; sleep 2; done" , ';',
+                    #  'ls', '-l', '/script', ';', 
+                    "/script/init_db.sh",
+                     ]
+          volumeMounts:
+            - name: script
+              mountPath: "/script"
+      volumes:
+        - name: script
+          configMap:
+            name: init-db-configuration
+            defaultMode: 0500
+      restartPolicy: Never
+  backoffLimit: 4
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: init-db-deployment
+#   labels:
+#     app: init-db
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: init-db
+#   template:
+#     metadata:
+#       labels:
+#         app: init-db
+#     spec:
+#       initContainers:
+#         - name: init-mydb
+#           image: busybox:1.28
+#           command: [ 'sh', '-c', "until nslookup postgres-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for postgres; sleep 2; done"]
+#           # command: [ 'sh', '-c', "sleep 20" ]
+
+#       containers:
+#         - name: test
+#           image: reza879/deploytools:latest # busybox:1.28
+#           imagePullPolicy: IfNotPresent
+#           command: [ # 'sh', '-c', "until nslookup postgres-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for postgres; sleep 2; done" , ';',
+#                     #  'ls', '-l', '/script', ';', 
+#                     "/script/init_db.sh",
+#                      ]
+#           volumeMounts:
+#             - name: script
+#               mountPath: "/script"
+#       volumes:
+#         - name: script
+#           configMap:
+#             name: init-db-configuration
+#             defaultMode: 0500
+#       # restartPolicy: Always

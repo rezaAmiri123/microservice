@@ -94,6 +94,41 @@ k8s_uninstall:
 	helm uninstall microservice 
 	helm uninstall kafka
 
+helm_install:
+	helm install microservice deploy/helm/
+
+helm_update:
+	helm upgrade microservice deploy/helm/
+
+helm_update_dependency:
+	helm dependency update deploy/helm
+
+helm_uninstall:
+	helm uninstall microservice 
+
+HELM_DB_CONNECTION = xxxx
+helm_init_db:
+	psql --file deploy/helm/sql/init_db.psql ${HELM_DB_CONNECTION}/postgres
+	psql --file deploy/helm/sql/init_service_db.psql -v db=baskets -v user=baskets_user -v pass=baskets_pass ${HELM_DB_CONNECTION}/postgres
+	psql --file deploy/helm/sql/init_service_db.psql -v db=cosec -v user=cosec_user -v pass=cosec_pass ${HELM_DB_CONNECTION}/postgres
+	psql --file deploy/helm/sql/init_service_db.psql -v db=depot -v user=depot_user -v pass=depot_pass ${HELM_DB_CONNECTION}/postgres
+	psql --file deploy/helm/sql/init_service_db.psql -v db=notifications -v user=notifications_user -v pass=notifications_pass ${HELM_DB_CONNECTION}/postgres
+	psql --file deploy/helm/sql/init_service_db.psql -v db=ordering -v user=ordering_user -v pass=ordering_pass ${HELM_DB_CONNECTION}/postgres
+	psql --file deploy/helm/sql/init_service_db.psql -v db=search -v user=search_user -v pass=search_pass ${HELM_DB_CONNECTION}/postgres
+	psql --file deploy/helm/sql/init_service_db.psql -v db=stores -v user=stores_user -v pass=stores_pass ${HELM_DB_CONNECTION}/postgres
+	psql --file deploy/helm/sql/init_service_db.psql -v db=users -v user=users_user -v pass=users_pass ${HELM_DB_CONNECTION}/postgres
+	psql --file deploy/helm/sql/init_service_db.psql -v db=payments -v user=payments_user -v pass=payments_pass ${HELM_DB_CONNECTION}/postgres
+
+
+minikube_start:
+	minikube start --driver=kvm2
+
+minikube_stop:
+	minikube stop
+
+minikube_dashboard:
+	minikube dashboard
+
 # postgresql://postgres:postgres@192.168.39.213:30001/microservice?sslmode=disable
 # createdb --username=postgres --owner=postgres microservice_finance
 # createdb --username=postgres --owner=postgres microservice_message

@@ -40,15 +40,15 @@ const (
 
 // Repository Table Names
 const (
-	OutboxTableName    = "outbox"
-	InboxTableName     = "inbox"
-	EventsTableName    = "events"
-	SnapshotsTableName = "snapshots"
-	SagasTableName     = "sagas"
+	OutboxTableName    = ServiceName + ".outbox"
+	InboxTableName     = ServiceName + ".inbox"
+	EventsTableName    = ServiceName + ".events"
+	SnapshotsTableName = ServiceName + ".snapshots"
+	SagasTableName     = ServiceName + ".sagas"
 
-	BasketTableName        = "baskets"
-	StoresCacheTableName   = "stores_cache"
-	ProductsCacheTableName = "products_cache"
+	BasketTableName        = ServiceName + ".baskets"
+	StoresCacheTableName   = ServiceName + ".stores_cache"
+	ProductsCacheTableName = ServiceName + ".products_cache"
 )
 
 // Repository Table Names

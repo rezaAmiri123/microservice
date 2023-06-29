@@ -1,0 +1,6 @@
+dependencies:
+- name: nats
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 7.8.5
+digest: sha256:2b2002b3e238551c15f3792a44fb205deab8b53fda291f3725254c7dd81a1e9c
+generated: "2023-06-28T09:14:05.155126799+03:00"

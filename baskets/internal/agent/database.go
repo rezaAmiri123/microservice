@@ -21,6 +21,10 @@ func (a *Agent) setupDatabase() error {
 		return fmt.Errorf("cannot load db: %w", err)
 	}
 
+	if err = postgres.DBMigrate(dbConn, "file://./internal/adapters/migrations", constants.ServiceName); err != nil {
+		return err
+	}
+
 	a.container.AddSingleton(constants.DatabaseKey, func(c di.Container) (any, error) {
 		return dbConn, nil
 	})
