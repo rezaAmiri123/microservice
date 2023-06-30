@@ -23,5 +23,10 @@ jobs:
           git config --global user.name "action-user"
           git config --global user.email "action-user@example.com"
           git add .
-          git commit -m "download vedor "
-          git push origin vendor
+          result=$(git status | grep "nothing to commit, working tree clean" |wc -l )
+          if [[ $result -eq 0 ]]
+            then
+            git commit -m "download vedor "
+            git push origin vendor
+          fi
+          
