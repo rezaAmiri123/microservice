@@ -7,7 +7,7 @@ on:
 jobs:
   test:
     strategy:
-      # max-parallel: 2
+      max-parallel: 1
       matrix:
         services: [pkg, users, baskets]
     uses: ./.github/workflows/download.yml
