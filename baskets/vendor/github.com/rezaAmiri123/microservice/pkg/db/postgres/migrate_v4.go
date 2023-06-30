@@ -20,6 +20,7 @@ func DBMigrate(db *sql.DB, migratePath string, dbName string) error {
 	if err != nil {
 		return err
 	}
+
 	err = m.Up() // or m.Step(2) if you want to explicitly set the number of migrations to run
 	fmt.Println(err)
 	if err != nil && err != migrate.ErrNoChange {
