@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package grpc;
+
+import "user.proto";
+
+option go_package = "github.com/rezaAmiri123/microservice/service_user/proto/grpc";
+
+message UpdateUserRequest {
+    optional string username = 1;
+    optional string password = 2;
+    optional string email = 3;
+    optional string bio = 4;
+    optional string image = 5;
+}
+
+message UpdateUserResponse {
+    User user = 1;
+}

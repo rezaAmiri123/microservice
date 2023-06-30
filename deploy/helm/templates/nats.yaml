@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nats-configuration
+  labels:
+    app: nats
+data:
+  POSTGRES_DB: postgres_db
+  POSTGRES_USER: postgres_user
+  POSTGRES_PASSWORD: postgres_pass
+
+# ---
+# kind: StorageClass
+# apiVersion: storage.k8s.io/v1
+# metadata:
+#   name: microk8s-hostpath
+#   annotations:
+#     # storageclass.kubernetes.io/is-default-class: "true"
+#     storageclass.kubernetes.io/is-default-class: "false"
+# provisioner: microk8s.io/hostpath
+
+---
+# to install microk8s
+# sudo snap install microk8s --classic --edge
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: nats-pv
+  labels:
+    app: nats
+    type: local
+spec:
+  # storageClassName: microk8s-hostpath
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/var/data"
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: nats-pv-claim
+  labels:
+    app: nats
+spec:
+  # storageClassName: microk8s-hostpath
+  capacity:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nats-statefulset
+  labels:
+    app: nats
+spec:
+  serviceName: "nats"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nats
+  template:
+    metadata:
+      labels:
+        app: nats
+    spec:
+      containers:
+      - name: nats
+        image: nats:2-alpine
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: nats-configuration
+        args: ["-js", "-sd", "/var/lib/nats/data", "-m", "8222"]
+        ports:
+        - containerPort: 4222
+          name: nats
+        - containerPort: 8222
+          name: nats-1
+        volumeMounts:
+        - name: pv-data
+          mountPath: /var/lib/nats/data
+      volumes:
+      - name: pv-data
+        persistentVolumeClaim:
+          claimName: nats-pv-claim
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats-service
+  labels:
+    app: nats
+spec:
+  ports:
+  - port: 4222
+    name: nats
+    nodePort: 30002
+  - port: 8222
+    name: nats-1
+    nodePort: 30003
+
+  type: NodePort 
+  selector:
+    app: nats
+
+

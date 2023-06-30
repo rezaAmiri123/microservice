@@ -1,0 +1,155 @@
+syntax = "proto3";
+
+package basketspb;
+option go_package = "github.com/rezaAmiri123/microservice/baskets/basketspb";
+
+//import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "basket Service API";
+    version: "1.1";
+    contact: {
+      name: "Basket service";
+      url: "https://github.com/rezaAmiri123/microservice";
+      // email: "example@example.com";
+    };
+  };
+};
+
+service BasketService {
+  rpc StartBasket(StartBasketRequest) returns (StartBasketResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/baskets/start_basket"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to start a new basket";
+      summary: "Create new basket";
+      operation_id: "startBasket";
+      tags: "Basket";
+    };
+  };
+  rpc CancelBasket(CancelBasketRequest) returns (CancelBasketResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/baskets/cancel_basket"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to cancel a basket";
+      summary: "Cancel a basket";
+      operation_id: "cancelBasket";
+      tags: "Basket";
+    };
+  };
+  rpc CheckoutBasket(CheckoutBasketRequest) returns (CheckoutBasketResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/baskets/checkout_basket"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to checkout a basket";
+      summary: "checkout a basket";
+      operation_id: "checkoutBasket";
+      tags:"Basket";
+    };
+  };
+  rpc AddItem(AddItemRequest) returns (AddItemResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/baskets/add_item"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to add a new item";
+      summary: "Create new item";
+      operation_id: "addItem";
+      tags:"Item";
+    };
+  };
+  rpc RemoveItem(RemoveItemRequest) returns (RemoveItemResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/baskets/remove_item"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to remove an item";
+      summary: "Remove an item";
+      operation_id: "removeItem";
+      tags:"Item";
+    };
+  };
+  rpc GetBasket(GetBasketRequest) returns (GetBasketResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/baskets/get_basket"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a basket";
+      summary: "Get a basket";
+      operation_id: "getBasket";
+      tags:"Basket";
+    };
+
+  };
+}
+
+message Basket {
+  string id = 1;
+  repeated Item items = 2;
+}
+
+message Item {
+  string store_id = 1;
+  string product_id = 2;
+  string store_name = 3;
+  string product_name = 4;
+  double product_price = 5;
+  int32 quantity = 6;
+}
+
+message StartBasketRequest {
+  string user_id = 1;
+}
+
+message StartBasketResponse {
+  string id = 1;
+}
+
+message CancelBasketRequest {
+  string id = 1;
+}
+
+message CancelBasketResponse {}
+
+message CheckoutBasketRequest {
+  string id = 1;
+  string payment_id = 2;
+}
+
+message CheckoutBasketResponse {}
+
+message AddItemRequest {
+  string id = 1;
+  string product_id = 3;
+  int32 quantity = 4;
+}
+
+message AddItemResponse {}
+
+message RemoveItemRequest {
+  string id = 1;
+  string product_id = 3;
+  int32 quantity = 4;
+}
+
+message RemoveItemResponse {}
+
+message GetBasketRequest {
+  string id = 1;
+}
+
+message GetBasketResponse {
+  Basket basket = 1;
+}

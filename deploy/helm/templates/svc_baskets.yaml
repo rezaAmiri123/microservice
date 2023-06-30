@@ -1,0 +1,238 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: baskets-configuration
+  labels:
+    app: baskets
+data:
+  POSTGRES_DRIVER: pgx
+  POSTGRES_HOST: postgres-service
+  POSTGRES_PORT: "5432"
+  POSTGRES_USER: baskets_user
+  POSTGRES_DB_NAME: baskets
+  POSTGRES_PASSWORD: baskets_pass
+  POSTGRES_SEARCH_PATH: baskets,public
+  HTTP_SERVER_PORT: "8080"
+  GRPC_SERVER_PORT: "9000"
+  GRPC_STORE_CLIENT_ADDR: stores
+  GRPC_STORE_CLIENT_PORT: "9000"
+  EVENT_SERVER_TYPE: nats
+  NATS_URL: nats-service:4222
+  OTEL_SERVICE_NAME: baskets
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://collector:4317
+
+
+  SECRET_KEY: dddsdffffffalkjwiothgsfysdfwFDSFQW
+  
+  # GRPC_SERVER_PORT: 5080
+
+  # KAFKA_BROKERS=kafka:9092
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: baskets-deployment
+  labels:
+    app: baskets
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: baskets
+  template:
+    metadata:
+      labels:
+        app: baskets
+    spec:
+      initContainers:
+        - name: init-mydb
+          image: busybox:1.28
+          command: [ 'sh', '-c', "until nslookup postgres-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for postgres; sleep 2; done"]
+        - name: init-nats
+          image: busybox:1.28
+          command: ['sh', '-c', "until nslookup nats-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for nats; sleep 2; done"]
+
+      containers:
+        - name: baskets
+#          image: nginx:1.16
+          image: reza879/baskets:latest
+          # image: willfarrell/ping:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+          - configMapRef:
+              name: baskets-configuration
+          ports:
+            # - containerPort: 5080
+            - name: http
+              protocol: TCP
+              containerPort: 8080
+            - name: grpc
+              protocol: TCP
+              containerPort: 9000
+
+          # env:
+          #   - name: HTTP_SERVER_PORT
+          #     value: '5080'
+          livenessProbe:
+            httpGet:
+              path: /liveness
+              port: 8080
+          #     httpHeaders:
+          #       - name: Custom-Header
+          #         value: Awesome
+            initialDelaySeconds: 10
+            periodSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: baskets-service
+  labels:
+    app: baskets
+spec:
+  selector:
+    app: baskets
+  # type: NodePort
+  # session_affinity: ClientIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+      # nodePort: 30004
+    - name: grpc
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+      # nodePort: 30005
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-app
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: hello-worldapp.com
+      http:
+        paths:
+          - path: /baskets-spec/
+            pathType: Prefix
+            backend:
+              service:
+                name: baskets-service
+                port:
+                  number: 8080        
+          - path: /v1/api/baskets/
+            pathType: Prefix
+            backend:
+              service:
+                name: baskets-service
+                port:
+                  number: 8080
+          # - path: /
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: baskets-service
+          #       port:
+          #         number: 8080                          
+
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: baskets-ingress
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+#     alb.ingress.kubernetes.io/group.name: mallbot # project name
+#     alb.ingress.kubernetes.io/scheme: internet-facing
+#     # alb.ingress.kubernetes.io/inbound-cidrs: local.allowed_cidr_block
+#     alb.ingress.kubernetes.io/target-type: instance
+# spec:
+#   ingressClassName: alb
+#   rules:
+#   - host: hello-worldapp.com  
+#     http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: baskets-service
+#             port:
+#               number: 8080
+#       - path: /v1/api/baskets
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: baskets-service
+#             port:
+#               number: 8080
+#       - path: /baskets-spec
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: baskets-service
+#             port:
+#               number: 8080              
+
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: minimal-ingress
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+# spec:
+#   ingressClassName: nginx-example
+#   rules:
+#   - host: hello-worldapp.com
+#     http:
+#       paths:
+#       - path: /v1/api/baskets
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: baskets-service
+#             port:
+#               number: 8080
+#       - path: /baskets-spec
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: baskets-service
+#             port:
+#               number: 8080              
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: baskets-service
+#             port:
+#               number: 8080              
+
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: ingress-app
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+# spec:
+#   rules:
+#     - host: hello-worldapp.com
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: baskets-service
+#                 port:
+#                   number: 8080
+

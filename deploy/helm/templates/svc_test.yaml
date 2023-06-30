@@ -1,0 +1,152 @@
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: test-configuration
+#   labels:
+#     app: test
+# data:
+#   slim-shady.sh: |
+#     #!/bin/sh
+
+#     echo "Hi, I'm a testing script added by @carrodher"
+#     cat >> /tmp/init_security.psql <<          EOF
+  
+#     GRANT ALL ON SCHEMA public TO postgres_user
+#     EOF
+#     export PGPASSWORD=postgres_pass
+#     psql --file /tmp/init_security.psql -h postgres-service -U postgres_user -d postgres_db
+
+
+#     cat >> /tmp/init_db.psql <<          EOF
+#     CREATE DATABASE commondb TEMPLATE template0;
+
+#     -- requires file is executed with psql
+#     \c commondb
+
+#     -- Apply to keep modifications to the created_at column from being made
+#     CREATE OR REPLACE FUNCTION created_at_trigger() RETURNS TRIGGER AS
+#     \$\$
+#     BEGIN
+#       NEW.created_at := OLD.created_at;
+#       RETURN NEW;
+#     END;
+#     \$\$ LANGUAGE 'plpgsql';
+
+#     -- Apply to a table to automatically update update_at columns
+#     CREATE OR REPLACE FUNCTION updated_at_trigger() RETURNS TRIGGER AS
+#     \$\$
+#     BEGIN
+#       IF ROW (NEW.*) IS DISTINCT FROM ROW (OLD.*) THEN
+#         NEW.updated_at = NOW();
+#         RETURN NEW;
+#       ELSE
+#         RETURN OLD;
+#       END IF;
+#     END;
+#     \$\$ LANGUAGE 'plpgsql';
+#     EOF
+#     cat >> /tmp/init_services_db.psql <<          EOF
+#     CREATE DATABASE :db TEMPLATE commondb;
+
+#     CREATE USER :user WITH ENCRYPTED PASSWORD :'pass';
+#     GRANT USAGE ON SCHEMA public TO :user;
+#     GRANT CREATE, CONNECT ON DATABASE :db TO :user;
+
+#     \c :db
+
+#     CREATE SCHEMA :db;
+#     GRANT CREATE, USAGE ON SCHEMA :db TO :user;
+#     EOF
+
+#     export PGPASSWORD=postgres_pass
+#     export POSTGRESQL_POSTGRES_PASSWORD=postgres_pass
+#     # psql -U postgres -d postgres_db 
+#     psql --file /tmp/init_db.psql -h postgres-service -U postgres_user -d postgres_db 
+#     psql --file /tmp/init_services_db.psql -v db=baskets -v user=baskets_user -v pass=baskets_pass -h postgres-service -U postgres_user -d postgres_db 
+#     psql --file /tmp/init_services_db.psql -v db=cosec -v user=cosec_user -v pass=cosec_pass -h postgres-service -U postgres_user -d postgres_db 
+#     psql --file /tmp/init_services_db.psql -v db=depot -v user=depot_user -v pass=depot_pass -h postgres-service -U postgres_user -d postgres_db 
+#     psql --file /tmp/init_services_db.psql -v db=notifications -v user=notifications_user -v pass=notifications_pass -h postgres-service -U postgres_user -d postgres_db 
+#     psql --file /tmp/init_services_db.psql -v db=ordering -v user=ordering_user -v pass=ordering_pass -h postgres-service -U postgres_user -d postgres_db 
+#     psql --file /tmp/init_services_db.psql -v db=search -v user=search_user -v pass=search_pass -h postgres-service -U postgres_user -d postgres_db 
+#     psql --file /tmp/init_services_db.psql -v db=stores -v user=stores_user -v pass=stores_pass -h postgres-service -U postgres_user -d postgres_db 
+#     psql --file /tmp/init_services_db.psql -v db=payments -v user=payments_user -v pass=payments_pass -h postgres-service -U postgres_user -d postgres_db 
+
+
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: test-deployment
+#   labels:
+#     app: test
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: test
+#   template:
+#     metadata:
+#       labels:
+#         app: test
+#     spec:
+#       initContainers:
+#         - name: init-mydb
+#           image: busybox:1.28
+#           command: [ 'sh', '-c', "until nslookup postgres-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for postgres; sleep 2; done"]
+#           # command: [ 'sh', '-c', "sleep 20" ]
+
+#       containers:
+#         - name: test
+#           image: reza879/deploytools:latest # busybox:1.28
+#           imagePullPolicy: IfNotPresent
+#           command: [ # 'sh', '-c', "until nslookup postgres-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for postgres; sleep 2; done" , ';',
+#                     #  'ls', '-l', '/script', ';', 
+#                     "/script/slim-shady.sh",
+#                      ]
+#           volumeMounts:
+#             - name: script
+#               mountPath: "/script"
+#       volumes:
+#         - name: script
+#           configMap:
+#             name: test-configuration
+#             defaultMode: 0500
+#       # restartPolicy: Always
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: ingress-demo
+# spec:
+#   selector:
+#     matchLabels:
+#       app: myapp
+#   replicas: 1
+#   template:
+#     metadata:
+#       labels:
+#         app: myapp
+#     spec:
+#       containers:
+#       - name: ingress-cont
+#         image: phozzy/hello-app
+
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: ingress-app
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+# spec:
+#   rules:
+#     - host: hello-worldapp.com
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: ingress-demo
+#                 port:
+#                   number: 8080        

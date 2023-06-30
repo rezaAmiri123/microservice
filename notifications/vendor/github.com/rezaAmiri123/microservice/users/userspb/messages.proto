@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package userspb;
+option go_package = "github.com/rezaAmiri123/microservice/users/userspb";
+
+// event
+message UserRegistered {
+  string id = 1;
+  string username = 2;
+}
+
+
+message UserEnabled {
+  string id = 1;
+}
+
+message UserDisabled {
+  string id = 1;
+}
+
+// command
+message AuthorizeUser {
+  string id = 1;
+}

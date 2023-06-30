@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	_ "github.com/lib/pq"
 	"github.com/rezaAmiri123/microservice/pkg/am"
 	"github.com/rezaAmiri123/microservice/pkg/amotel"
 	"github.com/rezaAmiri123/microservice/pkg/amprom"
@@ -37,6 +38,10 @@ func (a *Agent) setupApplication() error {
 	//if err = postgres.MigrateUp(dbConn, migrations.FS); err != nil {
 	//	return err
 	//}
+	if err = postgres.DBMigrate(dbConn, "file://./internal/adapters/migrations", constants.ServiceName); err != nil {
+		return err
+	}
+
 	a.container.AddSingleton(constants.DatabaseKey, func(c di.Container) (any, error) {
 		return dbConn, nil
 	})
