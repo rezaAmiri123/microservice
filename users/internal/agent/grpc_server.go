@@ -12,7 +12,6 @@ import (
 	// grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
-	grpc_opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 
 	"google.golang.org/grpc"
@@ -47,7 +46,7 @@ func (a *Agent) setupGrpcServer() error {
 		// )),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpc_ctxtags.UnaryServerInterceptor(),
-			grpc_opentracing.UnaryServerInterceptor(),
+			//grpc_opentracing.UnaryServerInterceptor(),
 			grpc_prometheus.UnaryServerInterceptor,
 			grpc_recovery.UnaryServerInterceptor(),
 			// grpc_auth.UnaryServerInterceptor(auth.Authenticate),
