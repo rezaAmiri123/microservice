@@ -20,6 +20,7 @@ jobs:
       - name: Run Unit Tests
         working-directory: ./${{ inputs.service }}
         run: |
+          go mod download
           go mod tidy
           go test --cover ./...
 

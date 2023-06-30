@@ -14,7 +14,7 @@ COPY . .
 # COPY .. ./
 # Build the binary.
 # RUN cd ${service} 
-RUN cd ${service};if [ ! -d "vendor" ]; then echo "directory not exists"; go mod tidy; fi;cd ..
+RUN cd ${service};if [ ! -d "vendor" ]; then echo "directory not exists";go mod download; go mod tidy; fi;cd ..
 
 RUN cd ${service};go build -ldflags="-s -w" -o main \
     ./cmd/service;mv main ../service
