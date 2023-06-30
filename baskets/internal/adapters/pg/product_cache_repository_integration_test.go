@@ -7,12 +7,11 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/docker/go-connections/nat"
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 	"github.com/rezaAmiri123/microservice/baskets/internal/constants"
 	"github.com/rezaAmiri123/microservice/baskets/internal/domain"
+	pkgPostgres "github.com/rezaAmiri123/microservice/pkg/db/postgres"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"github.com/testcontainers/testcontainers-go"
@@ -72,22 +71,36 @@ func (s *productCacheSuite) SetupSuite() {
 		s.T().Fatal(err)
 	}
 
-	dataSource := fmt.Sprintf("postgres://mallbots_user:mallbots_pass@%s/mallbots?sslmode=disable", endpoint)
-	s.db, err = sql.Open("pgx", dataSource)
+	//dataSource := fmt.Sprintf("postgres://mallbots_user:mallbots_pass@%s/mallbots?sslmode=disable", endpoint)
+	s.db, err = pkgPostgres.NewDB(pkgPostgres.Config{
+		PGDriver:     "pgx",
+		PGHost:       endpoint,
+		PGPort:       "5432",
+		PGUser:       fmt.Sprintf("%s_user", constants.ServiceName),
+		PGDBName:     constants.ServiceName,
+		PGPassword:   fmt.Sprintf("%s_pass", constants.ServiceName),
+		PGSearchPath: fmt.Sprintf("%s,public", constants.ServiceName),
+	})
+	//s.db, err = sql.Open("pgx", dataSource)
 	if err != nil {
 		s.T().Fatal(err)
 	}
-	driver, err := postgres.WithInstance(s.db, &postgres.Config{})
-	m, err := migrate.NewWithDatabaseInstance(
-		"file://../migrations",
-		"postgres", driver)
+	err = pkgPostgres.DBMigrate(s.db, "file://../migrations", constants.ServiceName)
 	if err != nil {
 		s.T().Fatal(err)
 	}
-	err = m.Up() // or m.Step(2) if you want to explicitly set the number of migrations to run
-	if err != nil && err != migrate.ErrNoChange {
-		s.T().Fatal(err)
-	}
+
+	//driver, err := postgres.WithInstance(s.db, &postgres.Config{})
+	//m, err := migrate.NewWithDatabaseInstance(
+	//	"file://../migrations",
+	//	"postgres", driver)
+	//if err != nil {
+	//	s.T().Fatal(err)
+	//}
+	//err = m.Up() // or m.Step(2) if you want to explicitly set the number of migrations to run
+	//if err != nil && err != migrate.ErrNoChange {
+	//	s.T().Fatal(err)
+	//}
 }
 func (s *productCacheSuite) TearDownSuite() {
 	err := s.db.Close()
