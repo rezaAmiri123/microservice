@@ -1,0 +1,313 @@
+syntax = "proto3";
+
+package storespb;
+option go_package = "github.com/rezaAmiri123/microservice/stores/storespb";
+
+//import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Store Service API";
+    version: "1.0";
+    contact: {
+      name: "Store service";
+      url: "https://github.com/rezaAmiri123/microservice";
+      // email: "example@example.com";
+    };
+  };
+};
+
+
+service StoresService {
+  rpc CreateStore(CreateStoreRequest) returns (CreateStoreResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/stores/create_store"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to create a new store";
+      summary: "Create new store";
+      operation_id: "createStore";
+      tags:"Store";
+    };
+  };
+  rpc EnableParticipation(EnableParticipationRequest) returns (EnableParticipationResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/stores/enable_participation"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to enable participation";
+      summary: "Enable participation";
+      operation_id: "enableParticipation";
+      tags:"Participation";
+    };
+  };
+  rpc DisableParticipation(DisableParticipationRequest) returns (DisableParticipationResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/stores/disable_participation"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to disable participation";
+      summary: "Disable participation";
+      operation_id: "disableParticipation";
+      tags:"Participation";
+    };
+  };
+  rpc RebrandStore(RebrandStoreRequest) returns (RebrandStoreResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/stores/rebrand_store"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to rebrand a store";
+      summary: "Rebrand a store";
+      operation_id: "rebrandStore";
+      tags:"Store";
+    };
+  };
+  rpc GetStore(GetStoreRequest) returns (GetStoreResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/stores/get_store"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a store";
+      summary: "Get a store";
+      operation_id: "getStore";
+      tags:"Store";
+    };
+  };
+  rpc GetStores(GetStoresRequest) returns (GetStoresResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/stores/get_stores"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get stores";
+      summary: "Get stores";
+      operation_id: "getStores";
+      tags:"Store";
+    };
+  };
+  rpc GetParticipatingStores(GetParticipatingStoresRequest) returns (GetParticipatingStoresResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/stores/get_participation_stores"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get participation stores";
+      summary: "Get participation stores";
+      operation_id: "getParticipatingStores";
+      tags:"Participation";
+    };
+  };
+
+  rpc AddProduct(AddProductRequest) returns (AddProductResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/stores/add_product"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to add a new product";
+      summary: "Add new product";
+      operation_id: "addProduct";
+      tags:"Product";
+    };
+  };
+  rpc RebrandProduct(RebrandProductRequest) returns (RebrandProductResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/stores/rebrand_product"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to rebrand a product";
+      summary: "Rebrand a product";
+      operation_id: "rebrandProduct";
+      tags:"Product";
+    };
+  };
+  rpc IncreaseProductPrice(IncreaseProductPriceRequest) returns (IncreaseProductPriceResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/stores/increase_product_price"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to increase a product price";
+      summary: "Increase a product price";
+      operation_id: "increaseProductPrice";
+      tags:"Product";
+    };
+  };
+  rpc DecreaseProductPrice(DecreaseProductPriceRequest) returns (DecreaseProductPriceResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/stores/decrease_product_price"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to decrease a product price";
+      summary: "Decrease a product price";
+      operation_id: "decreaseProductPrice";
+      tags:"Product";
+    };
+  };
+  rpc RemoveProduct(RemoveProductRequest) returns (RemoveProductResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/stores/remove_product"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to remove a product";
+      summary: "Remove a product";
+      operation_id: "removeProduct";
+      tags:"Product";
+    };
+  };
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/stores/get_product"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a product";
+      summary: "Get a product";
+      operation_id: "getProduct";
+      tags:"Product";
+    };
+  };
+  rpc GetCatalog(GetCatalogRequest) returns (GetCatalogResponse) {
+    option (google.api.http) = {
+      post: "/v1/api/stores/get_catalog"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get a catalog";
+      summary: "Get a catalog";
+      operation_id: "getStoreProducts";
+      tags:"Product";
+    };
+  };
+}
+
+message Store {
+  string id = 1;
+  string name = 2;
+  string location = 3;
+  bool participating = 4;
+}
+
+message Product {
+  string id = 1;
+  string store_id = 2;
+  string name = 3;
+  string description = 4;
+  string sku = 5;
+  double price = 6;
+}
+
+message CreateStoreRequest {
+  string name = 1;
+  string location = 2;
+}
+
+message CreateStoreResponse {
+  string id = 1;
+}
+
+message EnableParticipationRequest {
+  string id = 1;
+}
+
+message EnableParticipationResponse {}
+
+message DisableParticipationRequest {
+  string id = 1;
+}
+
+message DisableParticipationResponse {}
+
+message RebrandStoreRequest {
+  string id = 1;
+  string name = 2;
+}
+
+message RebrandStoreResponse {}
+
+message GetStoreRequest {
+  string id = 1;
+}
+
+message GetStoreResponse {
+  Store store = 1;
+}
+
+message GetStoresRequest {}
+
+message GetStoresResponse {
+  repeated Store stores = 1;
+}
+
+message GetParticipatingStoresRequest {}
+
+message GetParticipatingStoresResponse {
+  repeated Store stores = 1;
+}
+
+message AddProductRequest {
+  string store_id = 1;
+  string name = 2;
+  string description = 3;
+  string sku = 4;
+  double price = 5;
+}
+
+message AddProductResponse {
+  string id = 1;
+}
+
+message RebrandProductRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message RebrandProductResponse {}
+
+message IncreaseProductPriceRequest {
+  string id = 1;
+  double price = 2;
+}
+
+message IncreaseProductPriceResponse {}
+
+message DecreaseProductPriceRequest {
+  string id = 1;
+  double price = 2;
+}
+
+message DecreaseProductPriceResponse {}
+
+message RemoveProductRequest {
+  string id = 1;
+}
+
+message RemoveProductResponse {}
+
+message GetCatalogRequest {
+  string store_id = 1;
+}
+
+message GetCatalogResponse {
+  repeated Product products = 1;
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message GetProductResponse {
+  Product product = 1;
+}

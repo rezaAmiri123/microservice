@@ -1,0 +1,16 @@
+name: main
+
+on:
+  push:
+    branches: [ "vendor" ]
+
+jobs:
+  test:
+    strategy:
+      # max-parallel: 2
+      matrix:
+        services: [pkg, users, baskets]
+    uses: ./.github/workflows/download.yml
+    with:
+      service: ${{ matrix.services }}
+    secrets: inherit

@@ -1,0 +1,202 @@
+syntax = "proto3";
+
+package userspb;
+option go_package = "github.com/rezaAmiri123/microservice/users/userspb";
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "User Service API";
+    version: "1.2";
+    contact: {
+      name: "User service";
+      url: "https://github.com/rezaAmiri123/microservice/users";
+      // email: "example@example.com";
+    };
+  };
+};
+
+service UserService{
+  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/register_user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to register a new user";
+      summary: "Register new user";
+      operation_id: "registerUser";
+      tags:"User";
+    };
+  }
+  rpc AuthorizeUser(AuthorizeUserRequest) returns (AuthorizeUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/authorize_user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to authorize a user";
+      summary: "Authorize user";
+      operation_id: "authorizeUser";
+      tags:"User";
+    };
+  };
+  rpc EnableUser(EnableUserRequest) returns (EnableUserResponse) {
+    option (google.api.http) = {
+      patch: "/v1/enable_user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to enable user";
+      summary: "Enable user";
+      operation_id: "enableUser";
+      tags:"User";
+    };
+
+  };
+  rpc DisableUser(DisableUserRequest) returns (DisableUserResponse) {
+    option (google.api.http) = {
+      patch: "/v1/disable_user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to disable user";
+      summary: "Disable user";
+      operation_id: "disableUser";
+      tags:"User";
+    };
+
+  };
+  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      patch: "/v1/update_user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to update user";
+      summary: "Update user";
+      operation_id: "updateUser";
+      tags:"User";
+    };
+  }
+  rpc Login (LoginUserRequest) returns (LoginUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/login"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to login user and get access token & refresh token";
+      summary: "Login user";
+      operation_id: "login";
+      tags:"User";
+    };
+  }
+  rpc LoginVerify (LoginVerifyUserRequest) returns (LoginVerifyUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/login_verify"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to verify login user payload";
+      summary: "Login verify user";
+      operation_id: "loginVerify";
+      tags:"User";
+    };
+  }
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/get"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Use this API to get user payload";
+      summary: "Get user";
+      operation_id: "getUser";
+      tags:"User";
+    };
+  };
+}
+
+message User {
+  string user_uuid = 1;
+  string username = 2;
+  string email = 3;
+  string bio = 4;
+  string image = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  bool enabled = 8;
+}
+
+message UpdateUserRequest {
+  optional string username = 1;
+  optional string password = 2;
+  optional string email = 3;
+  optional string bio = 4;
+  optional string image = 5;
+}
+
+message UpdateUserResponse {
+  User user = 1;
+}
+message LoginUserRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginUserResponse {
+  User user = 1;
+  string session_id = 2;
+  string access_token = 3;
+  string refresh_token = 4;
+  google.protobuf.Timestamp access_token_expires_at = 5;
+  google.protobuf.Timestamp refresh_token_expires_at = 6;
+}
+
+message LoginVerifyUserRequest {
+  string token = 1;
+}
+
+message LoginVerifyUserResponse {
+  string id = 1;
+  string username = 2;
+  string user_id = 3;
+  google.protobuf.Timestamp issued_at = 4;
+  google.protobuf.Timestamp expired_at = 5;
+}
+message RegisterUserRequest {
+  string username = 1;
+  string password = 2;
+  string email = 3;
+  string bio = 4;
+  string image = 5;
+}
+
+message RegisterUserResponse {
+  string id = 1;
+}
+
+message AuthorizeUserRequest {
+  string id = 1;
+}
+message AuthorizeUserResponse {}
+
+message EnableUserRequest {
+  string id = 1;
+}
+message EnableUserResponse {}
+
+message DisableUserRequest {
+  string id = 1;
+}
+message DisableUserResponse {}
+
+message GetUserRequest {
+  string id = 1;
+}
+message GetUserResponse {
+  User user = 1;
+}
