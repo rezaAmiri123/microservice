@@ -35,18 +35,18 @@ const (
 
 // Repository Table Names
 const (
-	//OutboxTableName    = ServiceName + ".outbox"
-	//InboxTableName     = ServiceName + ".inbox"
-	//EventsTableName    = ServiceName + ".events"
-	//SnapshotsTableName = ServiceName + ".snapshots"
-	//SagasTableName     = ServiceName + ".sagas"
-	OutboxTableName    = "outbox"
-	InboxTableName     = "inbox"
-	EventsTableName    = "events"
-	SnapshotsTableName = "snapshots"
-	SagasTableName     = "sagas"
+	OutboxTableName    = ServiceName + ".outbox"
+	InboxTableName     = ServiceName + ".inbox"
+	EventsTableName    = ServiceName + ".events"
+	SnapshotsTableName = ServiceName + ".snapshots"
+	SagasTableName     = ServiceName + ".sagas"
+	//OutboxTableName    = "outbox"
+	//InboxTableName     = "inbox"
+	//EventsTableName    = "events"
+	//SnapshotsTableName = "snapshots"
+	//SagasTableName     = "sagas"
 
-	UsersTableName = "users"
+	UsersTableName = ServiceName + ".users"
 )
 
 // Metric Names
