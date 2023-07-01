@@ -17,7 +17,7 @@ docker_mallbots_down:
 
 docker:
 	@echo Starting docker compose
-	docker-compose -f docker-compose.yaml up --build --remove-orphans
+	docker-compose -f docker-compose.yaml up --build --remove-orphans --no-cache mallbots-baskets
 
 docker_down:
 	@echo Stoping docker compose
@@ -34,7 +34,7 @@ build-users:
 
 rebuild-baskets:
 	docker image rm -f mallbots-baskets
-	docker build -t mallbots-baskets --file docker/Dockerfile.microservices --build-arg=service=baskets .
+	docker build -t mallbots-baskets --no-cache --file docker/Dockerfile.microservices --build-arg=service=baskets .
 build-baskets:
 	docker build -t mallbots-baskets --file docker/Dockerfile.microservices --build-arg=service=baskets .
 

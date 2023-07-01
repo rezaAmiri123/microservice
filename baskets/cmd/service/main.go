@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/rezaAmiri123/microservice/baskets/internal/agent"
-	"github.com/spf13/viper"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/rezaAmiri123/microservice/baskets/internal/agent"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -31,17 +32,28 @@ type cfg struct {
 }
 
 func LoadConfig(path string) (config cfg, err error) {
-	viper.AddConfigPath(path)
+	// viper.AddConfigPath(path)
+	viper.AddConfigPath("/mallbots")
 	viper.SetConfigName("app")
 	viper.SetConfigType("env")
 
 	viper.AutomaticEnv()
 
-	err = viper.ReadInConfig()
-	if err != nil {
-		return
+	if err = viper.ReadInConfig(); err != nil {
+		log.Println("we have error")
+
+		log.Println(err.Error())
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			log.Println("error is not ConfigFileNotFoundError")
+			return
+		}
+		err = nil
 	}
+	// if err != nil {
+	// 	return
+	// }
 
 	err = viper.Unmarshal(&config.Config)
+	log.Println(config.Config)
 	return
 }
