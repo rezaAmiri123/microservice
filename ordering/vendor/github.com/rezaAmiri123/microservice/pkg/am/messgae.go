@@ -37,12 +37,13 @@ type (
 	MessagePublisher interface {
 		Publish(ctx context.Context, topicName string, msg Message) error
 	}
+
+	MessagePublisherFunc func(ctx context.Context, topicName string, msg Message) error
+
 	MessageStream interface {
 		MessageSubscriber
 		MessagePublisher
 	}
-
-	MessagePublisherFunc func(ctx context.Context, topicName string, msg Message) error
 
 	MessageStreamMiddleware    = func(next MessageStream) MessageStream
 	MessagePublisherMiddleware = func(next MessagePublisher) MessagePublisher
