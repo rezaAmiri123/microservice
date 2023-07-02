@@ -15,6 +15,7 @@ import (
 	"github.com/rezaAmiri123/microservice/pkg/logger"
 	"github.com/rezaAmiri123/microservice/pkg/registry"
 	"github.com/rezaAmiri123/microservice/pkg/tm"
+	"github.com/rezaAmiri123/microservice/users/internal/adapters/migrations"
 	"github.com/rezaAmiri123/microservice/users/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/users/internal/app"
 	"github.com/rezaAmiri123/microservice/users/internal/constants"
@@ -38,34 +39,16 @@ func (a *Agent) setupApplication() error {
 	//if err = postgres.MigrateUp(dbConn, migrations.FS); err != nil {
 	//	return err
 	//}
-	if err = postgres.DBMigrate(dbConn, "file://./internal/adapters/migrations", constants.ServiceName); err != nil {
+	//if err = postgres.DBMigrate(dbConn, "file://./internal/adapters/migrations", constants.ServiceName); err != nil {
+	//	return err
+	//}
+	if err = postgres.MigrateUp(dbConn, migrations.FS); err != nil {
 		return err
 	}
 
 	a.container.AddSingleton(constants.DatabaseKey, func(c di.Container) (any, error) {
 		return dbConn, nil
 	})
-
-	//repo, err := adapters.NewGORMArticleRepository(a.DBConfig)
-	//repo := pg.NewPGUserRepository(dbConn, a.logger)
-
-	// setup Driven adapters
-	//reg := registry.New()
-	//a.container.AddSingleton(constants.RegistryKey, func(c di.Container) (any, error) {
-	//	return reg, nil
-	//})
-	//if err = userspb.Registrations(reg); err != nil {
-	//	return err
-	//}
-	//log := a.container.Get(constants.LoggerKey).(logger.Logger)
-	//js, err := a.nats()
-	//if err != nil {
-	//	return err
-	//}
-	//stream1 := jetstream.NewStream(a.NatsStream, js, log)
-	//fmt.Println(stream1)
-	//fmt.Println(log)
-	//stream := kafkastream.NewStream(a.NatsStream, log, []string{"kafka:9092"})
 	a.container.AddScoped(constants.DatabaseTransactionKey, func(c di.Container) (any, error) {
 		return dbConn.Begin()
 	})

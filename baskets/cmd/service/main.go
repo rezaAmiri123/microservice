@@ -1,13 +1,12 @@
 package main
 
 import (
+	"github.com/rezaAmiri123/microservice/baskets/internal/agent"
+	"github.com/spf13/viper"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
-
-	"github.com/rezaAmiri123/microservice/baskets/internal/agent"
-	"github.com/spf13/viper"
 )
 
 func main() {
@@ -18,7 +17,7 @@ func main() {
 
 	ag, err := agent.NewAgent(config.Config)
 	if err != nil {
-		log.Fatal("cannot load config:", err)
+		log.Fatal("cannot load agent config:", err)
 	}
 	sigc := make(chan os.Signal, 1)
 	signal.Notify(sigc, syscall.SIGINT, syscall.SIGTERM)
@@ -32,28 +31,17 @@ type cfg struct {
 }
 
 func LoadConfig(path string) (config cfg, err error) {
-	// viper.AddConfigPath(path)
-	viper.AddConfigPath("/mallbots")
+	viper.AddConfigPath(path)
 	viper.SetConfigName("app")
 	viper.SetConfigType("env")
 
 	viper.AutomaticEnv()
 
-	if err = viper.ReadInConfig(); err != nil {
-		log.Println("we have error")
-
-		log.Println(err.Error())
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			log.Println("error is not ConfigFileNotFoundError")
-			return
-		}
-		err = nil
+	err = viper.ReadInConfig()
+	if err != nil {
+		return
 	}
-	// if err != nil {
-	// 	return
-	// }
 
 	err = viper.Unmarshal(&config.Config)
-	log.Println(config.Config)
 	return
 }
