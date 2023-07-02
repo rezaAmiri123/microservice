@@ -168,6 +168,7 @@ data:
     psql --file /script/init_services_db.psql -v db=search -v user=search_user -v pass=search_pass -h postgres-service -U postgres_user -d postgres_db 
     psql --file /script/init_services_db.psql -v db=stores -v user=stores_user -v pass=stores_pass -h postgres-service -U postgres_user -d postgres_db 
     psql --file /script/init_services_db.psql -v db=payments -v user=payments_user -v pass=payments_pass -h postgres-service -U postgres_user -d postgres_db 
+    psql --file /script/init_services_db.psql -v db=users -v user=users_user -v pass=users_pass -h postgres-service -U postgres_user -d postgres_db 
 
 ---
 apiVersion: batch/v1
