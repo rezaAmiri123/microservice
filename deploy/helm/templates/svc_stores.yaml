@@ -1,24 +1,24 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: users-configuration
+  name: stores-configuration
   labels:
-    app: users
+    app: stores
 data:
   POSTGRES_DRIVER: pgx
   POSTGRES_HOST: postgres-service
   POSTGRES_PORT: "5432"
-  POSTGRES_USER: users_user
-  POSTGRES_DB_NAME: users
-  POSTGRES_PASSWORD: users_pass
-  POSTGRES_SEARCH_PATH: users,public
+  POSTGRES_USER: stores_user
+  POSTGRES_DB_NAME: stores
+  POSTGRES_PASSWORD: stores_pass
+  POSTGRES_SEARCH_PATH: stores,public
   HTTP_SERVER_PORT: "8080"
   GRPC_SERVER_PORT: "9000"
   GRPC_STORE_CLIENT_ADDR: stores
   GRPC_STORE_CLIENT_PORT: "9000"
   EVENT_SERVER_TYPE: nats
   NATS_URL: nats-service:4222
-  OTEL_SERVICE_NAME: baskets
+  OTEL_SERVICE_NAME: stores
   OTEL_EXPORTER_OTLP_ENDPOINT: http://collector:4317
 
 
@@ -33,18 +33,18 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: users-deployment
+  name: stores-deployment
   labels:
-    app: users
+    app: stores
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: users
+      app: stores
   template:
     metadata:
       labels:
-        app: users
+        app: stores
     spec:
       initContainers:
         - name: init-mydb
@@ -55,14 +55,14 @@ spec:
           command: ['sh', '-c', "until nslookup nats-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for nats; sleep 2; done"]
 
       containers:
-        - name: users
+        - name: stores
 #          image: nginx:1.16
-          image: reza879/users:latest
+          image: reza879/stores:latest
           # image: willfarrell/ping:latest
           imagePullPolicy: IfNotPresent
           envFrom:
           - configMapRef:
-              name: users-configuration
+              name: stores-configuration
           ports:
             # - containerPort: 5080
             - name: http
@@ -88,12 +88,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: users-service
+  name: stores-service
   labels:
-    app: users
+    app: stores
 spec:
   selector:
-    app: users
+    app: stores
   # type: NodePort
   # session_affinity: ClientIP
   ports:
@@ -112,7 +112,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: users-ingress
+  name: stores-ingress
   annotations:
     # nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
@@ -120,25 +120,17 @@ spec:
     - host: hello-worldapp.com
       http:
         paths:
-          - path: /users-spec/
+          - path: /stores-spec/
             pathType: Prefix
             backend:
               service:
-                name: users-service
+                name: stores-service
                 port:
                   number: 8080        
-          - path: /v1/api/users/
+          - path: /v1/api/stores/
             pathType: Prefix
             backend:
               service:
-                name: users-service
+                name: stores-service
                 port:
                   number: 8080
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: users-service
-                port:
-                  number: 8080                          
-

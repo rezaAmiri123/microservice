@@ -9,7 +9,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        services: [pkg, users, baskets]
+        services: [pkg, baskets, cosec, depot, notifications, ordering, payments, search, stores, users]
     uses: ./.github/workflows/download.yml
     with:
       service: ${{ matrix.services }}
