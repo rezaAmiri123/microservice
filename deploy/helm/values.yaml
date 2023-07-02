@@ -19,6 +19,7 @@
 #       postgresqlUsername: "userservice-pguser"
 #       servicePort: "5432"
 nats:
+  enabled: false
   auth:
     enabled: false
   persistence:
