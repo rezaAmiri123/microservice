@@ -17,11 +17,12 @@ jobs:
       - name: Run mod vendor
         working-directory: ./${{ inputs.service }}
         run: |
+          git config --global user.name "action-user"
+          git config --global user.email "action-user@example.com"
+          git pull origin vendor
           go mod tidy
           go mod download
           go mod vendor
-          git config --global user.name "action-user"
-          git config --global user.email "action-user@example.com"
           git add .
           result=$(git status | grep "nothing to commit, working tree clean" |wc -l )
           if [[ $result -eq 0 ]]
