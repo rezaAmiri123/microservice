@@ -11,7 +11,7 @@ func Registrations(reg registry.Registry) (err error) {
 
 	// Store
 	if err = serde.Register(Store{}, func(v any) error {
-		store := v.(Store)
+		store := v.(*Store)
 		store.Aggregate = es.NewAggregate("", StoreAggregate)
 		return nil
 	}); err != nil {
