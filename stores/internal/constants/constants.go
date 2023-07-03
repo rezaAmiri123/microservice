@@ -44,13 +44,25 @@ const (
 )
 
 // Repository Table Names
-const (
-	OutboxTableName    = "outbox"
-	InboxTableName     = "inbox"
-	EventsTableName    = "events"
-	SnapshotsTableName = "snapshots"
-	SagasTableName     = "sagas"
+//const (
+//	OutboxTableName    = "outbox"
+//	InboxTableName     = "inbox"
+//	EventsTableName    = "events"
+//	SnapshotsTableName = "snapshots"
+//	SagasTableName     = "sagas"
+//
+//	CatalogTableName = "products"
+//	MallTableName    = "stores"
+//)
 
-	CatalogTableName = "products"
-	MallTableName    = "stores"
+// Repository Table Names
+const (
+	OutboxTableName    = ServiceName + ".outbox"
+	InboxTableName     = ServiceName + ".inbox"
+	EventsTableName    = ServiceName + ".events"
+	SnapshotsTableName = ServiceName + ".snapshots"
+	SagasTableName     = ServiceName + ".sagas"
+
+	CatalogTableName = ServiceName + ".products"
+	MallTableName    = ServiceName + ".stores"
 )

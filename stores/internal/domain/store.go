@@ -3,7 +3,6 @@ package domain
 import (
 	"github.com/rezaAmiri123/microservice/pkg/ddd"
 	"github.com/rezaAmiri123/microservice/pkg/es"
-	"github.com/rezaAmiri123/microservice/pkg/registry"
 	"github.com/stackus/errors"
 )
 
@@ -26,11 +25,7 @@ type Store struct {
 var _ interface {
 	es.EventApplier
 	es.Snapshotter
-	registry.Registrable
 } = (*Store)(nil)
-
-// Key implements registry.Registerable
-func (Store) Key() string { return StoreAggregate }
 
 func NewStore(id string) *Store {
 	return &Store{
@@ -42,26 +37,34 @@ func (s *Store) InitStore(name, location string) (ddd.Event, error) {
 	if name == "" {
 		return nil, ErrStoreNameIsBlank
 	}
+
 	if location == "" {
 		return nil, ErrStoreLocationIsBlank
 	}
+
 	s.AddEvent(StoreCreatedEvent, &StoreCreated{
 		Name:     name,
 		Location: location,
 	})
+
 	return ddd.NewEvent(StoreCreatedEvent, s), nil
 }
+
+// Key implements registry.Registerable
+func (Store) Key() string { return StoreAggregate }
 
 func (s *Store) EnableParticipation() (ddd.Event, error) {
 	if s.Participating {
 		return nil, ErrStoreIsAlreadyParticipating
 	}
+
 	s.AddEvent(StoreParticipationEnabledEvent, &StoreParticipationToggled{
 		Participating: true,
 	})
 
 	return ddd.NewEvent(StoreParticipationEnabledEvent, s), nil
 }
+
 func (s *Store) DisableParticipation() (ddd.Event, error) {
 	if !s.Participating {
 		return nil, ErrStoreIsAlreadyNotParticipating
@@ -78,6 +81,7 @@ func (s *Store) Rebrand(name string) (ddd.Event, error) {
 	s.AddEvent(StoreRebrandedEvent, &StoreRebranded{
 		Name: name,
 	})
+
 	return ddd.NewEvent(StoreRebrandedEvent, s), nil
 }
 
@@ -87,13 +91,17 @@ func (s *Store) ApplyEvent(event ddd.Event) error {
 	case *StoreCreated:
 		s.Name = payload.Name
 		s.Location = payload.Location
+
 	case *StoreParticipationToggled:
 		s.Participating = payload.Participating
+
 	case *StoreRebranded:
 		s.Name = payload.Name
+
 	default:
 		return errors.ErrInternal.Msgf("%T received the event %s with unexpected payload %T", s, event.EventName(), payload)
 	}
+
 	return nil
 }
 
@@ -104,15 +112,17 @@ func (s *Store) ApplySnapshot(snapshot es.Snapshot) error {
 		s.Name = ss.Name
 		s.Location = ss.Location
 		s.Participating = ss.Participating
+
 	default:
 		return errors.ErrInternal.Msgf("%T received the unexpected snapshot %T", s, snapshot)
 	}
+
 	return nil
 }
 
 // ToSnapshot implements es.Snapshotter
 func (s Store) ToSnapshot() es.Snapshot {
-	return &StoreV1{
+	return StoreV1{
 		Name:          s.Name,
 		Location:      s.Location,
 		Participating: s.Participating,

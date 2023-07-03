@@ -114,26 +114,26 @@ kind: Ingress
 metadata:
   name: users-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    # nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
     - host: hello-worldapp.com
       http:
         paths:
-          # - path: /users-spec/
-          #   pathType: Prefix
-          #   backend:
-          #     service:
-          #       name: users-service
-          #       port:
-          #         number: 8080        
-          # - path: /v1/api/users/
-          #   pathType: Prefix
-          #   backend:
-          #     service:
-          #       name: users-service
-          #       port:
-          #         number: 8080
+          - path: /users-spec/
+            pathType: Prefix
+            backend:
+              service:
+                name: users-service
+                port:
+                  number: 8080        
+          - path: /v1/api/users/
+            pathType: Prefix
+            backend:
+              service:
+                name: users-service
+                port:
+                  number: 8080
           - path: /
             pathType: Prefix
             backend:
