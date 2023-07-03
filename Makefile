@@ -1,3 +1,4 @@
+REPO_NAME=reza879
 docker_local:
 	@echo Starting local docker compose
 	docker-compose -f docker-compose-local.yaml up -d --build --remove-orphans
@@ -57,10 +58,12 @@ build-search:
 	docker build -t mallbots-search --file docker/Dockerfile.microservices --build-arg=service=search .
 
 rebuild-payments:
-	docker image rm -f mallbots-payments
-	docker build -t mallbots-payments --file docker/Dockerfile.microservices --build-arg=service=payments .
+	docker image rm -f mallbots-payments $(REPO_NAME)/payments:latest
+	docker build -t mallbots-payments -t $(REPO_NAME)/payments:latest --file docker/Dockerfile.microservices --build-arg=service=payments .
 build-payments:
-	docker build -t mallbots-payments --file docker/Dockerfile.microservices --build-arg=service=payments .
+	docker build -t mallbots-payments -t $(REPO_NAME)/payments:latest --file docker/Dockerfile.microservices --build-arg=service=payments .
+minikube-load-payments:
+	minikube image load $(REPO_NAME)/payments:latest
 
 rebuild-ordering:
 	docker image rm -f mallbots-ordering

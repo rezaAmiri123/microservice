@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -21,9 +20,9 @@ func DBMigrate(db *sql.DB, migratePath string, dbName string) error {
 	if err != nil {
 		return err
 	}
-	migrate.
-		err = m.Up() // or m.Step(2) if you want to explicitly set the number of migrations to run
-	fmt.Println(err)
+	// migrate.
+	err = m.Up() // or m.Step(2) if you want to explicitly set the number of migrations to run
+
 	if err != nil && err != migrate.ErrNoChange {
 		return err
 	}

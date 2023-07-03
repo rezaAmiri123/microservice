@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/rezaAmiri123/microservice/payments/internal/adapters/migrations"
 	"github.com/rezaAmiri123/microservice/payments/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/payments/internal/app"
 	"github.com/rezaAmiri123/microservice/payments/internal/constants"
@@ -35,19 +36,14 @@ func (a *Agent) setupApplication() error {
 		return fmt.Errorf("cannot load db: %w", err)
 	}
 
+	if err = postgres.MigrateUp(dbConn, migrations.FS); err != nil {
+		return err
+	}
+
 	a.container.AddSingleton(constants.DatabaseKey, func(c di.Container) (any, error) {
 		return dbConn, nil
 	})
 
-	//js, err := a.nats()
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//stream := jetstream.NewStream(a.NatsStream, js, a.container.Get(constants.LoggerKey).(logger.Logger))
-	//a.container.AddSingleton(constants.DomainDispatcherKey, func(c di.Container) (any, error) {
-	//	return ddd.NewEventDispatcher[ddd.AggregateEvent](), nil
-	//})
 	a.container.AddSingleton(constants.DomainDispatcherKey, func(c di.Container) (any, error) {
 		return ddd.NewEventDispatcher[ddd.Event](), nil
 	})
