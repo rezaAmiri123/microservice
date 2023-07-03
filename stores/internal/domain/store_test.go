@@ -114,7 +114,7 @@ func TestStore_ToSnapshot(t *testing.T) {
 				Location:      testStoreLocation,
 				Participating: true,
 			},
-			want: &StoreV1{
+			want: StoreV1{
 				Name:          testStoreName,
 				Location:      testStoreLocation,
 				Participating: true,
