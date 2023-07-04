@@ -66,22 +66,28 @@ minikube-load-payments:
 	minikube image load $(REPO_NAME)/payments:latest
 
 rebuild-ordering:
-	docker image rm -f mallbots-ordering
-	docker build -t mallbots-ordering --file docker/Dockerfile.microservices --build-arg=service=ordering .
+	docker image rm -f mallbots-ordering $(REPO_NAME)/ordering:latest
+	docker build -t mallbots-ordering -t $(REPO_NAME)/ordering:latest --file docker/Dockerfile.microservices --build-arg=service=ordering .
 build-ordering:
-	docker build -t mallbots-ordering --file docker/Dockerfile.microservices --build-arg=service=ordering .
+	docker build -t mallbots-ordering -t $(REPO_NAME)/ordering:latest --file docker/Dockerfile.microservices --build-arg=service=ordering .
+minikube-load-ordering:
+	minikube image load $(REPO_NAME)/ordering:latest
 
 rebuild-depot:
-	docker image rm -f mallbots-depot
-	docker build -t mallbots-depot --file docker/Dockerfile.microservices --build-arg=service=depot .
+	docker image rm -f mallbots-depot $(REPO_NAME)/depot:latest
+	docker build -t mallbots-depot -t $(REPO_NAME)/depot:latest --file docker/Dockerfile.microservices --build-arg=service=depot .
 build-depot:
-	docker build -t mallbots-depot --file docker/Dockerfile.microservices --build-arg=service=depot .
+	docker build -t mallbots-depot -t $(REPO_NAME)/depot:latest --file docker/Dockerfile.microservices --build-arg=service=depot .
+minikube-load-depot:
+	minikube image load $(REPO_NAME)/depot:latest
 
 rebuild-cosec:
-	docker image rm -f mallbots-cosec
-	docker build -t mallbots-cosec --file docker/Dockerfile.microservices --build-arg=service=cosec .
+	docker image rm -f mallbots-cosec $(REPO_NAME)/cosec:latest
+	docker build -t mallbots-cosec -t $(REPO_NAME)/cosec:latest --file docker/Dockerfile.microservices --build-arg=service=cosec .
 build-cosec:
-	docker build -t mallbots-cosec --file docker/Dockerfile.microservices --build-arg=service=cosec .
+	docker build -t mallbots-cosec -t $(REPO_NAME)/cosec:latest --file docker/Dockerfile.microservices --build-arg=service=cosec .
+minikube-load-cosec:
+	minikube image load $(REPO_NAME)/cosec:latest
 
 # helm repo add bitnami https://charts.bitnami.com/bitnami
 #=====================================================

@@ -35,10 +35,19 @@ const (
 )
 
 // Repository Table Names
+//const (
+//	OutboxTableName    = "outbox"
+//	InboxTableName     = "inbox"
+//	EventsTableName    = "events"
+//	SnapshotsTableName = "snapshots"
+//	SagasTableName     = "sagas"
+//)
+
+// Repository Table Names
 const (
-	OutboxTableName    = "outbox"
-	InboxTableName     = "inbox"
-	EventsTableName    = "events"
-	SnapshotsTableName = "snapshots"
-	SagasTableName     = "sagas"
+	OutboxTableName    = ServiceName + ".outbox"
+	InboxTableName     = ServiceName + ".inbox"
+	EventsTableName    = ServiceName + ".events"
+	SnapshotsTableName = ServiceName + ".snapshots"
+	SagasTableName     = ServiceName + ".sagas"
 )
