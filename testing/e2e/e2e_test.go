@@ -6,16 +6,17 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/cucumber/godog"
+	"github.com/go-openapi/runtime/client"
 	"reflect"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/cucumber/godog"
-	"github.com/go-openapi/runtime/client"
-	_ "github.com/jackc/pgx/v4/stdlib"
+	//_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/rdumont/assistdog"
+	"github.com/spf13/viper"
 	"github.com/stackus/errors"
 )
 
@@ -44,17 +45,43 @@ type featureConfig struct {
 	transport    *client.Runtime
 	useMonoDB    bool
 	randomString string
+
+	TransportURL string `mapstructure:"TRANSPORT_URL"`
+	PGDriver     string `mapstructure:"POSTGRES_DRIVER"`
+	PGHost       string `mapstructure:"POSTGRES_HOST"`
+	PGPort       string `mapstructure:"POSTGRES_PORT"`
+
+	PGUsersUser       string `mapstructure:"POSTGRES_USERS_USER"`
+	PGUsersDBName     string `mapstructure:"POSTGRES_USERS_DB_NAME"`
+	PGUsersPassword   string `mapstructure:"POSTGRES_USERS_PASSWORD"`
+	PGUsersSearchPath string `mapstructure:"POSTGRES_USERS_SEARCH_PATH"`
+
+	PGStoresUser       string `mapstructure:"POSTGRES_STORES_USER"`
+	PGStoresDBName     string `mapstructure:"POSTGRES_STORES_DB_NAME"`
+	PGStoresPassword   string `mapstructure:"POSTGRES_STORES_PASSWORD"`
+	PGStoresSearchPath string `mapstructure:"POSTGRES_STORES_SEARCH_PATH"`
+
+	PGBasketsUser       string `mapstructure:"POSTGRES_BASKETS_USER"`
+	PGBasketsDBName     string `mapstructure:"POSTGRES_BASKETS_DB_NAME"`
+	PGBasketsPassword   string `mapstructure:"POSTGRES_BASKETS_PASSWORD"`
+	PGBasketsSearchPath string `mapstructure:"POSTGRES_BASKETS_SEARCH_PATH"`
+
+	PGPaymentsUser       string `mapstructure:"POSTGRES_PAYMENTS_USER"`
+	PGPaymentsDBName     string `mapstructure:"POSTGRES_PAYMENTS_DB_NAME"`
+	PGPaymentsPassword   string `mapstructure:"POSTGRES_PAYMENTS_PASSWORD"`
+	PGPaymentsSearchPath string `mapstructure:"POSTGRES_PAYMENTS_SEARCH_PATH"`
 }
 
-func TestEndToEnd2(t *testing.T) {
-	opts := godog.Options{
-		Format:    "progress",
-		Paths:     []string{"features"},
-		Randomize: time.Now().UTC().UnixNano(), // randomize scenario execution order
-	}
-	fmt.Println(opts)
+//func TestEndToEnd2(t *testing.T) {
+//	opts := godog.Options{
+//		Format:    "progress",
+//		Paths:     []string{"features"},
+//		Randomize: time.Now().UTC().UnixNano(), // randomize scenario execution order
+//	}
+//	fmt.Println(opts)
+//
+//}
 
-}
 func TestEndToEnd(t *testing.T) {
 	assist.RegisterComparer(float64(0.0), func(raw string, actual interface{}) error {
 		af, ok := actual.(float64)
@@ -76,10 +103,16 @@ func TestEndToEnd(t *testing.T) {
 		return strconv.ParseFloat(raw, 64)
 	})
 
-	cfg := featureConfig{
-		transport: client.New("localhost:8080", "/", nil),
-		useMonoDB: *useMonoDB,
+	cfg, err := LoadConfig(".")
+	if err != nil {
+		t.Error(err)
 	}
+	cfg.transport = client.New(cfg.TransportURL, "/", nil)
+	cfg.useMonoDB = *useMonoDB
+	//cfg := featureConfig{
+	//	transport: client.New("localhost:8080", "/", nil),
+	//	useMonoDB: *useMonoDB,
+	//}
 
 	features, err := func(fs ...feature) ([]feature, error) {
 		features := make([]feature, len(fs))
@@ -191,4 +224,19 @@ func lastError(ctx context.Context) error {
 		return nil
 	}
 	return e.(error)
+}
+
+func LoadConfig(path string) (config featureConfig, err error) {
+	viper.AddConfigPath(path)
+	viper.SetConfigName("app")
+	viper.SetConfigType("env")
+
+	viper.AutomaticEnv()
+	err = viper.ReadInConfig()
+	if err != nil {
+		return
+	}
+
+	err = viper.Unmarshal(&config)
+	return
 }

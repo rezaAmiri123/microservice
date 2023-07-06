@@ -140,7 +140,7 @@
 #     nginx.ingress.kubernetes.io/rewrite-target: /
 # spec:
 #   rules:
-#     - host: hello-worldapp.com
+#     - host: mallbots.local
 #       http:
 #         paths:
 #           - path: /

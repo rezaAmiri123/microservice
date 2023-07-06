@@ -82,8 +82,8 @@ spec:
           #     httpHeaders:
           #       - name: Custom-Header
           #         value: Awesome
-            initialDelaySeconds: 10
-            periodSeconds: 3
+            # initialDelaySeconds: 10
+            # periodSeconds: 3
 ---
 apiVersion: v1
 kind: Service
@@ -117,7 +117,7 @@ spec:
 #     # nginx.ingress.kubernetes.io/rewrite-target: /
 # spec:
 #   rules:
-#     - host: hello-worldapp.com
+#     - host: mallbots.com
 #       http:
 #         paths:
 #           - path: /cosec-spec/
