@@ -17,7 +17,6 @@ require (
 	github.com/go-openapi/runtime v0.26.0
 	github.com/go-openapi/strfmt v0.21.7
 	github.com/google/uuid v1.3.0
-	github.com/jackc/pgx/v4 v4.18.1
 	github.com/pact-foundation/pact-go/v2 v2.0.0-beta.20
 	github.com/rdumont/assistdog v0.0.0-20201106100018-168b06230d14
 	github.com/rezaAmiri123/microservice/baskets v0.0.0-00010101000000-000000000000
@@ -80,7 +79,7 @@ require (
 	github.com/jackc/pgproto3/v2 v2.3.2 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgtype v1.14.0 // indirect
-	github.com/jackc/pgx v3.6.2+incompatible // indirect
+	github.com/jackc/pgx/v4 v4.18.1 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
@@ -94,7 +93,6 @@ require (
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/pressly/goose/v3 v3.11.2 // indirect
 	github.com/spf13/afero v1.9.5 // indirect
