@@ -1,7 +1,5 @@
 package domain
 
-import "github.com/rezaAmiri123/microservice/pkg/registry"
-
 const (
 	StoreCreatedEvent               = "stores.StoreCreated"
 	StoreParticipationEnabledEvent  = "stores.StoreParticipationEnabled"
@@ -14,8 +12,7 @@ type StoreCreated struct {
 	Location string
 }
 
-var _ registry.Registrable = (*StoreCreated)(nil)
-
+// Key implements registry.Registerable
 func (StoreCreated) Key() string { return StoreCreatedEvent }
 
 type StoreParticipationToggled struct {
@@ -26,6 +23,5 @@ type StoreRebranded struct {
 	Name string
 }
 
-var _ registry.Registrable = (*StoreRebranded)(nil)
-
+// Key implements registry.Registerable
 func (StoreRebranded) Key() string { return StoreRebrandedEvent }

@@ -6,16 +6,15 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/go-openapi/runtime/client"
+	"github.com/cucumber/godog"
+	"github.com/go-openapi/strfmt"
+	"github.com/google/uuid"
+	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
 	"github.com/rezaAmiri123/microservice/stores/storesclient"
 	"github.com/rezaAmiri123/microservice/stores/storesclient/models"
 	"github.com/rezaAmiri123/microservice/stores/storesclient/product"
 	"github.com/rezaAmiri123/microservice/stores/storesclient/store"
-
-	"github.com/cucumber/godog"
-	"github.com/go-openapi/strfmt"
-	"github.com/google/uuid"
-	_ "github.com/jackc/pgx/v4/stdlib"
+	//_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/stackus/errors"
 )
 
@@ -24,19 +23,31 @@ type productIDKey struct{}
 type productMapKey struct{}
 
 type storesFeature struct {
-	//db     *sql.DB
+	db     *sql.DB
 	client *storesclient.StoreServiceAPI
 }
 
 var _ feature = (*storesFeature)(nil)
 
-func (c *storesFeature) getDB() (*sql.DB, error) {
-	return sql.Open("pgx", "postgres://stores_user:stores_pass@localhost:5432/stores?sslmode=disable&search_path=stores,public")
-}
+//	func (c *storesFeature) getDB() (*sql.DB, error) {
+//		return sql.Open("pgx", "postgres://stores_user:stores_pass@localhost:5432/stores?sslmode=disable&search_path=stores,public")
+//	}
 func (c *storesFeature) init(cfg featureConfig) (err error) {
-	conn := client.New("localhost:8080", "/", nil)
-	c.client = storesclient.New(conn, strfmt.Default)
-	return err
+	c.client = storesclient.New(cfg.transport, strfmt.Default)
+	c.db, err = postgres.NewDB(postgres.Config{
+		PGDriver:     cfg.PGDriver,
+		PGHost:       cfg.PGHost,
+		PGPort:       cfg.PGPort,
+		PGUser:       cfg.PGStoresUser,
+		PGDBName:     cfg.PGStoresDBName,
+		PGPassword:   cfg.PGStoresPassword,
+		PGSearchPath: cfg.PGStoresSearchPath,
+	})
+	if err != nil {
+		return fmt.Errorf("cannot load db: %w", err)
+	}
+
+	return
 }
 
 func (c *storesFeature) register(ctx *godog.ScenarioContext) {
@@ -71,10 +82,8 @@ func (c *storesFeature) register(ctx *godog.ScenarioContext) {
 }
 
 func (c *storesFeature) reset() {
-	db, _ := c.getDB()
-	defer db.Close()
 	truncate := func(tableName string) {
-		_, err := db.Exec(fmt.Sprintf("TRUNCATE %s", tableName))
+		_, err := c.db.Exec(fmt.Sprintf("TRUNCATE %s", tableName))
 		if err != nil {
 			fmt.Errorf("reset error: %v", err)
 		}
@@ -98,11 +107,8 @@ func (c *storesFeature) noop() {
 }
 
 func (c *storesFeature) expectAStoreCalledToExist(ctx context.Context, name string) error {
-	db, _ := c.getDB()
-	defer db.Close()
-
 	var storeID string
-	row := db.QueryRow("SELECT id FROM stores.stores WHERE name = $1", withRandomString(name))
+	row := c.db.QueryRow("SELECT id FROM stores.stores WHERE name = $1", withRandomString(name))
 	err := row.Scan(&storeID)
 	if err != nil {
 		return errors.ErrNotFound.Msgf("the store `%s` does not exist", name)
@@ -112,11 +118,8 @@ func (c *storesFeature) expectAStoreCalledToExist(ctx context.Context, name stri
 }
 
 func (c *storesFeature) expectNoStoreCalledToExist(name string) error {
-	db, _ := c.getDB()
-	defer db.Close()
-
 	var storeID string
-	row := db.QueryRow("SELECT id FROM stores WHERE name = $1", withRandomString(name))
+	row := c.db.QueryRow("SELECT id FROM stores.stores WHERE name = $1", withRandomString(name))
 	err := row.Scan(&storeID)
 	if err == sql.ErrNoRows {
 		return nil
@@ -150,11 +153,8 @@ func (c *storesFeature) expectTheStoreWasCreated(ctx context.Context) error {
 }
 
 func (c *storesFeature) expectAProductCalledToExist(ctx context.Context, name string) error {
-	db, _ := c.getDB()
-	defer db.Close()
-
 	var productID string
-	row := db.QueryRow("SELECT id FROM stores.products WHERE name = $1", withRandomString(name))
+	row := c.db.QueryRow("SELECT id FROM stores.products WHERE name = $1", withRandomString(name))
 	err := row.Scan(&productID)
 	if err != nil {
 		return errors.ErrNotFound.Msgf("the product `%s` does not exist", name)
@@ -164,11 +164,8 @@ func (c *storesFeature) expectAProductCalledToExist(ctx context.Context, name st
 }
 
 func (c *storesFeature) expectNoProductCalledToExist(name string) error {
-	db, _ := c.getDB()
-	defer db.Close()
-
 	var productID string
-	row := db.QueryRow("SELECT id FROM stores.products WHERE name = $1", withRandomString(name))
+	row := c.db.QueryRow("SELECT id FROM stores.products WHERE name = $1", withRandomString(name))
 	err := row.Scan(&productID)
 	if err == sql.ErrNoRows {
 		return nil

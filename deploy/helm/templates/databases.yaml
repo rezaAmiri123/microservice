@@ -101,7 +101,7 @@ spec:
   ports:
   - port: 5432
     name: postgres
-    nodePort: 30001
+    nodePort: 30000
   type: NodePort 
   selector:
     app: postgres
@@ -168,6 +168,7 @@ data:
     psql --file /script/init_services_db.psql -v db=search -v user=search_user -v pass=search_pass -h postgres-service -U postgres_user -d postgres_db 
     psql --file /script/init_services_db.psql -v db=stores -v user=stores_user -v pass=stores_pass -h postgres-service -U postgres_user -d postgres_db 
     psql --file /script/init_services_db.psql -v db=payments -v user=payments_user -v pass=payments_pass -h postgres-service -U postgres_user -d postgres_db 
+    psql --file /script/init_services_db.psql -v db=users -v user=users_user -v pass=users_pass -h postgres-service -U postgres_user -d postgres_db 
 
 ---
 apiVersion: batch/v1
@@ -192,10 +193,7 @@ spec:
         - name: test
           image: reza879/deploytools:latest # busybox:1.28
           imagePullPolicy: IfNotPresent
-          command: [ # 'sh', '-c', "until nslookup postgres-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for postgres; sleep 2; done" , ';',
-                    #  'ls', '-l', '/script', ';', 
-                    "/script/init_db.sh",
-                     ]
+          command: ["/script/init_db.sh"]
           volumeMounts:
             - name: script
               mountPath: "/script"

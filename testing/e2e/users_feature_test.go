@@ -7,8 +7,8 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/cucumber/godog"
-	"github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
+	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
 	"github.com/rezaAmiri123/microservice/users/usersclient"
 	"github.com/rezaAmiri123/microservice/users/usersclient/models"
 	"github.com/rezaAmiri123/microservice/users/usersclient/user"
@@ -19,26 +19,30 @@ type userIDKey struct{}
 
 type usersFeature struct {
 	client *usersclient.UserServiceAPI
-	//db     *sql.DB
+	db     *sql.DB
 }
 
 var _ feature = (*usersFeature)(nil)
 
-func (u *usersFeature) getDB() (*sql.DB, error) {
-	return sql.Open("pgx", "postgres://users_user:users_pass@localhost:5432/users?sslmode=disable&search_path=users,public")
-}
+//func (u *usersFeature) getDB() (*sql.DB, error) {
+//	return sql.Open("pgx", "postgres://users_user:users_pass@localhost:5432/users?sslmode=disable&search_path=users,public")
+//}
 
 func (u *usersFeature) init(cfg featureConfig) (err error) {
-	//if cfg.useMonoDB {
-	//	u.db, err = sql.Open("pgx", "postgres://mallbots_user:mallbots_pass@localhost:5432/mallbots?sslmode=disable")
-	//} else {
-	//	u.db, err = sql.Open("pgx", "postgres://users_user:users_pass@localhost:5432/users?sslmode=disable&search_path=users,public")
-	//}
-	//if err != nil {
-	//	return
-	//}
-	conn := client.New("localhost:8080", "/", nil)
-	u.client = usersclient.New(conn, strfmt.Default)
+	u.client = usersclient.New(cfg.transport, strfmt.Default)
+	u.db, err = postgres.NewDB(postgres.Config{
+		PGDriver:     cfg.PGDriver,
+		PGHost:       cfg.PGHost,
+		PGPort:       cfg.PGPort,
+		PGUser:       cfg.PGUsersUser,
+		PGDBName:     cfg.PGUsersDBName,
+		PGPassword:   cfg.PGUsersPassword,
+		PGSearchPath: cfg.PGUsersSearchPath,
+	})
+	if err != nil {
+		return fmt.Errorf("cannot load db: %w", err)
+	}
+
 	return
 }
 
@@ -51,11 +55,9 @@ func (u *usersFeature) register(ctx *godog.ScenarioContext) {
 }
 
 func (u *usersFeature) reset() {
-	db, _ := u.getDB()
-	defer db.Close()
 
 	truncate := func(tableName string) {
-		_, _ = db.Exec(fmt.Sprintf("TRUNCATE %s", tableName))
+		_, _ = u.db.Exec(fmt.Sprintf("TRUNCATE %s", tableName))
 	}
 
 	truncate("users")
@@ -93,11 +95,8 @@ func (u *usersFeature) iRegisterANewUserAs(ctx context.Context, username string)
 }
 
 func (u *usersFeature) expectAUserNamedToExist(username string) error {
-	db, _ := u.getDB()
-	defer db.Close()
-
 	var userID string
-	row := db.QueryRow("SELECT id FROM users WHERE username = $1", withRandomString(username))
+	row := u.db.QueryRow("SELECT id FROM users.users WHERE username = $1", withRandomString(username))
 	err := row.Scan(&userID)
 	if err != nil {
 		return errors.ErrNotFound.Msgf("the user `%s` does not exist", username)
@@ -106,11 +105,8 @@ func (u *usersFeature) expectAUserNamedToExist(username string) error {
 }
 
 func (u *usersFeature) expectNoUserNamedToExist(username string) error {
-	db, _ := u.getDB()
-	defer db.Close()
-
 	var userID string
-	row := db.QueryRow("SELECT id FROM users WHERE username = $1", withRandomString(username))
+	row := u.db.QueryRow("SELECT id FROM users.users WHERE username = $1", withRandomString(username))
 	err := row.Scan(&userID)
 	if err == sql.ErrNoRows {
 		return nil

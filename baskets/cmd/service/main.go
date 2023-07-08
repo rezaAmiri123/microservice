@@ -17,7 +17,7 @@ func main() {
 
 	ag, err := agent.NewAgent(config.Config)
 	if err != nil {
-		log.Fatal("cannot load config:", err)
+		log.Fatal("cannot load agent config:", err)
 	}
 	sigc := make(chan os.Signal, 1)
 	signal.Notify(sigc, syscall.SIGINT, syscall.SIGTERM)

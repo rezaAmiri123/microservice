@@ -5,22 +5,11 @@ import (
 	"github.com/rezaAmiri123/microservice/pkg/errorsotel"
 	"github.com/rezaAmiri123/microservice/users/internal/app"
 	"github.com/rezaAmiri123/microservice/users/userspb"
+	"github.com/stackus/errors"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
-	grpcCodes "google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
-
-func (s serverTx) GetUser(ctx context.Context, request *userspb.GetUserRequest) (resp *userspb.GetUserResponse, err error) {
-	ctx = s.c.Scoped(ctx)
-	//defer func(tx *sql.Tx) {
-	//	err = s.closeTx(tx, err)
-	//}(di.Get(ctx, constants.DatabaseTransactionKey).(*sql.Tx))
-
-	next := s.getNextServer()
-	return next.GetUser(ctx, request)
-}
 
 func (s *server) GetUser(ctx context.Context, req *userspb.GetUserRequest) (*userspb.GetUserResponse, error) {
 	span := trace.SpanFromContext(ctx)
@@ -32,12 +21,14 @@ func (s *server) GetUser(ctx context.Context, req *userspb.GetUserRequest) (*use
 		ID: req.GetId(),
 	})
 	if err != nil {
-		//s.cfg.Logger.Errorf("failed to authorize user: %s", err)
+		err = errors.Wrap(err, "grpc GetUser")
+		s.cfg.Logger.Error(err)
 		span.RecordError(err, trace.WithAttributes(errorsotel.ErrAttrs(err)...))
 		span.SetStatus(codes.Error, err.Error())
-		return nil, status.Errorf(grpcCodes.Internal, "failed to authorize user: %s", err)
+		return nil, err
 	}
-	return &userspb.GetUserResponse{
-		User: s.userFromDomain(user),
-	}, nil
+
+	s.cfg.Logger.Debugf("retrieve user %s ", req.GetId())
+
+	return &userspb.GetUserResponse{User: s.userFromDomain(user)}, nil
 }

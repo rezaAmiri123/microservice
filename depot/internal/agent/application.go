@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-
 	"github.com/rezaAmiri123/microservice/depot/internal/adapters/grpc"
+	"github.com/rezaAmiri123/microservice/depot/internal/adapters/migrations"
 	"github.com/rezaAmiri123/microservice/depot/internal/adapters/pg"
 	"github.com/rezaAmiri123/microservice/depot/internal/app"
 	"github.com/rezaAmiri123/microservice/depot/internal/constants"
@@ -35,6 +35,14 @@ func (a *Agent) setupApplication() error {
 	})
 	if err != nil {
 		return fmt.Errorf("cannot load db: %w", err)
+	}
+
+	//if err = postgres.MigrateDown(dbConn, migrations.FS); err != nil {
+	//	return err
+	//}
+
+	if err = postgres.MigrateUp(dbConn, migrations.FS); err != nil {
+		return err
 	}
 
 	a.container.AddSingleton(constants.DatabaseKey, func(c di.Container) (any, error) {

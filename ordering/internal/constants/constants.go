@@ -38,13 +38,23 @@ const (
 
 // Repository Table Names
 const (
-	OrdersTableName = "orders"
+// OrdersTableName = "orders"
 
-	OutboxTableName    = "outbox"
-	InboxTableName     = "inbox"
-	EventsTableName    = "events"
-	SnapshotsTableName = "snapshots"
-	SagasTableName     = "sagas"
+// OutboxTableName    = "outbox"
+// InboxTableName     = "inbox"
+// EventsTableName    = "events"
+// SnapshotsTableName = "snapshots"
+// SagasTableName     = "sagas"
+)
+
+// Repository Table Names
+const (
+	OrdersTableName    = ServiceName + ".orders"
+	OutboxTableName    = ServiceName + ".outbox"
+	InboxTableName     = ServiceName + ".inbox"
+	EventsTableName    = ServiceName + ".events"
+	SnapshotsTableName = ServiceName + ".snapshots"
+	SagasTableName     = ServiceName + ".sagas"
 )
 
 // Metric Names

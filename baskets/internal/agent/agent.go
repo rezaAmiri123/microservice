@@ -5,9 +5,12 @@ import (
 	"github.com/rezaAmiri123/microservice/baskets/internal/constants"
 	"github.com/rezaAmiri123/microservice/pkg/am"
 	"github.com/rezaAmiri123/microservice/pkg/di"
+	"github.com/stackus/errors"
 	"go.opentelemetry.io/otel/sdk/trace"
 	"google.golang.org/grpc"
 	"net/http"
+	"reflect"
+	"runtime"
 
 	//"github.com/rezaAmiri123/microservice/users/internal/app"
 	"io"
@@ -118,6 +121,7 @@ func NewAgent(config Config) (*Agent, error) {
 	}
 	for _, fn := range setupsFn {
 		if err := fn(); err != nil {
+			err = errors.Wrap(err, runtime.FuncForPC(reflect.ValueOf(fn).Pointer()).Name())
 			return nil, err
 		}
 	}

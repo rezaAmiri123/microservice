@@ -2,6 +2,7 @@ package agent
 
 import (
 	"fmt"
+	"github.com/rezaAmiri123/microservice/ordering/internal/adapters/migrations"
 	"github.com/rezaAmiri123/microservice/ordering/internal/constants"
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
 	"github.com/rezaAmiri123/microservice/pkg/di"
@@ -19,6 +20,9 @@ func (a *Agent) setupDatabase() error {
 	})
 	if err != nil {
 		return fmt.Errorf("cannot load db: %w", err)
+	}
+	if err = postgres.MigrateUp(dbConn, migrations.FS); err != nil {
+		return err
 	}
 
 	a.container.AddSingleton(constants.DatabaseKey, func(c di.Container) (any, error) {

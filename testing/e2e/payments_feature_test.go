@@ -4,11 +4,13 @@ package e2e
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"github.com/cucumber/godog"
 	"github.com/go-openapi/strfmt"
 	"github.com/rezaAmiri123/microservice/payments/paymentsclient"
 	"github.com/rezaAmiri123/microservice/payments/paymentsclient/models"
 	"github.com/rezaAmiri123/microservice/payments/paymentsclient/payment"
+	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
 	"github.com/stackus/errors"
 )
 
@@ -22,15 +24,19 @@ type paymentsFeature struct {
 var _ feature = (*paymentsFeature)(nil)
 
 func (c *paymentsFeature) init(cfg featureConfig) (err error) {
-	if cfg.useMonoDB {
-		c.db, err = sql.Open("pgx", "postgres://mallbots_user:mallbots_pass@localhost:5432/mallbots?sslmode=disable")
-	} else {
-		c.db, err = sql.Open("pgx", "postgres://payments_user:payments_pass@localhost:5432/payments?sslmode=disable&search_path=payments,public")
-	}
-	if err != nil {
-		return
-	}
 	c.client = paymentsclient.New(cfg.transport, strfmt.Default)
+	c.db, err = postgres.NewDB(postgres.Config{
+		PGDriver:     cfg.PGDriver,
+		PGHost:       cfg.PGHost,
+		PGPort:       cfg.PGPort,
+		PGUser:       cfg.PGPaymentsUser,
+		PGDBName:     cfg.PGPaymentsDBName,
+		PGPassword:   cfg.PGPaymentsPassword,
+		PGSearchPath: cfg.PGPaymentsSearchPath,
+	})
+	if err != nil {
+		return fmt.Errorf("cannot load db: %w", err)
+	}
 
 	return
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/docker/go-connections/nat"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
+	"github.com/rezaAmiri123/microservice/baskets/internal/adapters/migrations"
 	"github.com/rezaAmiri123/microservice/baskets/internal/constants"
 	"github.com/rezaAmiri123/microservice/baskets/internal/domain"
 	pkgPostgres "github.com/rezaAmiri123/microservice/pkg/db/postgres"
@@ -85,7 +86,8 @@ func (s *productCacheSuite) SetupSuite() {
 	if err != nil {
 		s.T().Fatal(err)
 	}
-	err = pkgPostgres.DBMigrate(s.db, "file://../migrations", constants.ServiceName)
+	//err = pkgPostgres.DBMigrate(s.db, "file://../migrations", constants.ServiceName)
+	err = pkgPostgres.MigrateUp(s.db, migrations.FS)
 	if err != nil {
 		s.T().Fatal(err)
 	}
