@@ -23,7 +23,7 @@ jobs:
       - name: Run mod vendor
         # working-directory: ./${{ inputs.service }}
         run: |
-          services=( pkg baskets cosec depot notifications ordering payments search stores users )
+          services=( pkg baskets cosec depot notifications ordering payments search stores users testing )
           for service in "${services[@]}"
           do
             echo "${service}"

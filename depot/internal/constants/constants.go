@@ -40,16 +40,29 @@ const (
 
 // Repository Table Names
 const (
-	OutboxTableName    = "outbox"
-	InboxTableName     = "inbox"
-	EventsTableName    = "events"
-	SnapshotsTableName = "snapshots"
-	SagasTableName     = "sagas"
+	OutboxTableName    = ServiceName + ".outbox"
+	InboxTableName     = ServiceName + ".inbox"
+	EventsTableName    = ServiceName + ".events"
+	SnapshotsTableName = ServiceName + ".snapshots"
+	SagasTableName     = ServiceName + ".sagas"
 
-	ShoppingListsTableName = "shopping_lists"
-	StoresCacheTableName   = "stores_cache"
-	ProductsCacheTableName = "products_cache"
+	ShoppingListsTableName = ServiceName + ".shopping_lists"
+	StoresCacheTableName   = ServiceName + ".stores_cache"
+	ProductsCacheTableName = ServiceName + ".products_cache"
 )
+
+// Repository Table Names
+//const (
+//	OutboxTableName    = "outbox"
+//	InboxTableName     = "inbox"
+//	EventsTableName    = "events"
+//	SnapshotsTableName = "snapshots"
+//	SagasTableName     = "sagas"
+//
+//	ShoppingListsTableName = "shopping_lists"
+//	StoresCacheTableName   = "stores_cache"
+//	ProductsCacheTableName = "products_cache"
+//)
 
 // Metric Names
 const (

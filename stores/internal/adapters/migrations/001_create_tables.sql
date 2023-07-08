@@ -109,6 +109,7 @@ CREATE TRIGGER updated_at_sagas_trgr
     ON sagas
     FOR EACH ROW EXECUTE PROCEDURE updated_at_trigger();
 
+
 -- +goose Down
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS stores;

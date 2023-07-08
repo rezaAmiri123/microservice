@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/rezaAmiri123/microservice/cosec/internal"
+	"github.com/rezaAmiri123/microservice/cosec/internal/adapters/migrations"
 	"github.com/rezaAmiri123/microservice/cosec/internal/constants"
 	"github.com/rezaAmiri123/microservice/cosec/internal/domain"
 	"github.com/rezaAmiri123/microservice/cosec/internal/handlers"
@@ -24,16 +25,21 @@ func (a *Agent) setupApplication() (err error) {
 	//stream := jetstream.NewStream(svc.Config().Nats.Stream, svc.JS(), svc.Logger())
 	//js, _ := a.nats()
 	//stream := jetstream.NewStream(a.NatsStream, js, a.container.Get(constants.LoggerKey).(logger.Logger))
-	dbConn, err := postgres.NewPsqlDB(postgres.Config{
-		PGDriver:   a.PGDriver,
-		PGHost:     a.PGHost,
-		PGPort:     a.PGPort,
-		PGUser:     a.PGUser,
-		PGDBName:   a.PGDBName,
-		PGPassword: a.PGPassword,
+	dbConn, err := postgres.NewDB(postgres.Config{
+		PGDriver:     a.PGDriver,
+		PGHost:       a.PGHost,
+		PGPort:       a.PGPort,
+		PGUser:       a.PGUser,
+		PGDBName:     a.PGDBName,
+		PGPassword:   a.PGPassword,
+		PGSearchPath: a.PGSearchPath,
 	})
 	if err != nil {
 		return fmt.Errorf("cannot load db: %w", err)
+	}
+
+	if err = postgres.MigrateUp(dbConn, migrations.FS); err != nil {
+		return err
 	}
 
 	a.container.AddScoped(constants.DatabaseTransactionKey, func(c di.Container) (any, error) {

@@ -27,35 +27,44 @@ docker_down:
 build-services: build-users build-baskets build-notifications build-stores build-search build-payments build-ordering build-depot build-cosec  
 
 rebuild-users:
-	docker image rm -f mallbots-users
-	docker build -t mallbots-users --file docker/Dockerfile.microservices --build-arg=service=users .
-
+	docker image rm -f mallbots-users $(REPO_NAME)/users:latest
+	docker build -t mallbots-users -t $(REPO_NAME)/users:latest --file docker/Dockerfile.microservices --build-arg=service=users .
 build-users:
-	docker build -t mallbots-users --file docker/Dockerfile.microservices --build-arg=service=users .
+	docker build -t mallbots-users -t $(REPO_NAME)/users:latest --file docker/Dockerfile.microservices --build-arg=service=users .
+minikube-load-users:
+	minikube image load $(REPO_NAME)/users:latest
 
 rebuild-baskets:
-	docker image rm -f mallbots-baskets
-	docker build -t mallbots-baskets --no-cache --file docker/Dockerfile.microservices --build-arg=service=baskets .
+	docker image rm -f mallbots-baskets $(REPO_NAME)/baskets:latest
+	docker build -t mallbots-baskets -t $(REPO_NAME)/baskets:latest --file docker/Dockerfile.microservices --build-arg=service=baskets .
 build-baskets:
-	docker build -t mallbots-baskets --file docker/Dockerfile.microservices --build-arg=service=baskets .
+	docker build -t mallbots-baskets -t $(REPO_NAME)/baskets:latest --file docker/Dockerfile.microservices --build-arg=service=baskets .
+minikube-load-baskets:
+	minikube image load $(REPO_NAME)/baskets:latest
 
 rebuild-notifications:
-	docker image rm -f mallbots-notifications
-	docker build -t mallbots-notifications --file docker/Dockerfile.microservices --build-arg=service=notifications .
+	docker image rm -f mallbots-notifications $(REPO_NAME)/notifications:latest
+	docker build -t mallbots-notifications -t $(REPO_NAME)/notifications:latest --file docker/Dockerfile.microservices --build-arg=service=notifications .
 build-notifications:
-	docker build -t mallbots-notifications --file docker/Dockerfile.microservices --build-arg=service=notifications .
+	docker build -t mallbots-notifications -t $(REPO_NAME)/notifications:latest --file docker/Dockerfile.microservices --build-arg=service=notifications .
+minikube-load-notifications:
+	minikube image load $(REPO_NAME)/notifications:latest
 
 rebuild-stores:
-	docker image rm -f mallbots-stores
-	docker build -t mallbots-stores --file docker/Dockerfile.microservices --build-arg=service=stores .
+	docker image rm -f mallbots-stores $(REPO_NAME)/stores:latest
+	docker build -t mallbots-stores -t $(REPO_NAME)/stores:latest --file docker/Dockerfile.microservices --build-arg=service=stores .
 build-stores:
-	docker build -t mallbots-stores --file docker/Dockerfile.microservices --build-arg=service=stores .
+	docker build -t mallbots-stores -t $(REPO_NAME)/stores:latest --file docker/Dockerfile.microservices --build-arg=service=stores .
+minikube-load-stores:
+	minikube image load $(REPO_NAME)/stores:latest
 
 rebuild-search:
-	docker image rm -f mallbots-search
-	docker build -t mallbots-search --file docker/Dockerfile.microservices --build-arg=service=search .
+	docker image rm -f mallbots-search $(REPO_NAME)/search:latest
+	docker build -t mallbots-search -t $(REPO_NAME)/search:latest --file docker/Dockerfile.microservices --build-arg=service=search .
 build-search:
-	docker build -t mallbots-search --file docker/Dockerfile.microservices --build-arg=service=search .
+	docker build -t mallbots-search -t $(REPO_NAME)/search:latest --file docker/Dockerfile.microservices --build-arg=service=search .
+minikube-load-search:
+	minikube image load $(REPO_NAME)/search:latest
 
 rebuild-payments:
 	docker image rm -f mallbots-payments $(REPO_NAME)/payments:latest
@@ -66,22 +75,40 @@ minikube-load-payments:
 	minikube image load $(REPO_NAME)/payments:latest
 
 rebuild-ordering:
-	docker image rm -f mallbots-ordering
-	docker build -t mallbots-ordering --file docker/Dockerfile.microservices --build-arg=service=ordering .
+	docker image rm -f mallbots-ordering $(REPO_NAME)/ordering:latest
+	docker build -t mallbots-ordering -t $(REPO_NAME)/ordering:latest --file docker/Dockerfile.microservices --build-arg=service=ordering .
 build-ordering:
-	docker build -t mallbots-ordering --file docker/Dockerfile.microservices --build-arg=service=ordering .
+	docker build -t mallbots-ordering -t $(REPO_NAME)/ordering:latest --file docker/Dockerfile.microservices --build-arg=service=ordering .
+minikube-load-ordering:
+	minikube image load $(REPO_NAME)/ordering:latest
 
 rebuild-depot:
-	docker image rm -f mallbots-depot
-	docker build -t mallbots-depot --file docker/Dockerfile.microservices --build-arg=service=depot .
+	docker image rm -f mallbots-depot $(REPO_NAME)/depot:latest
+	docker build -t mallbots-depot -t $(REPO_NAME)/depot:latest --file docker/Dockerfile.microservices --build-arg=service=depot .
 build-depot:
-	docker build -t mallbots-depot --file docker/Dockerfile.microservices --build-arg=service=depot .
+	docker build -t mallbots-depot -t $(REPO_NAME)/depot:latest --file docker/Dockerfile.microservices --build-arg=service=depot .
+minikube-load-depot:
+	minikube image load $(REPO_NAME)/depot:latest
 
 rebuild-cosec:
-	docker image rm -f mallbots-cosec
-	docker build -t mallbots-cosec --file docker/Dockerfile.microservices --build-arg=service=cosec .
+	docker image rm -f mallbots-cosec $(REPO_NAME)/cosec:latest
+	docker build -t mallbots-cosec -t $(REPO_NAME)/cosec:latest --file docker/Dockerfile.microservices --build-arg=service=cosec .
 build-cosec:
-	docker build -t mallbots-cosec --file docker/Dockerfile.microservices --build-arg=service=cosec .
+	docker build -t mallbots-cosec -t $(REPO_NAME)/cosec:latest --file docker/Dockerfile.microservices --build-arg=service=cosec .
+minikube-load-cosec:
+	minikube image load $(REPO_NAME)/cosec:latest
+
+minikube-load-all:
+	minikube image load \
+		$(REPO_NAME)/baskets:latest \
+		$(REPO_NAME)/cosec:latest \
+		$(REPO_NAME)/depot:latest \
+		$(REPO_NAME)/notifications:latest \
+		$(REPO_NAME)/ordering:latest \
+		$(REPO_NAME)/payments:latest \
+		$(REPO_NAME)/search:latest \
+		$(REPO_NAME)/stores:latest \
+		$(REPO_NAME)/users:latest
 
 # helm repo add bitnami https://charts.bitnami.com/bitnami
 #=====================================================
@@ -108,19 +135,6 @@ helm_update_dependency:
 
 helm_uninstall:
 	helm uninstall microservice 
-
-HELM_DB_CONNECTION = xxxx
-helm_init_db:
-	psql --file deploy/helm/sql/init_db.psql ${HELM_DB_CONNECTION}/postgres
-	psql --file deploy/helm/sql/init_service_db.psql -v db=baskets -v user=baskets_user -v pass=baskets_pass ${HELM_DB_CONNECTION}/postgres
-	psql --file deploy/helm/sql/init_service_db.psql -v db=cosec -v user=cosec_user -v pass=cosec_pass ${HELM_DB_CONNECTION}/postgres
-	psql --file deploy/helm/sql/init_service_db.psql -v db=depot -v user=depot_user -v pass=depot_pass ${HELM_DB_CONNECTION}/postgres
-	psql --file deploy/helm/sql/init_service_db.psql -v db=notifications -v user=notifications_user -v pass=notifications_pass ${HELM_DB_CONNECTION}/postgres
-	psql --file deploy/helm/sql/init_service_db.psql -v db=ordering -v user=ordering_user -v pass=ordering_pass ${HELM_DB_CONNECTION}/postgres
-	psql --file deploy/helm/sql/init_service_db.psql -v db=search -v user=search_user -v pass=search_pass ${HELM_DB_CONNECTION}/postgres
-	psql --file deploy/helm/sql/init_service_db.psql -v db=stores -v user=stores_user -v pass=stores_pass ${HELM_DB_CONNECTION}/postgres
-	psql --file deploy/helm/sql/init_service_db.psql -v db=users -v user=users_user -v pass=users_pass ${HELM_DB_CONNECTION}/postgres
-	psql --file deploy/helm/sql/init_service_db.psql -v db=payments -v user=payments_user -v pass=payments_pass ${HELM_DB_CONNECTION}/postgres
 
 
 minikube_start:

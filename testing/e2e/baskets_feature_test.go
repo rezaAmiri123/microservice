@@ -5,12 +5,12 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/cucumber/godog"
-	"github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 	"github.com/rezaAmiri123/microservice/baskets/basketsclient"
 	"github.com/rezaAmiri123/microservice/baskets/basketsclient/basket"
 	"github.com/rezaAmiri123/microservice/baskets/basketsclient/item"
 	"github.com/rezaAmiri123/microservice/baskets/basketsclient/models"
+	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
 	"github.com/stackus/errors"
 )
 
@@ -18,26 +18,29 @@ type basketIDKey struct{}
 
 type basketsFeature struct {
 	client *basketsclient.BasketServiceAPI
-	//db     *sql.DB
+	db     *sql.DB
 }
 
 var _ feature = (*basketsFeature)(nil)
 
-func (c *basketsFeature) getDB() (*sql.DB, error) {
-	return sql.Open("pgx", "postgres://baskets_user:baskets_pass@localhost:5432/baskets?sslmode=disable&search_path=baskets,public")
-}
+//func (c *basketsFeature) getDB() (*sql.DB, error) {
+//	return sql.Open("pgx", "postgres://baskets_user:baskets_pass@localhost:5432/baskets?sslmode=disable&search_path=baskets,public")
+//}
 
 func (c *basketsFeature) init(cfg featureConfig) (err error) {
-	//if cfg.useMonoDB {
-	//	c.db, err = sql.Open("pgx", "postgres://mallbots_user:mallbots_pass@localhost:5432/mallbots?sslmode=disable")
-	//} else {
-	//	c.db, err = sql.Open("pgx", "postgres://baskets_user:baskets_pass@localhost:5432/baskets?sslmode=disable&search_path=baskets,public")
-	//}
-	//if err != nil {
-	//	return
-	//}
-	conn := client.New("localhost:8080", "/", nil)
-	c.client = basketsclient.New(conn, strfmt.Default)
+	c.client = basketsclient.New(cfg.transport, strfmt.Default)
+	c.db, err = postgres.NewDB(postgres.Config{
+		PGDriver:     cfg.PGDriver,
+		PGHost:       cfg.PGHost,
+		PGPort:       cfg.PGPort,
+		PGUser:       cfg.PGBasketsUser,
+		PGDBName:     cfg.PGBasketsDBName,
+		PGPassword:   cfg.PGBasketsPassword,
+		PGSearchPath: cfg.PGBasketsSearchPath,
+	})
+	if err != nil {
+		return fmt.Errorf("cannot load db: %w", err)
+	}
 
 	return
 }
@@ -54,11 +57,8 @@ func (c *basketsFeature) register(ctx *godog.ScenarioContext) {
 }
 
 func (c *basketsFeature) reset() {
-	db, _ := c.getDB()
-	defer db.Close()
-
 	truncate := func(tableName string) {
-		_, _ = db.Exec(fmt.Sprintf("TRUNCATE %s", tableName))
+		_, _ = c.db.Exec(fmt.Sprintf("TRUNCATE %s", tableName))
 	}
 
 	truncate("events")
