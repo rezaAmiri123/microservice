@@ -193,10 +193,7 @@ spec:
         - name: test
           image: reza879/deploytools:latest # busybox:1.28
           imagePullPolicy: IfNotPresent
-          command: [ # 'sh', '-c', "until nslookup postgres-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for postgres; sleep 2; done" , ';',
-                    #  'ls', '-l', '/script', ';', 
-                    "/script/init_db.sh",
-                     ]
+          command: ["/script/init_db.sh"]
           volumeMounts:
             - name: script
               mountPath: "/script"

@@ -2,6 +2,7 @@ package agent
 
 import (
 	"fmt"
+
 	"github.com/rezaAmiri123/microservice/pkg/db/postgres"
 	"github.com/rezaAmiri123/microservice/pkg/di"
 	"github.com/rezaAmiri123/microservice/stores/internal/adapters/migrations"
@@ -31,6 +32,7 @@ func (a *Agent) setupDatabase() error {
 	})
 
 	a.container.AddScoped(constants.DatabaseTransactionKey, func(c di.Container) (any, error) {
+		fmt.Println("dbConn.Begin() called")
 		return dbConn.Begin()
 	})
 

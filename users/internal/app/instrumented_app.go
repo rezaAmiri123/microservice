@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/rezaAmiri123/microservice/users/internal/constants"
@@ -27,9 +26,7 @@ func NewInstrumentedApp(app App) App {
 }
 
 func (a instrumentedApp) RegisterUser(ctx context.Context, cmd RegisterUser) error {
-	fmt.Println("before instrumented")
 	err := a.App.RegisterUser(ctx, cmd)
-	fmt.Println("after instrumented")
 	if err != nil {
 		return err
 	}

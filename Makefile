@@ -98,6 +98,18 @@ build-cosec:
 minikube-load-cosec:
 	minikube image load $(REPO_NAME)/cosec:latest
 
+minikube-load-all:
+	minikube image load \
+		$(REPO_NAME)/baskets:latest \
+		$(REPO_NAME)/cosec:latest \
+		$(REPO_NAME)/depot:latest \
+		$(REPO_NAME)/notifications:latest \
+		$(REPO_NAME)/ordering:latest \
+		$(REPO_NAME)/payments:latest \
+		$(REPO_NAME)/search:latest \
+		$(REPO_NAME)/stores:latest \
+		$(REPO_NAME)/users:latest
+
 # helm repo add bitnami https://charts.bitnami.com/bitnami
 #=====================================================
 # kuberneties

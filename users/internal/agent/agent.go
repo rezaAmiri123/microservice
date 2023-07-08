@@ -97,19 +97,14 @@ func NewAgent(config Config) (*Agent, error) {
 	}
 	setupsFn := []func() error{
 		a.setupLogger,
-		//a.setupMetric,
-
-		//a.setupRepository,
-		//a.setupTracing,
 		a.setupTracer,
-		a.setupEventServer,
 		a.setupRegistry,
+		a.setupDatabase,
+		a.setupEventServer,
 		a.setupApplication,
-		//a.setupAuthClient,
+		a.setupEventHandler,
 		a.setupGrpcServer,
 		a.setupHttpServer,
-		//a.setupGRPCServer,
-		//a.setupTracer,
 	}
 	for _, fn := range setupsFn {
 		if err := fn(); err != nil {

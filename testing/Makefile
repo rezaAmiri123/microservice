@@ -58,6 +58,7 @@ generate:
 	swagger generate client -q -f ./internal/ports/rest/api.swagger.json -c storesclient -m storesclient/models --with-flatten=remove-unused
 
 test_coverage:
+	go clean -testcache
 	go test --cover ./...
 
 test_coverage_html:
