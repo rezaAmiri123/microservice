@@ -7,8 +7,10 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/docker/go-connections/nat"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
-	_ "github.com/lib/pq"
+	"strings"
+
+	//_ "github.com/golang-migrate/migrate/v4/source/file"
+	//_ "github.com/lib/pq"
 	"github.com/rezaAmiri123/microservice/baskets/internal/adapters/migrations"
 	"github.com/rezaAmiri123/microservice/baskets/internal/constants"
 	"github.com/rezaAmiri123/microservice/baskets/internal/domain"
@@ -71,12 +73,12 @@ func (s *productCacheSuite) SetupSuite() {
 	if err != nil {
 		s.T().Fatal(err)
 	}
-
+	splitEndpoint := strings.Split(endpoint, ":")
 	//dataSource := fmt.Sprintf("postgres://mallbots_user:mallbots_pass@%s/mallbots?sslmode=disable", endpoint)
 	s.db, err = pkgPostgres.NewDB(pkgPostgres.Config{
 		PGDriver:     "pgx",
-		PGHost:       endpoint,
-		PGPort:       "5432",
+		PGHost:       splitEndpoint[0],
+		PGPort:       splitEndpoint[1],
 		PGUser:       fmt.Sprintf("%s_user", constants.ServiceName),
 		PGDBName:     constants.ServiceName,
 		PGPassword:   fmt.Sprintf("%s_pass", constants.ServiceName),
