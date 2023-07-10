@@ -17,9 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Test services
+        env:
+          SERVICES: "baskets cosec depot notifications ordering payments search stores users"
         run: |
-          services=( baskets cosec depot notifications ordering payments search stores users testing )
-          for service in "${services[@]}"
+          # services=( baskets cosec depot notifications ordering payments search stores users )
+          for service in $SERVICES
           do
             echo "${service}"
             # do something on $service #
@@ -50,7 +52,7 @@ jobs:
           DOCKERFILE: docker/Dockerfile.microservices
 
         run: |
-          services=( baskets cosec depot notifications ordering payments search stores users testing )
+          services=( baskets cosec depot notifications ordering payments search stores users )
           for service in "${services[@]}"
           do
             echo "${service}"
@@ -71,7 +73,7 @@ jobs:
           REGISTRY: ${{secrets.DOCKER_USER}}
           GITHUB_SHA: ${{ github.sha }}
           DOCKERFILE: docker/Dockerfile.microservices
-          SERVICES: "baskets cosec depot notifications ordering payments search stores users testing"
+          SERVICES: "baskets cosec depot notifications ordering payments search stores users"
         run: |
           # services=( baskets cosec depot notifications ordering payments search stores users testing )
           for service in ${SERVICES}
