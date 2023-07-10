@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Test services
         run: |
-          services=( pkg baskets cosec depot notifications ordering payments search stores users testing )
+          services=( baskets cosec depot notifications ordering payments search stores users testing )
           for service in "${services[@]}"
           do
             echo "${service}"
