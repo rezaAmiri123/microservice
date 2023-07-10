@@ -20,11 +20,9 @@ jobs:
         env:
           SERVICES: "baskets cosec depot notifications ordering payments search stores users"
         run: |
-          # services=( baskets cosec depot notifications ordering payments search stores users )
           for service in $SERVICES
           do
             echo "${service}"
-            # do something on $service #
             cd "${service}"
             go test --cover ./...
             cd ..
@@ -50,10 +48,9 @@ jobs:
           REGISTRY: ${{secrets.DOCKER_USER}}
           GITHUB_SHA: ${{ github.sha }}
           DOCKERFILE: docker/Dockerfile.microservices
-
+          SERVICES: "baskets cosec depot notifications ordering payments search stores users"
         run: |
-          services=( baskets cosec depot notifications ordering payments search stores users )
-          for service in "${services[@]}"
+          for service in $SERVICES
           do
             echo "${service}"
             # do something on $service #
@@ -75,7 +72,6 @@ jobs:
           DOCKERFILE: docker/Dockerfile.microservices
           SERVICES: "baskets cosec depot notifications ordering payments search stores users"
         run: |
-          # services=( baskets cosec depot notifications ordering payments search stores users testing )
           for service in ${SERVICES}
           do	
             echo ${service}
