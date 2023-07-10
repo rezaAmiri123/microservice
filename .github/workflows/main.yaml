@@ -13,23 +13,83 @@ on:
 
 jobs:
   test:
-    strategy:
-      # max-parallel: 2
-      matrix:
-        services: [baskets, cosec, depot, notifications, ordering, payments, search, stores, users]
-        # services: [baskets, users, stores, payments]
-    uses: ./.github/workflows/test.yml
-    with:
-      service: ${{ matrix.services }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Test services
+        run: |
+          services=( pkg baskets cosec depot notifications ordering payments search stores users testing )
+          for service in "${services[@]}"
+          do
+            echo "${service}"
+            # do something on $service #
+            cd "${service}"
+            go test --cover ./...
+            cd ..
+          done
+
+    # strategy:
+    #   # max-parallel: 2
+    #   matrix:
+    #     services: [baskets, cosec, depot, notifications, ordering, payments, search, stores, users]
+    #     # services: [baskets, users, stores, payments]
+    # uses: ./.github/workflows/test.yml
+    # with:
+    #   service: ${{ matrix.services }}
+    # secrets: inherit
   build:
-    strategy:
-      # max-parallel: 2
-      matrix:
-        services: [baskets, cosec, depot, notifications, ordering, payments, search, stores, users]
-        # services: [baskets, users, stores, payments]
-    uses: ./.github/workflows/build.yml
     needs: test
-    with:
-      service: ${{ matrix.services }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build services
+        env:
+          # REGISTRY: ${{ steps.ecr.outputs.registry }}
+          REGISTRY: ${{secrets.DOCKER_USER}}
+          GITHUB_SHA: ${{ github.sha }}
+          DOCKERFILE: docker/Dockerfile.microservices
+
+        run: |
+          services=( baskets cosec depot notifications ordering payments search stores users testing )
+          for service in "${services[@]}"
+          do
+            echo "${service}"
+            # do something on $service #
+            docker build -t $REGISTRY/${service}:latest --file $DOCKERFILE --build-arg=service=${service} .
+          done
+
+      - name: docker login
+        env:
+          DOCKER_USER: ${{secrets.DOCKER_USER}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
+
+      - name: Push services
+        env:
+          # REGISTRY: ${{ steps.ecr.outputs.registry }}
+          REGISTRY: ${{secrets.DOCKER_USER}}
+          GITHUB_SHA: ${{ github.sha }}
+          DOCKERFILE: docker/Dockerfile.microservices
+          SERVICES: "baskets cosec depot notifications ordering payments search stores users testing"
+        run: |
+          # services=( baskets cosec depot notifications ordering payments search stores users testing )
+          for service in ${SERVICES}
+          do	
+            echo ${service}
+            docker push $REGISTRY/${service}:latest
+          done
+          # docker build -t $REGISTRY/${{ inputs.service }}:$GITHUB_SHA -t $REGISTRY/${{ inputs.service }}:latest --file $DOCKERFILE --build-arg=service=${{ inputs.service }} .
+          # docker build -t $REGISTRY/${{ inputs.service }}:latest --file $DOCKERFILE --build-arg=service=${{ inputs.service }} .
+          
+
+    # strategy:
+    #   # max-parallel: 2
+    #   matrix:
+    #     services: [baskets, cosec, depot, notifications, ordering, payments, search, stores, users]
+    #     # services: [baskets, users, stores, payments]
+    # uses: ./.github/workflows/build.yml
+    # needs: test
+    # with:
+    #   service: ${{ matrix.services }}
+    # secrets: inherit
