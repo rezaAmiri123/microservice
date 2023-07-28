@@ -6,7 +6,7 @@ variable region {
 variable services {
   description = "List of MallBots microservices"
   type        = list(string)
-  default     = ["users"]
+  default     = ["baskets", "cosec", "users", "depot", "ordering", "notifications", "payments", "search", "stores"]
 }
 
 variable project {
@@ -20,6 +20,8 @@ variable allowed_cidr_block {
   type        = string
 }
 
+# Use this data source to get the access to the effective Account ID, User ID, 
+# and ARN in which Terraform is authorized.
 // https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity
 data aws_caller_identity current {}
 
