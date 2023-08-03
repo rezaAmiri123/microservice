@@ -12,33 +12,7 @@ on:
 #   SERVICE: baskets
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Test services
-        env:
-          SERVICES: "baskets cosec depot notifications ordering payments search stores users"
-        run: |
-          for service in $SERVICES
-          do
-            echo "${service}"
-            cd "${service}"
-            go test --cover ./...
-            cd ..
-          done
-
-    # strategy:
-    #   # max-parallel: 2
-    #   matrix:
-    #     services: [baskets, cosec, depot, notifications, ordering, payments, search, stores, users]
-    #     # services: [baskets, users, stores, payments]
-    # uses: ./.github/workflows/test.yml
-    # with:
-    #   service: ${{ matrix.services }}
-    # secrets: inherit
   build:
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -47,15 +21,10 @@ jobs:
           # REGISTRY: ${{ steps.ecr.outputs.registry }}
           REGISTRY: ${{secrets.DOCKER_USER}}
           GITHUB_SHA: ${{ github.sha }}
-          DOCKERFILE: docker/Dockerfile.microservices
+          DOCKERFILE: deploy/setup-tools/Dockerfile
           SERVICES: "baskets cosec depot notifications ordering payments search stores users"
         run: |
-          for service in $SERVICES
-          do
-            echo "${service}"
-            # do something on $service #
-            docker build -t $REGISTRY/${service}:latest --file $DOCKERFILE --build-arg=service=${service} .
-          done
+          docker build -t deploytools:latest --file $DOCKERFILE  .
 
       - name: docker login
         env:
@@ -69,16 +38,10 @@ jobs:
           # REGISTRY: ${{ steps.ecr.outputs.registry }}
           REGISTRY: ${{secrets.DOCKER_USER}}
           GITHUB_SHA: ${{ github.sha }}
-          DOCKERFILE: docker/Dockerfile.microservices
+          DOCKERFILE: deploy/setup-tools/Dockerfile
           SERVICES: "baskets cosec depot notifications ordering payments search stores users"
         run: |
-          for service in ${SERVICES}
-          do	
-            echo ${service}
-            docker push $REGISTRY/${service}:latest
-          done
-          # docker build -t $REGISTRY/${{ inputs.service }}:$GITHUB_SHA -t $REGISTRY/${{ inputs.service }}:latest --file $DOCKERFILE --build-arg=service=${{ inputs.service }} .
-          # docker build -t $REGISTRY/${{ inputs.service }}:latest --file $DOCKERFILE --build-arg=service=${{ inputs.service }} .
+          docker push $REGISTRY/deploytools:latest
           
 
     # strategy:
