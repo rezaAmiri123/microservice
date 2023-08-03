@@ -9,7 +9,7 @@ RUN set -ex; \
 RUN set -eux; \
     git clone --single-branch --depth 1 -b ${AWS_CLI_VERSION} https://github.com/aws/aws-cli.git; \
     cd /aws-cli; \
-    sed -i'' 's/PyInstaller.*/PyInstaller==5.6/g' requirements-build.txt; \
+    # sed -i'' 's/PyInstaller.*/PyInstaller==5.6/g' requirements-build.txt; \
     python -m venv venv; \
     . venv/bin/activate; \
     ./scripts/installers/make-exe
