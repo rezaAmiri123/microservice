@@ -17,5 +17,5 @@ docker run --rm -it \
         -v ~/.kube:/root/.kube \
         -v ${root}:/mallbots \
         -v ${PWD}:/mallbots/deployment/.current \
-        -w /mallbots/deployment/.current \
+        -w /mallbots/deploy/.current \
         deploytools
