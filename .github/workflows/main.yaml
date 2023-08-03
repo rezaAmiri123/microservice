@@ -12,24 +12,45 @@ on:
 #   SERVICE: baskets
 
 jobs:
-  test:
-    strategy:
-      # max-parallel: 2
-      matrix:
-        services: [baskets, cosec, depot, notifications, ordering, payments, search, stores, users]
-        # services: [baskets, users, stores, payments]
-    uses: ./.github/workflows/test.yml
-    with:
-      service: ${{ matrix.services }}
-    secrets: inherit
   build:
-    strategy:
-      # max-parallel: 2
-      matrix:
-        services: [baskets, cosec, depot, notifications, ordering, payments, search, stores, users]
-        # services: [baskets, users, stores, payments]
-    uses: ./.github/workflows/build.yml
-    needs: test
-    with:
-      service: ${{ matrix.services }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build services
+        env:
+          # REGISTRY: ${{ steps.ecr.outputs.registry }}
+          REGISTRY: ${{secrets.DOCKER_USER}}
+          GITHUB_SHA: ${{ github.sha }}
+          DOCKERFILE: deploy/setup-tools/Dockerfile
+          SERVICES: "baskets cosec depot notifications ordering payments search stores users"
+        run: |
+          docker build -t deploytools:latest --file $DOCKERFILE  .
+
+      - name: docker login
+        env:
+          DOCKER_USER: ${{secrets.DOCKER_USER}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
+
+      - name: Push services
+        env:
+          # REGISTRY: ${{ steps.ecr.outputs.registry }}
+          REGISTRY: ${{secrets.DOCKER_USER}}
+          GITHUB_SHA: ${{ github.sha }}
+          DOCKERFILE: deploy/setup-tools/Dockerfile
+          SERVICES: "baskets cosec depot notifications ordering payments search stores users"
+        run: |
+          docker push $REGISTRY/deploytools:latest
+          
+
+    # strategy:
+    #   # max-parallel: 2
+    #   matrix:
+    #     services: [baskets, cosec, depot, notifications, ordering, payments, search, stores, users]
+    #     # services: [baskets, users, stores, payments]
+    # uses: ./.github/workflows/build.yml
+    # needs: test
+    # with:
+    #   service: ${{ matrix.services }}
+    # secrets: inherit

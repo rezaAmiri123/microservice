@@ -1,3 +1,11 @@
+# Terraform module which creates EC2 security group within VPC on AWS.
+# A security group controls the traffic 
+# that is allowed to reach and leave the resources that it is associated with. 
+# For example, after you associate a security group with an EC2 instance, 
+# it controls the inbound and outbound traffic for the instance. 
+# You can associate a security group only with resources in the VPC for 
+# which it is created.
+# https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html
 // https://registry.terraform.io/modules/terraform-aws-modules/security-group/aws/4.13.0
 module security_group {
   source  = "terraform-aws-modules/security-group/aws"
@@ -6,6 +14,7 @@ module security_group {
   name   = "${var.project}-sg"
   vpc_id = module.vpc.vpc_id
 
+  # List of ingress rules to create where 'cidr_blocks' is used
   ingress_with_cidr_blocks = [
     {
       from_port   = 1
@@ -30,6 +39,7 @@ module security_group {
     }
   ]
 
+  # A mapping of tags to assign to security group
   tags = {
     "kubernetes.io/cluster/${var.project}": "shared"
   }

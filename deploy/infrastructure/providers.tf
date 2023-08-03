@@ -46,11 +46,23 @@ provider "docker" {
     password = data.aws_ecr_authorization_token.token.password
   }
 }
-
+# The Kubernetes (K8S) provider is used to interact 
+# with the resources supported by Kubernetes. 
+# The provider needs to be configured with the proper credentials 
+# before it can be used.
 // https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs
 provider kubernetes {
+  # host - (Optional) The hostname (in form of URI) of the Kubernetes API. 
+  # Can be sourced from KUBE_HOST.
   host                   = module.eks.cluster_endpoint
+  # cluster_ca_certificate - (Optional) PEM-encoded root certificates bundle 
+  # for TLS authentication. Can be sourced from KUBE_CLUSTER_CA_CERT_DATA
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+  # Some cloud providers have short-lived authentication tokens 
+  # that can expire relatively quickly. To ensure the Kubernetes provider 
+  # is receiving valid credentials, an exec-based plugin can be used to fetch 
+  # a new token before initializing the provider. For example, on EKS, 
+  # the command eks get-token can be used
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "aws"
