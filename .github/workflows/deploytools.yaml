@@ -3,14 +3,6 @@ name: main
 on:
   push:
     branches: [ "deploytools",  ]
-    # paths:
-    #   - baskets/**
-    #   - internal/**
-    #   - stores/storespb/**
-
-# env:
-#   SERVICE: baskets
-
 jobs:
   build:
     runs-on: ubuntu-latest
