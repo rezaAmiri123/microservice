@@ -53,8 +53,8 @@ resource kubernetes_service_account_v1 lb_service_account {
     # with kubernetes.io. This is necessary because such annotations 
     # can be mutated by server-side components and consequently cause a perpetual diff 
     # in the Terraform plan output. If you explicitly specify any such annotations 
-    # in the configuration template then Terraform will consider t
-    # hese as normal resource attributes and manage them as expected 
+    # in the configuration template then Terraform will consider 
+    # these as normal resource attributes and manage them as expected 
     # (while still avoiding the perpetual diff problem)
   }
 }

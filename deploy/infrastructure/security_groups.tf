@@ -5,6 +5,8 @@
 # it controls the inbound and outbound traffic for the instance. 
 # You can associate a security group only with resources in the VPC for 
 # which it is created.
+# Examples
+# https://github.com/terraform-aws-modules/terraform-aws-security-group/tree/v4.13.0/examples
 # https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html
 // https://registry.terraform.io/modules/terraform-aws-modules/security-group/aws/4.13.0
 module security_group {

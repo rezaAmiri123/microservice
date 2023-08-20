@@ -39,10 +39,21 @@ provider aws {
   }
 }
 
+# The Docker provider is used to interact with Docker containers and images. 
+# It uses the Docker API to manage the lifecycle of Docker containers. 
+# Because the Docker provider uses the Docker API, 
+# it is immediately compatible not only with single server Docker but Swarm 
+# and any additional Docker-compatible API hosts.
+// https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs
 provider "docker" {
   registry_auth {
+    # address (String) Address of the registry
     address  = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.region}.amazonaws.com"
+    # username (String) Username for the registry. 
+    # Defaults to DOCKER_REGISTRY_USER env variable if set.
     username = data.aws_ecr_authorization_token.token.user_name
+    # password (String, Sensitive) Password for the registry. 
+    # Defaults to DOCKER_REGISTRY_PASS env variable if set.
     password = data.aws_ecr_authorization_token.token.password
   }
 }
@@ -70,8 +81,15 @@ provider kubernetes {
     args = ["eks", "get-token", "--region", var.region, "--cluster-name", module.eks.cluster_id]
   }
 }
-
+# The Helm provider is used to deploy software packages in Kubernetes. 
+# The provider needs to be configured with the proper credentials 
+# before it can be used.
+# https://registry.terraform.io/providers/hashicorp/helm/latest/docs
 provider helm {
+  # You must have a Kubernetes cluster available. We support version 1.14.0 or higher.
+  # NOTE: The provider does not use the KUBECONFIG environment variable by default. 
+  # See the attribute reference below for the environment variables 
+  # that map to provider block attributes.
   kubernetes {
     host                   = module.eks.cluster_endpoint
     cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)

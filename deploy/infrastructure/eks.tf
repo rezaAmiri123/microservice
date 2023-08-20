@@ -1,3 +1,5 @@
+# https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html
+
 variable eks_node_instance_types {
   description = "EC2 instance types to use for EKS nodes"
   type        = list(string)
@@ -31,10 +33,26 @@ module "eks" {
 
   # Map of attribute maps for all EKS cluster addons enabled
   cluster_addons = {
+    # CoreDNS is a flexible, extensible DNS server that can serve 
+    # as the Kubernetes cluster DNS. When you launch an Amazon EKS cluster 
+    # with at least one node, two replicas of the CoreDNS image are deployed by default, 
+    # regardless of the number of nodes deployed in your cluster. 
+    # The CoreDNS Pods provide name resolution for all Pods in the cluster. 
+    # The CoreDNS Pods can be deployed to Fargate nodes 
+    # if your cluster includes an AWS Fargate profile with a namespace 
+    # that matches the namespace for the CoreDNS deployment
     coredns = {
       resolve_conflicts = "OVERWRITE"
     }
+    # The kube-proxy add-on is deployed on each Amazon EC2 node in your Amazon EKS cluster. 
+    # It maintains network rules on your nodes and enables network communication 
+    # to your Pods. The add-on isn't deployed to Fargate nodes in your cluster.
     kube-proxy = {}
+    # The Amazon VPC CNI plugin for Kubernetes add-on is deployed 
+    # on each Amazon EC2 node in your Amazon EKS cluster. 
+    # The add-on creates elastic network interfaces and attaches them 
+    # to your Amazon EC2 nodes. The add-on also assigns a private IPv4 
+    # or IPv6 address from your VPC to each Pod and service.
     vpc-cni    = {
       resolve_conflicts = "OVERWRITE"
     }
@@ -42,8 +60,13 @@ module "eks" {
 
   # Determines whether to create an OpenID Connect Provider for EKS to enable IRSA
   enable_irsa = true
+  # IAM Roles for Service Accounts (IRSA) is a feature of AWS 
+  # which allows you to make use of IAM roles at the pod level 
+  # by combining an OpenID Connect (OIDC) identity provider 
+  # and Kubernetes service account annotations.
 
   # Map of EKS managed node group default configurations
+  # https://docs.aws.amazon.com/eks/latest/userguide/create-managed-node-group.html
   eks_managed_node_group_defaults = {
     ami_type                              = "AL2_x86_64"
     disk_size                             = 10
@@ -67,6 +90,17 @@ module "eks" {
   }
 }
 
+# Amazon VPC Container Network Interface
+# Amazon EKS implements cluster networking through 
+# the Amazon VPC Container Network Interface(VPC CNI) plugin. 
+# The CNI plugin allows Kubernetes Pods to have the same IP address 
+# as they do on the VPC network.
+
+# IAM Roles for Service Accounts (IRSA) is a feature of AWS 
+# which allows you to make use of IAM roles at the pod level 
+# by combining an OpenID Connect (OIDC) identity provider 
+# and Kubernetes service account annotations.
+
 # Creates an IAM role which can be assumed by AWS EKS ServiceAccounts 
 # with optional policies for commonly used controllers/custom resources within EKS
 
@@ -78,7 +112,6 @@ module "eks" {
 # in the namespace default and canary in a cluster in us-east-1; 
 # and also the ServiceAccount name my-app-staging in the namespace default 
 # in a cluster in ap-southeast-1
-
 // https://registry.terraform.io/modules/terraform-aws-modules/iam/aws/5.3.1/submodules/iam-role-for-service-accounts-eks
 module "vpc_cni_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
@@ -89,6 +122,9 @@ module "vpc_cni_irsa" {
   # Determines whether to attach the Load Balancer Controller policy to the role
   attach_load_balancer_controller_policy = true
 
+  # Your cluster has an OpenID Connect (OIDC) issuer URL associated with it. 
+  # To use AWS Identity and Access Management (IAM) roles for service accounts, 
+  # an IAM OIDC provider must exist for your cluster's OIDC issuer URL.
   # Map of OIDC providers where each provider map should contain the provider, 
   # provider_arn, and namespace_service_accounts
   oidc_providers = {

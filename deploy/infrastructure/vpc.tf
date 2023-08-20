@@ -41,6 +41,8 @@ data aws_availability_zones available {
 # This virtual network closely resembles a traditional network 
 # that you'd operate in your own data center, 
 # with the benefits of using the scalable infrastructure of AWS.
+# Examples
+# https://github.com/terraform-aws-modules/terraform-aws-vpc/blob/master/examples/
 # https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html
 // https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/3.14.3
 module "vpc" {

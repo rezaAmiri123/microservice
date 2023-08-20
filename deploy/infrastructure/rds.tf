@@ -50,14 +50,15 @@ resource aws_rds_cluster_parameter_group postgres {
   # family - (Required) The family of the DB cluster parameter group.
   family = var.db_family
 }
-
+# Examples
+# https://github.com/terraform-aws-modules/terraform-aws-rds-aurora/tree/v7.5.0/examples
 // https://registry.terraform.io/modules/terraform-aws-modules/rds-aurora/aws/7.5.1
 module "db" {
   source  = "terraform-aws-modules/rds-aurora/aws"
   version = "~> 7.5.0"
 
   name                   = "${var.project}-db-cluster"
-  # nstance type to use at master instance. Note: if autoscaling_enabled is true, 
+  # Instance type to use at master instance. Note: if autoscaling_enabled is true, 
   # this will be the same instance class used on instances created by autoscaling
   instance_class         = var.db_instance_type
   # The name of the database engine to be used for this DB cluster. Defaults to aurora. 
