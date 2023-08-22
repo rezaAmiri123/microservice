@@ -20,7 +20,7 @@ func newSegment(dir string, baseOffset uint64, config Config) (*segment, error) 
 		config:     config,
 	}
 	var err error
-	storeFileName := path.Join(dir, fmt.Sprintf("%d:%s", baseOffset, ".store"))
+	storeFileName := path.Join(dir, fmt.Sprintf("%d%s", baseOffset, ".store"))
 	storeFileFlag := os.O_RDWR | os.O_APPEND | os.O_CREATE
 	storeFile, err := os.OpenFile(storeFileName, storeFileFlag, 0644)
 	if err != nil {
@@ -31,7 +31,7 @@ func newSegment(dir string, baseOffset uint64, config Config) (*segment, error) 
 		return nil, err
 	}
 
-	indexFileName := path.Join(dir, fmt.Sprintf("%d:%s", baseOffset, ".index"))
+	indexFileName := path.Join(dir, fmt.Sprintf("%d%s", baseOffset, ".index"))
 	indexFileFlag := os.O_RDWR | os.O_CREATE
 	indexFile, err := os.OpenFile(indexFileName, indexFileFlag, 0644)
 	if err != nil {
