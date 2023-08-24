@@ -9,7 +9,7 @@ import (
 )
 
 func TestLog(t *testing.T) {
-	for scenario, fn := range map[string]func(t *testing.T, log *log){
+	for scenario, fn := range map[string]func(t *testing.T, log Log, dir string, config Config){
 		"append and read a record succeeds": testAppendRead,
 		"offset out of range error":         testOutOfRangeErr,
 		"init with existing segments":       testInitExisting,
@@ -26,12 +26,12 @@ func TestLog(t *testing.T) {
 			log, err := NewLog(dir, c)
 			require.NoError(t, err)
 
-			fn(t, log)
+			fn(t, log, dir, c)
 		})
 	}
 }
 
-func testAppendRead(t *testing.T, log *log) {
+func testAppendRead(t *testing.T, log Log, dir string, config Config) {
 	record := &Record{Value: []byte("hello world")}
 	offset, err := log.Append(record)
 	require.NoError(t, err)
@@ -42,13 +42,13 @@ func testAppendRead(t *testing.T, log *log) {
 	require.Equal(t, got.Value, record.Value)
 }
 
-func testOutOfRangeErr(t *testing.T, log *log) {
+func testOutOfRangeErr(t *testing.T, log Log, dir string, config Config) {
 	got, err := log.Read(1)
 	require.Nil(t, got)
 	require.Equal(t, err, ErrOffsetOutOfRange)
 }
 
-func testInitExisting(t *testing.T, log *log) {
+func testInitExisting(t *testing.T, log Log, dir string, config Config) {
 	record := &Record{Value: []byte("hello world")}
 	for i := 0; i < 3; i++ {
 		_, err := log.Append(record)
@@ -64,7 +64,7 @@ func testInitExisting(t *testing.T, log *log) {
 	require.NoError(t, err)
 	require.Equal(t, uint64(2), offset)
 
-	newLog, err := NewLog(log.Dir, log.Config)
+	newLog, err := NewLog(dir, config)
 	require.NoError(t, err)
 
 	offset, err = newLog.LowestOffset()
@@ -75,7 +75,7 @@ func testInitExisting(t *testing.T, log *log) {
 	require.Equal(t, uint64(2), offset)
 }
 
-func testReader(t *testing.T, log *log) {
+func testReader(t *testing.T, log Log, dir string, config Config) {
 	record := &Record{Value: []byte("hello world")}
 	offset, err := log.Append(record)
 	require.NoError(t, err)
@@ -91,7 +91,7 @@ func testReader(t *testing.T, log *log) {
 	require.Equal(t, record.Value, got.Value)
 }
 
-func testTruncate(t *testing.T, log *log) {
+func testTruncate(t *testing.T, log Log, dir string, config Config) {
 	record := &Record{Value: []byte("hello world")}
 	for i := 0; i < 3; i++ {
 		_, err := log.Append(record)

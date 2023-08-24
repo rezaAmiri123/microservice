@@ -18,6 +18,13 @@ type (
 	Log interface {
 		Append(record *Record) (uint64, error)
 		Read(uint642 uint64) (*Record, error)
+		Close() error
+		Remove() error
+		Reset() error
+		LowestOffset() (uint64, error)
+		HighestOffset() (uint64, error)
+		Truncate(lowest uint64) error
+		Reader() io.Reader
 	}
 	originReader struct {
 		*store
@@ -34,7 +41,7 @@ type (
 	}
 )
 
-func NewLog(dir string, c Config) (*log, error) {
+func NewLog(dir string, c Config) (Log, error) {
 	if c.Segment.MaxStoreBytes == 0 {
 		c.Segment.MaxStoreBytes = 1024
 	}
