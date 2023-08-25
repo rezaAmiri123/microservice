@@ -6,6 +6,7 @@ import (
 	api "github.com/rezaAmiri123/microservice/proglog/api/v1"
 	"github.com/rezaAmiri123/microservice/proglog/internal/distribution"
 	"github.com/rezaAmiri123/microservice/proglog/internal/domain"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"go.opencensus.io/examples/exporter"
 	"go.uber.org/zap"
@@ -34,20 +35,25 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+type mocks struct {
+	distributionServers *distribution.MockGetServers
+}
+
 func TestServer(t *testing.T) {
-	for scenario, fn := range map[string]func(t *testing.T, client api.LogClient, config *Config){
+	for scenario, fn := range map[string]func(t *testing.T, client api.LogClient, config *Config, m mocks){
 		"produce/consume a message to/from the log succeeds": testProduceConsume,
 		"consume past log boundary fails":                    testConsumePastBoundary,
+		"get servers":                                        testGetServers,
 	} {
 		t.Run(scenario, func(t *testing.T) {
-			client, cfg, teardown := setupTest(t, nil)
+			client, cfg, teardown, m := setupTest(t, nil)
 			defer teardown()
-			fn(t, client, cfg)
+			fn(t, client, cfg, m)
 		})
 	}
 }
 
-func setupTest(t *testing.T, fn func(*Config)) (client api.LogClient, cfg *Config, teardown func()) {
+func setupTest(t *testing.T, fn func(*Config)) (client api.LogClient, cfg *Config, teardown func(), m mocks) {
 	t.Helper()
 
 	l, err := net.Listen("tcp", "127.0.0.1:0")
@@ -85,9 +91,12 @@ func setupTest(t *testing.T, fn func(*Config)) (client api.LogClient, cfg *Confi
 		err = telemetryExpoter.Start()
 		require.NoError(t, err)
 	}
+	m = mocks{
+		distributionServers: distribution.NewMockGetServers(t),
+	}
 	cfg = &Config{
 		Log:     logc,
-		Servers: distribution.NewMockGetServers(t),
+		Servers: m.distributionServers,
 	}
 
 	if fn != nil {
@@ -110,10 +119,10 @@ func setupTest(t *testing.T, fn func(*Config)) (client api.LogClient, cfg *Confi
 			telemetryExpoter.Stop()
 			telemetryExpoter.Close()
 		}
-	}
+	}, m
 }
 
-func testProduceConsume(t *testing.T, client api.LogClient, config *Config) {
+func testProduceConsume(t *testing.T, client api.LogClient, config *Config, m mocks) {
 	ctx := context.Background()
 	want := &domain.Record{Value: []byte("hello world")}
 	produce, err := client.Produce(ctx, &api.ProduceRequest{Record: recordToAPI(want)})
@@ -125,7 +134,7 @@ func testProduceConsume(t *testing.T, client api.LogClient, config *Config) {
 	require.Equal(t, want.GetOffset(), consume.GetRecord().GetOffset())
 }
 
-func testConsumePastBoundary(t *testing.T, client api.LogClient, config *Config) {
+func testConsumePastBoundary(t *testing.T, client api.LogClient, config *Config, m mocks) {
 	ctx := context.Background()
 	want := &domain.Record{Value: []byte("hello world")}
 	produce, err := client.Produce(ctx, &api.ProduceRequest{Record: recordToAPI(want)})
@@ -138,4 +147,23 @@ func testConsumePastBoundary(t *testing.T, client api.LogClient, config *Config)
 	gotErr := status.Code(err)
 	wantErr := status.Code(domain.ErrOffsetOutOfRange)
 	require.Equal(t, gotErr, wantErr)
+}
+
+func testGetServers(t *testing.T, client api.LogClient, config *Config, m mocks) {
+	ctx := context.Background()
+	server := &distribution.Server{
+		Id:       "server-id",
+		RpcAddr:  "server-address",
+		IsLeader: true,
+	}
+
+	m.distributionServers.On("GetServers", mock.Anything, mock.Anything).Return(
+		[]*distribution.Server{server},
+		nil,
+	)
+	got, err := client.GetServers(ctx, &api.GetServersRequest{})
+	require.NoError(t, err)
+	require.Equal(t, got.GetServers()[0].GetId(), server.Id)
+	require.Equal(t, got.GetServers()[0].GetRpcAddr(), server.RpcAddr)
+	require.Equal(t, got.GetServers()[0].GetIsLeader(), server.IsLeader)
 }
