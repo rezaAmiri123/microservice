@@ -17,7 +17,7 @@ var ErrOffsetOutOfRange = errors.Wrap(errors.ErrBadRequest, "offset out of range
 type (
 	Log interface {
 		Append(record *Record) (uint64, error)
-		Read(uint642 uint64) (*Record, error)
+		Read(offset uint64) (*Record, error)
 		Close() error
 		Remove() error
 		Reset() error

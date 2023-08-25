@@ -7,6 +7,7 @@ import (
 	raftboltdb "github.com/hashicorp/raft-boltdb"
 	"github.com/rezaAmiri123/microservice/proglog/internal/constats"
 	"github.com/rezaAmiri123/microservice/proglog/internal/discovery"
+	"github.com/rezaAmiri123/microservice/proglog/internal/distribution"
 	"github.com/rezaAmiri123/microservice/proglog/internal/domain"
 	"google.golang.org/protobuf/proto"
 	"os"
@@ -20,7 +21,10 @@ var (
 	Timeout         = 10 * time.Second
 )
 
-var _ discovery.Handler = (*DistributedLog)(nil)
+var _ interface {
+	discovery.Handler
+	distribution.GetServers
+} = (*DistributedLog)(nil)
 
 type (
 	Config struct {
@@ -34,11 +38,6 @@ type (
 		logConfig domain.Config
 		log       domain.Log
 		raft      *raft.Raft
-	}
-	Server struct {
-		Id       string
-		RpcAddr  string
-		IsLeader bool
 	}
 )
 
@@ -225,15 +224,15 @@ func (l *DistributedLog) WaitForLeader(timeout time.Duration) error {
 	}
 }
 
-func (l *DistributedLog) GetServers() ([]*Server, error) {
+func (l *DistributedLog) GetServers() ([]*distribution.Server, error) {
 	future := l.raft.GetConfiguration()
 	if err := future.Error(); err != nil {
 		return nil, err
 	}
-	var servers []*Server
+	var servers []*distribution.Server
 	for _, server := range future.Configuration().Servers {
 		serverAddr, _ := l.raft.LeaderWithID()
-		servers = append(servers, &Server{
+		servers = append(servers, &distribution.Server{
 			Id:       string(server.ID),
 			RpcAddr:  string(server.Address),
 			IsLeader: serverAddr == server.Address,
